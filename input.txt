@@ -1,0 +1,2 @@
+echo "1 OPO" > input.txt
+echo "OPO,Francisco de Sá Carneiro Airport,Porto,PT,large_airport" > resultados-esperados/command1_output.txt
