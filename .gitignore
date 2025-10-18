@@ -1,0 +1,15 @@
+# Binários e objetos
+bin/
+obj/
+*.o
+
+# Resultados gerados
+resultados/
+resultados-esperados/
+datasets/
+
+# Ficheiros temporários
+*.swp
+*.log
+*.tmp
+*.zip
