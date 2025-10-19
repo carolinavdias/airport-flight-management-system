@@ -1,4 +1,4 @@
-# Makefile corrigido para LI3 — Fase 1
+# makefile base - fase 1
 
 CC = gcc
 CFLAGS = -Wall -Wextra -pedantic -O2 -Iinclude
