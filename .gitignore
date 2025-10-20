@@ -1,15 +1,18 @@
-# Binários e objetos
+# binários e objetos
 bin/
 obj/
 *.o
 
-# Resultados gerados
+# resultados gerados
 resultados/
 resultados-esperados/
 datasets/
 
-# Ficheiros temporários
+# ficheiros temporários
 *.swp
 *.log
 *.tmp
 *.zip
+
+#garantir inclusão da pasta programa-main!!!:)
+!programa-main/
