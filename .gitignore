@@ -21,3 +21,8 @@ datasets/
 trabalho-pratico/datasets/
 trabalho-pratico/resultados/
 
+
+# Ignorar datasets e resultados locais
+trabalho-pratico/datasets/
+trabalho-pratico/resultados/
+
