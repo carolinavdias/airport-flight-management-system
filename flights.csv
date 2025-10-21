@@ -1,0 +1,6 @@
+flight id, departure, actual departure, arrival, actual arrival, gate, status, origin, destination, aircraft, airline, tracking url
+AC345, 2025-10-15 08:00, 2025-10-15 08:00, 2025-10-15 10:15, 2025-10-15 10:35, B12, On Time, JFK, LAX, N123AA, American Airlines, https://tracking.airline.com/AC345
+HJ456, 2025-10-15 10:45, 2025-10-15 13:00, 2025-10-15 14:20, 2025-10-15 16:50, A04, Delayed, FRA, CDG, D-ABCD, Wizz Air, https://tracking.wizzair.com/HJ456
+XY567, 2025-10-16 09:00,, 2025-10-16 12:15,, C08, Cancelled, FCO, MAD, EI-IMI, Ryanair, https://tracking.ryanair.com/XY567
+LP678, 2025-10-16 18:20, 2025-10-16 18:45, 2025-10-16 21:10, 2025-10-16 21:35, D09, Delayed, GRU, JFK, PR-GXZ, TAP Air Portugal, https://tracking.tapairpt.com/LP678
+RT789, 2026-10-17 19:05, 2025-10-17 19:05, 2025-10-17 22:30, 2025-10-17 22:28, E07, On Time, CGH, SDU, PP-MQA, Emirates, https://tracking.emirates.com/RT789
