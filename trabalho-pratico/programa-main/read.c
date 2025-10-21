@@ -118,6 +118,18 @@ void imprimir_voo(gpointer key, gpointer value, gpointer user_data) {
            v->partida_efetiva.data.dia,
            v->partida_efetiva.horas.hora,
            v->partida_efetiva.horas.mins);
+    printf("Partida prevista: %04d-%02d-%02d %02d:%02d\n",
+           v->chegada_prevista.data.ano,
+           v->chegada_prevista.data.mes,
+           v->chegada_prevista.data.dia,
+           v->chegada_prevista.horas.hora,
+           v->chegada_prevista.horas.mins);
+    printf("Partida efetiva: %04d-%02d-%02d %02d:%02d\n",
+           v->chegada_efetiva.data.ano,
+           v->chegada_efetiva.data.mes,
+           v->chegada_efetiva.data.dia,
+           v->chegada_efetiva.horas.hora,
+           v->chegada_efetiva.horas.mins);
     printf("Porta embarque: %s\n", v->porta_embarque);
     printf("Estado: %s\n", v->estado); // podes criar função para imprimir o enum como string
     printf("Origem: %s | Destino: %s\n", v->codigo_IATA_aer_origem, v->codigo_IATA_aer_destino);
@@ -145,8 +157,9 @@ int main () {
     while (getline(&linha, &len, ficheiro) != -1) {
 	Voo *voo_atual = malloc(sizeof(Voo));
 	int caso = 0;
-	char *token = strtok(linha, ",\n");
-  	while (token) {
+	char *token;
+	//char *token = strtok(linha, ",\n");
+  	while ((token = strsep(&linha, ",\n")) != NULL) {
 	    switch (caso) {
 		case 0: voo_atual->voo_id = g_strdup(token); break;
 		case 1: voo_atual->partida_prevista = parse_DataH(token); break;
@@ -161,12 +174,12 @@ int main () {
 		case 10: voo_atual->companhia_aerea = g_strdup(token); break;
 		case 11: voo_atual->tracking_url = g_strdup(token); break;
 	    }
-            printf("Campo: %s\n", token);
-            token = strtok(NULL, ",\n");
+            //printf("Campo: %s\n", token);
+            //token = strtok(NULL, ",\n");
 	    caso++;
 	}
 	g_hash_table_insert(tabela, voo_atual->voo_id, voo_atual);
-	printf ("----------\n");
+	//printf ("----------\n");
     }
 
 // depois, no main ou depois de preencher a hash table:
