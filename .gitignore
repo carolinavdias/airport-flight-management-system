@@ -16,3 +16,8 @@ datasets/
 
 #garantir inclusão da pasta programa-main!!!:)
 !programa-main/
+
+# Ignorar datasets e resultados locais
+trabalho-pratico/datasets/
+trabalho-pratico/resultados/
+
