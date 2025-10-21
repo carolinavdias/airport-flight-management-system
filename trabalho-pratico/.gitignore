@@ -1,18 +1,36 @@
-# binários e objetos
-bin/
-obj/
+
+#binários e objetos de compilação
 *.o
+*.out
+*.exe
 
-# resultados gerados
-resultados/
-resultados-esperados/
-datasets/
+#diretórios de build
+trabalho-pratico/obj/
+trabalho-pratico/bin/
 
-# ficheiros temporários
+#ficheiros gerados automaticamente
+#resultados produzidos durante os testes ou execução
+trabalho-pratico/resultados/
+trabalho-pratico/resultados-esperados/*_output.txt
+
+#datasets 
+trabalho-pratico/datasets/
+
+#inclui ficheiros CSV originais do dataset
+*.csv
+
+#ficheiros temporários do editor e do sistema
+*~
 *.swp
-*.log
 *.tmp
+*.log
 *.zip
+.DS_Store
 
-#garantir inclusão da pasta programa-main!!!:)
-!programa-main/
+#ficheiros de backup e cache
+__pycache__/
+*.bak
+
+#diretórios duplicados acidentalmente criados
+trabalho-pratico/trabalho-pratico/
+programa-main/
