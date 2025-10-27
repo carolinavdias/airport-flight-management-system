@@ -5,6 +5,9 @@
 #include <glib.h>
 #include <ctype.h>
 
+//Por fazer:
+//ficheiro.h
+//latitude/longitude, identificador reserva, numero documento, listas csv
 
 typedef struct data_def {
    int ano, mes, dia;
@@ -20,14 +23,31 @@ typedef struct dataH {
 } DataH;
 
 typedef enum {
+    F,
+    M,
+    O,
+    ERROR,
+} Genero; //Genero_passageiro
+
+typedef enum {
     On_Time,
     Delayed,
     Cancelled,
+    Error,
 } Estado;
+
+typedef enum { //Perguntar se tem de ser como está escrito no documento ou se pode ser traduzido
+    small_airport,
+    medium_airport,
+    large_airport,
+    heliport,
+    seaplane_base,
+    error,
+} Tipo_aeroporto;
 
 typedef struct voos {
     char *voo_id;
-    DataH partida_prevista; //A criar DataHora struct
+    DataH partida_prevista; // DataHora struct
     DataH partida_efetiva;
     DataH chegada_prevista;
     DataH chegada_efetiva;
@@ -49,7 +69,7 @@ typedef struct aeroporto {
     double latitude; //latitude do aeroporto em graus decimais
     double longitude;
     char *codigo_ICAO_aer;
-    char *tipo; //Militar, publico e privado
+    Tipo_aeroporto tipo; //Militar, publico e privado
 } Aeroporto;
 
 
@@ -69,7 +89,7 @@ typedef struct passageiros {
     char *ultimo_nome;
     Data data_nascimento;
     char *nacionalidade;
-    char *genero_passageiro;
+    Genero genero_passageiro;
     char *email_passageiro;
     int telefone_passageiro;
     char *morada_passageiro;
@@ -107,25 +127,44 @@ int string_vazia_ou_espacos(const char *s) {
 
 
 DataH parse_DataH (char *string) { // com validação incluida
-    DataH novo;
-    int narg = sscanf (string, " %d-%d-%d %d:%d", &novo.data.ano, &novo.data.mes, &novo.data.dia, &novo.horas.hora, &novo.horas.mins);
-    if (narg != 5 || (novo.data.ano < 0 || novo.data.ano > 2025) ||                                                                                             //validação ano
-                     (novo.data.mes < 1 || novo.data.mes > 12 || (novo.data.ano == 2025 && novo.data.mes > 11)) ||                                              //validação mes
-                     (novo.data.dia < 0 || (qual_mes(novo.data.mes) == 1 && novo.data.dia > 31) || (qual_mes(novo.data.mes) == 2 && novo.data.dia > 30)) ||     //validação dia
-                     (qual_mes(novo.data.mes) == 3 && ((novo.data.ano % 4 == 0 && novo.data.dia > 28) || (novo.data.ano % 4 != 0 && novo.data.dia > 29))) ||   //validação especial (mês de Fevereiro)
-		     (novo.horas.hora < 0 || novo.horas.hora > 23 || novo.horas.mins < 0 || novo.horas.mins > 59)) {
-        fprintf (stderr,"Formatação errada da DataHora, ou célula vazia.\nCorrija antes de ensirir novamente.\nDado incorreto: ");
-        //fprintf(stderr, "|%s|\n", string_vazia_ou_espacos(string) ? "(vazio)" : string);
-    	if (string == NULL || strlen(string) == 0) {
-    	    printf("String vazia ou nula\n\n");
-    	} else printf ("%s\n\n", string); //Acrescentar trim??
-        novo.data.ano = 0000;
-        novo.data.mes = 00;
-        novo.data.dia = 00;
-        novo.horas.hora = 00;
-        novo.horas.mins = 00;
-    }
-    return novo;
+
+    	DataH novo;
+    	int narg = sscanf (string, " %d-%d-%d %d:%d", &novo.data.ano, &novo.data.mes, &novo.data.dia, &novo.horas.hora, &novo.horas.mins);
+    	if (narg != 5 || (novo.data.ano < 0 || novo.data.ano > 2025) ||                                                                                             //validação ano
+                     	 (novo.data.mes < 1 || novo.data.mes > 12 || (novo.data.ano == 2025 && novo.data.mes > 11)) ||                                              //validação mes
+                     	 (novo.data.dia < 0 || (qual_mes(novo.data.mes) == 1 && novo.data.dia > 31) || (qual_mes(novo.data.mes) == 2 && novo.data.dia > 30)) ||     //validação dia
+                      	 (qual_mes(novo.data.mes) == 3 && ((novo.data.ano % 4 == 0 && novo.data.dia > 28) || (novo.data.ano % 4 != 0 && novo.data.dia > 29))) ||   //validação especial (mês de Fevereiro)
+		     	 (novo.horas.hora < 0 || novo.horas.hora > 23 || novo.horas.mins < 0 || novo.horas.mins > 59)) {
+        	fprintf (stderr,"Formatação errada da DataHora, ou célula vazia.\nCorrija antes de ensirir novamente.\nDado incorreto: ");
+        	//fprintf(stderr, "|%s|\n", string_vazia_ou_espacos(string) ? "(vazio)" : string);
+    		if (string == NULL || strlen(string) == 0) {
+    	    		printf("String vazia ou nula\n\n");
+    		} else printf ("%s\n\n", string); //Acrescentar trim??
+        	novo.data.ano = 0000;
+        	novo.data.mes = 00;
+        	novo.data.dia = 00;
+        	novo.horas.hora = 00;
+        	novo.horas.mins = 00;
+    	}
+ 	return novo;
+}
+
+Data parse_Data (char *string) {
+    Data novo;
+    int narg = sscanf (string, "%d-%d-%d", &novo.ano, &novo.mes, &novo.dia);
+    if (narg != 3 || (novo.ano < 0 || novo.ano > 2025) ||                                                                                             //validação ano
+                     (novo.mes < 1 || novo.mes > 12 || (novo.ano == 2025 && novo.mes > 11)) ||                                              //validação mes
+                     (novo.dia < 0 || (qual_mes(novo.mes) == 1 && novo.dia > 31) || (qual_mes(novo.mes) == 2 && novo.dia > 30)) ||     //validação dia
+                     (qual_mes(novo.mes) == 3 && ((novo.ano % 4 == 0 && novo.dia > 28) || (novo.ano % 4 != 0 && novo.dia > 29)))) {
+	fprintf (stderr, "Formatação errada da DataHora, ou célula vazia.\nCorrija antes de inserir novamente.\nDado incorreto: ");
+	if (string == NULL || strlen(string) == 0) {
+		printf ("String vazia ou nula\n\n");
+	} else printf ("%s\n\n", string);
+	novo.ano = 0000;
+ 	novo.mes = 00;
+  	novo.dia = 00;
+   }
+   return novo;
 }
 
 char* string_to_email (char *string) { // função c/ traducao e validação token para Passageiro->email
@@ -180,12 +219,54 @@ char* string_to_codigoIATA (char* string) { // funcao traducao e validacao token
 }
 
 
+//Funcao a considerar mudança (usar strings ou usar estrutura pre-definida!!
 Estado string_to_Estado (char *string) { // função traducao token para Voo->estado com default cancelled
+    if (string == NULL || strlen(string) == 0) fprintf (stderr, "Designação de Estado : espaço vazio! Preencha antes de inserir novamente.\n");
     if (strcmp(string, "On_Time") == 0) return On_Time;
     if (strcmp(string, "Delayed") == 0) return Delayed;
     if (strcmp(string, "Cancelled") == 0) return Cancelled;
-    return Cancelled;
+    fprintf (stderr, "Designação de Estado incorreta : %s . Corrija antes de inserir novamente.\n", string);
+    string = strdup("error");
+    return Error; //default
 }
+
+Tipo_aeroporto valida_tipo (char *string) {
+    if (string == NULL || strlen(string) == 0) fprintf (stderr, "Designação de Tipo Aeroporto : espaço vazio! Preencha antes de inserir novamente.\n");
+    if (strcmp(string, "small_airport") == 0) return small_airport;
+    if (strcmp(string, "medium_airport") == 0) return medium_airport;
+    if (strcmp(string, "large_airport") == 0) return large_airport;
+    if (strcmp(string, "heliport") == 0) return heliport;
+    if (strcmp(string, "seaplane_base") == 0) return seaplane_base;
+    fprintf (stderr, "Designação de Tipo Aeroporto incorreta : %s . Corrija antes de inserir novamente.\n", string);
+    string = strdup("error");
+    return Error; //default
+}
+
+bool string_to_bool (char *string, int versao) {
+    if (string == NULL || strlen(string) == 0) { // string vazia
+	if (versao == 1) fprintf (stderr, "Designação para Bagagem Extra : espaço vazio! Preencha antes de inserir novamente.\n"); // para Reserva-> Bagagem Extra
+ 	else fprintf (stderr, "Designação para Prioridade : espaço vazio! Preencha antes de inserir novamente.\n"); // para Reserva-> Prioridade
+	return 0; // por default
+    }
+    if (strcmp (string, "true") == 0) return 1;
+    if (strcmp (string, "false") == 0) return 0;
+    if (versao == 1) fprintf (stderr, "Designação para Bagagem Extra incorreta: %s. Corrija antes de inserir novamente.\n", string); //erro ao inserir Bagagem Extra
+    else fprintf (stderr, "Designação para Prioridade incorreta: %s. Corrija antes de inserir novamente.\n", string); // erro ao inserir Prioridade
+    return 0; // por default
+}
+
+Genero string_to_genero (char* string) {
+    if (string == NULL || strlen(string) == 0 || strlen(string) != 1) {
+	fprintf (stderr, "Designação para Género do Passageiro: espaço vazio! Preencha antes de inserir novamente.\n");
+	return Error;
+    }
+    if (strcmp(string, "M") == 0) return M;
+    if (strcmp(string, "F") == 0) return F;
+    if (strcmp(string, "O") == 0) return O;
+    fprintf (stderr, "Designação para Género do Passagiero incorreta. Corrija antes de inserir novamente.\n");
+    return Error;
+}
+
 
 char* string_to_id_voo (char* string) {
     char* id_voo;
@@ -348,7 +429,7 @@ switch (opcao) {
                                         case 4: aeroporto_atual->latitude = atof(token); break;
                                         case 5: aeroporto_atual->longitude = atof(token); break;
                                         case 6: aeroporto_atual->codigo_ICAO_aer = g_strdup(token); break;
-                                        case 7: aeroporto_atual->tipo = g_strdup(token); break;
+                                        case 7: aeroporto_atual->tipo = valida_tipo(token); break; //Ou string_to_tipo??
                                 }
                                 caso++;
                         }
@@ -357,7 +438,7 @@ switch (opcao) {
                 }
 
                 // depois, no main ou depois de preencher a hash table:
-                g_hash_table_foreach(tabela2, imprimir_aeroporto, NULL); //imprimir aeroporto para verificação a fazer
+                //g_hash_table_foreach(tabela2, imprimir_aeroporto, NULL); //imprimir aeroporto para verificação a fazer
 
                 free(linha);
                 fclose(ficheiro);
@@ -387,7 +468,12 @@ switch (opcao) {
                                         case 0: aeronave_atual->id_aeronave = g_strdup(token); break;
                                         case 1: aeronave_atual->fabricante_nave = g_strdup(token); break;
                                         case 2: aeronave_atual->modelo_nave = g_strdup(token); break;
-                                        case 3: aeronave_atual->ano_fabricacao = atoi(token); break;
+                                        case 3: if (atoi(token) < 0 || atoi(token) > 2025) aeronave_atual->ano_fabricacao = atoi(token);
+						else {
+							fprintf (stderr, "Designação incorreta de Ano de Fabricação: %s. Corrija antes de inserir novamente.\n", token);
+							aeronave_atual->ano_fabricacao = -1;
+						}
+						break;
                                         case 4: aeronave_atual->capacidade_max_pessoas = atoi(token); break;
                                         case 5: aeronave_atual->alcance_max = atoi(token); break;
                                 }
@@ -398,7 +484,7 @@ switch (opcao) {
                 }
 
                 // depois, no main ou depois de preencher a hash table:
-                g_hash_table_foreach(tabela3, imprimir_aeronave, NULL); //imprimir aeronave para verificação a fazer
+                //g_hash_table_foreach(tabela3, imprimir_aeronave, NULL); //imprimir aeronave para verificação a fazer
 
                free(linha);
                fclose(ficheiro);
@@ -428,9 +514,9 @@ switch (opcao) {
                                         case 0: passageiro_atual->id_passageiro = g_strdup(token); break;
                                         case 1: passageiro_atual->primeiro_nome = g_strdup(token); break;
                                         case 2: passageiro_atual->ultimo_nome = g_strdup(token); break;
-                                        case 3: passageiro_atual->data_nascimento = parse_DataH(token); break; //data! a fazer/modificar funcao parse_dataH
+                                        case 3: passageiro_atual->data_nascimento = parse_Data(token); break; //data! a fazer/modificar funcao parse_dataH
                                         case 4: passageiro_atual->nacionalidade = g_strdup(token); break;
-                                        case 5: passageiro_atual->genero_passageiro = g_strdup(token); break; //Novo tipo de dado?
+                                        case 5: passageiro_atual->genero_passageiro = string_to_genero(token); break; //Novo tipo de dado?
                                         case 6:	passageiro_atual->email_passageiro = string_to_email(token); break;//Novo tipo de dado??
                                         case 7: passageiro_atual->telefone_passageiro = atoi(token); break;
                                         case 8: passageiro_atual->morada_passageiro = g_strdup(token); break;
@@ -442,7 +528,7 @@ switch (opcao) {
                 }
 
                 // depois, no main ou depois de preencher a hash table:
-                g_hash_table_foreach(tabela4, imprimir_passageiro, NULL); //imprimir passageiro para verificação a fazer
+                //g_hash_table_foreach(tabela4, imprimir_passageiro, NULL); //imprimir passageiro para verificação a fazer
 
                 free(linha);
                 fclose(ficheiro);
@@ -475,15 +561,15 @@ switch (opcao) {
                                         case 2: reserva_atual->id_pessoa_reservou = g_strdup(token); break;
                                         case 3: reserva_atual->lugar_reservado = g_strdup(token); break;
                                         case 4: reserva_atual->preco_reserva = atof(token); break;
-                                        case 5: reserva_atual->bagagem_extra = string_to_bool(token); break; //nova função string_to_bool a fazer
-                                        case 6: reserva_atual->prioridade = string_to_bool(token); break;
+                                        case 5: reserva_atual->bagagem_extra = string_to_bool(token,1); break; //nova função string_to_bool a fazer
+                                        case 6: reserva_atual->prioridade = string_to_bool(token,2); break;
                                         case 7: reserva_atual->qr_code = atoi(token); break; //qrcode identificado por int???
                                 }
                                 caso++;
                         }
                         g_hash_table_insert(tabela5, GINT_TO_POINTER(reserva_atual->id_reserva), reserva_atual);
                 }
-                g_hash_table_foreach(tabela5, imprimir_reservas, NULL); //imprimir reservas para verificação
+                //g_hash_table_foreach(tabela5, imprimir_reservas, NULL); //imprimir reservas para verificação
 
                 free(linha);
                 fclose(ficheiro);
@@ -493,3 +579,5 @@ switch (opcao) {
 
 
 //Podíamos criar um novo atributo a complementar sobre os países para onde é preciso o passaporte na viagem de voo
+//Quando ocorre algum erro na validação do scanf, dar ao utilizador opção de corrigir na hora
+//Usar typedef union para datas horas???
