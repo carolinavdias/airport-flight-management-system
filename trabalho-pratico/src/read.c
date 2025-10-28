@@ -329,7 +329,12 @@ void imprimir_voo(gpointer key, gpointer value, gpointer user_data) {
 }
 
 
+<<<<<<< Updated upstream
 //Validar email, id.voo e codigo iata
+=======
+
+int main () {
+>>>>>>> Stashed changes
 
 int main () { //Para opção inserir
 // read (table, nome_ficheiro
@@ -574,6 +579,7 @@ switch (opcao) {
                 free(linha);
                 fclose(ficheiro);
 	}
+<<<<<<< Updated upstream
    	return 0;
 }
 
@@ -581,3 +587,16 @@ switch (opcao) {
 //Podíamos criar um novo atributo a complementar sobre os países para onde é preciso o passaporte na viagem de voo
 //Quando ocorre algum erro na validação do scanf, dar ao utilizador opção de corrigir na hora
 //Usar typedef union para datas horas???
+=======
+	g_hash_table_insert(tabela, voo_atual->voo_id, voo_atual);
+	//printf ("----------\n");
+    }
+
+// depois, no main ou depois de preencher a hash table:
+    g_hash_table_foreach(tabela, imprimir_voo, NULL);
+
+    free(linha);
+    fclose(ficheiro);
+    return 0;
+}
+>>>>>>> Stashed changes
