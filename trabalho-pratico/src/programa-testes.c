@@ -4,6 +4,7 @@
 #include <time.h>
 #include <sys/resource.h>
 
+//função para comparar dois ficheiros linha a linha
 static int compare_files(const char *expected, const char *output) {
     FILE *f1 = fopen(expected, "r");
     FILE *f2 = fopen(output, "r");
@@ -39,30 +40,54 @@ static int compare_files(const char *expected, const char *output) {
     }
 }
 
+// Programa principal de testes
 int main(int argc, char *argv[]) {
     if (argc < 4) {
         printf("Uso: %s <dataset_dir> <input.txt> <resultados-esperados/>\n", argv[0]);
         return 1;
     }
+
     const char *dataset = argv[1];
     const char *input = argv[2];
     const char *expected_dir = argv[3];
-    (void)dataset; (void)input; (void)expected_dir;
 
+    printf("====================================\n");
+    printf("    ☑︎ Programa de Testes LI3\n");
+    printf("====================================\n");
+
+    //1-executa o programa principal antes da comparação
+    printf("\nA executar ./bin/programa-principal...\n");
+    char command[256];
+    snprintf(command, sizeof(command), "./bin/programa-principal %s %s", dataset, input);
+    int ret = system(command);
+    if (ret != 0) {
+        printf("Erro: programa-principal terminou com código %d\n", ret);
+        return 1;
+    }
+
+    //2-cronometrar o tempo e medir memória
     struct timespec start, end;
     struct rusage usage;
     clock_gettime(CLOCK_REALTIME, &start);
 
-    int status = compare_files("resultados-esperados/command1_output.txt",
-                               "resultados/command1_output.txt");
+    char expected_path[256], output_path[256];
+    snprintf(expected_path, sizeof(expected_path), "%s/command1_output.txt", expected_dir);
+    snprintf(output_path, sizeof(output_path), "resultados/command1_output.txt");
+
+    int status = compare_files(expected_path, output_path);
 
     clock_gettime(CLOCK_REALTIME, &end);
     getrusage(RUSAGE_SELF, &usage);
     double elapsed = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
 
-    printf("\nResumo testes:\n");
-    printf("Status comparacao: %s\n", status==0 ? "OK" : "FALHOU");
+    //3-resumo final
+    printf("\n====================================\n");
+    printf("        ▶ Resumo dos Testes\n");
+    printf("====================================\n");
+    printf("Status comparacao: %s\n", status == 0 ? "✔ OK" : "✘ FALHOU");
     printf("Tempo total: %.4f s\n", elapsed);
     printf("Memoria usada: %ld KB\n", usage.ru_maxrss);
+    printf("====================================\n");
+
     return status != 0;
 }
