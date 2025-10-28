@@ -75,10 +75,14 @@ int main() {
     char comando[100];
     char codigo[10];
 
-    carregarAeroportos("airports.csv");
+    carregarAeroportos("datasets/flights.csv");
 
     printf("Introduza o comando (ex: 1 LIS): ");
-    fgets(comando, sizeof(comando), stdin);
+    if (!fgets(comando, sizeof(comando), stdin)) {
+        fprintf(stderr, "Erro a ler comando.\n");
+        return 1;
+    }
+
 
     FILE* resultado = fopen("resultado.csv", "w");
     if (!resultado) {
