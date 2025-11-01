@@ -1,6 +1,7 @@
 #ifndef Q2_H
 #define Q2_H
 
+<<<<<<< HEAD
 #include <glib.h>
 
 typedef struct aeronave {
@@ -12,4 +13,9 @@ typedef struct aeronave {
     float range;
 } Aeronave;
 
+=======
+#include <stdio.h> //tipo FILE*
+#include <glib.h>
+
+>>>>>>> 959de35b227d690b39f34b8bc072a9717bfb23bd
 #endif

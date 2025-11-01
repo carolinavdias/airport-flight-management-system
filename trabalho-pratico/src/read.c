@@ -3,7 +3,11 @@
 #include <string.h>
 #include <stdbool.h>
 #include <glib.h>
+#include <ctype.h>
 
+//Por fazer:
+//ficheiro.h
+//latitude/longitude, identificador reserva, numero documento, listas csv
 
 typedef struct data_def {    j
    int ano, mes, dia;
@@ -19,14 +23,32 @@ typedef struct dataH {
 } DataH;
 
 typedef enum {
-    On_Time,
-    Delayed,
-    Cancelled,
+    GENERO_F,
+    GENERO_M,
+    GENERO_O,
+    GENERO_ERROR
+} Genero;
+
+typedef enum {
+    ESTADO_ON_TIME,
+    ESTADO_DELAYED,
+    ESTADO_CANCELLED,
+    ESTADO_ERROR
 } Estado;
+
+typedef enum {
+    TIPO_SMALL_AIRPORT,
+    TIPO_MEDIUM_AIRPORT,
+    TIPO_LARGE_AIRPORT,
+    TIPO_HELIPORT,
+    TIPO_SEAPLANE_BASE,
+    TIPO_ERROR
+} Tipo_aeroporto;
+
 
 typedef struct voos {
     char *voo_id;
-    DataH partida_prevista; //A criar DataHora struct
+    DataH partida_prevista; // DataHora struct
     DataH partida_efetiva;
     DataH chegada_prevista;
     DataH chegada_efetiva;
@@ -43,12 +65,12 @@ typedef struct voos {
 typedef struct aeroporto {
     char *codigo_IATA_aer;
     char *nome_aer;
-    char *cidada_aer;
+    char *cidade_aer;
     char *pais_aer;
     double latitude; //latitude do aeroporto em graus decimais
     double longitude;
     char *codigo_ICAO_aer;
-    char *tipo; //Militar, publico e privado
+    Tipo_aeroporto tipo; //Militar, publico e privado
 } Aeroporto;
 
 
@@ -63,16 +85,16 @@ typedef struct aeronave {
 
 
 typedef struct passageiros {
-    char *id_pessoa;
+    char *id_passageiro;
     char *primeiro_nome;
     char *ultimo_nome;
     Data data_nascimento;
     char *nacionalidade;
-    char *genero_pessoa;
-    char *email_pessoa;
-    int telefone_pessoa;
-    char *morada_pessoa;
-    //fotografia_pessoa (int);
+    Genero genero_passageiro;
+    char *email_passageiro;
+    int telefone_passageiro;
+    char *morada_passageiro;
+    int fotografia_passageiro; //(int);
 } Passageiros;
 
 
@@ -84,108 +106,126 @@ typedef struct reservas {
     double preco_reserva;
     bool bagagem_extra;
     bool prioridade; //priority boarding
+    int qr_code;
     //QR CODE associado à reserva (int);
 } Reservas;
 
+
+//funções auxiliares e de validação
+int qual_mes (int mes) {
+    if (mes == 2) return 3;
+    if (mes == 4 || mes == 6 || mes == 9 || mes == 11) return 2;
+    else return 1;
+}
+
+
+int string_vazia_ou_espacos(const char *s) {
+    if (s == NULL) return 1;
+    while (*s) {
+        if (!isspace((unsigned char)*s)) return 0; // encontrou algo que não é espaço
+        s++;
+    }
+    return 1; // só espaços (ou vazio)
+}
+
+
 DataH parse_DataH (char *string) {
     DataH novo;
-    sscanf (string, "%d-%d-%d %d:%d", &novo.data.ano, &novo.data.mes, &novo.data.dia, &novo.horas.hora, &novo.horas.mins);
+    int narg = sscanf (string, " %d-%d-%d %d:%d", &novo.data.ano, &novo.data.mes,
+                       &novo.data.dia, &novo.horas.hora, &novo.horas.mins);
+
+    if (narg != 5 || (novo.data.ano < 0 || novo.data.ano > 2025) ||
+        (novo.data.mes < 1 || novo.data.mes > 12) ||
+        (novo.data.dia < 1 || novo.data.dia > 31) ||
+        (novo.horas.hora < 0 || novo.horas.hora > 23) ||
+        (novo.horas.mins < 0 || novo.horas.mins > 59)) {
+
+        fprintf(stderr, "Formatação errada da DataHora: %s\n", string ? string : "(null)");
+        novo.data.ano = novo.data.mes = novo.data.dia = 0;
+        novo.horas.hora = novo.horas.mins = 0;
+    }
     return novo;
 }
 
-Estado string_to_Estado (char *string) {
-    if (strcmp(string, "On_Time") == 0) return On_Time;
-    if (strcmp(string, "Delayed") == 0) return Delayed;
-    if (strcmp(string, "Cancelled") == 0) return Cancelled;
-    return Cancelled;
+Data parse_Data (char *string) {
+    Data novo;
+    int narg = sscanf (string, "%d-%d-%d", &novo.ano, &novo.mes, &novo.dia);
+    if (narg != 3 || (novo.ano < 0 || novo.ano > 2025) ||
+        (novo.mes < 1 || novo.mes > 12) || (novo.dia < 1 || novo.dia > 31)) {
+        fprintf(stderr, "Formatação errada da Data: %s\n", string ? string : "(null)");
+        novo.ano = novo.mes = novo.dia = 0;
+    }
+    return novo;
 }
 
+char* string_to_email (char *string) {
+    if (string == NULL || strlen(string) == 0) return strdup("------@----.---");
+    if (!strchr(string, '@')) return strdup("------@----.---");
+    return strdup(string);
+}
+
+char* string_to_codigoIATA (char* string) {
+    if (string == NULL || strlen(string) != 3) return strdup("---");
+    for (int i = 0; i < 3; i++) {
+        if (string[i] < 'A' || string[i] > 'Z') return strdup("---");
+    }
+    return strdup(string);
+}
+
+Estado string_to_Estado (char *string) {
+    if (!string) return ESTADO_ERROR;
+    if (strcmp(string, "On_Time") == 0) return ESTADO_ON_TIME;
+    if (strcmp(string, "Delayed") == 0) return ESTADO_DELAYED;
+    if (strcmp(string, "Cancelled") == 0) return ESTADO_CANCELLED;
+    return ESTADO_ERROR;
+}
+
+Tipo_aeroporto valida_tipo (char *string) {
+    if (!string) return TIPO_ERROR;
+    if (strcmp(string, "small_airport") == 0) return TIPO_SMALL_AIRPORT;
+    if (strcmp(string, "medium_airport") == 0) return TIPO_MEDIUM_AIRPORT;
+    if (strcmp(string, "large_airport") == 0) return TIPO_LARGE_AIRPORT;
+    if (strcmp(string, "heliport") == 0) return TIPO_HELIPORT;
+    if (strcmp(string, "seaplane_base") == 0) return TIPO_SEAPLANE_BASE;
+    return TIPO_ERROR;
+}
+
+bool string_to_bool (char *string, int versao) {
+    if (!string) return false;
+    if (strcmp(string, "true") == 0) return true;
+    if (strcmp(string, "false") == 0) return false;
+    fprintf(stderr, "Aviso: valor inválido para booleano (%s)\n", string);
+    (void)versao; // evitar warning de parâmetro não usado
+    return false;
+}
+
+Genero string_to_genero (char* string) {
+    if (!string || strlen(string) != 1) return GENERO_ERROR;
+    if (strcmp(string, "M") == 0) return GENERO_M;
+    if (strcmp(string, "F") == 0) return GENERO_F;
+    if (strcmp(string, "O") == 0) return GENERO_O;
+    return GENERO_ERROR;
+}
+
+char* string_to_id_voo (char* string) {
+    if (!string || strlen(string) != 7) return strdup("00-----");
+    for (int i = 0; i < 2; i++)
+        if (string[i] < 'A' || string[i] > 'Z') return strdup("00-----");
+    for (int i = 2; i < 7; i++)
+        if (string[i] < '0' || string[i] > '9') return strdup("00-----");
+    return strdup(string);
+}
 
 void imprimir_voo(gpointer key, gpointer value, gpointer user_data) {
+    (void)user_data; // evitar warning
     char *voo_id = (char *) key;
     Voo *v = (Voo *) value;
 
     printf("Voo ID: %s\n", voo_id);
-    printf("Partida prevista: %04d-%02d-%02d %02d:%02d\n",
-           v->partida_prevista.data.ano,
-           v->partida_prevista.data.mes,
-           v->partida_prevista.data.dia,
-           v->partida_prevista.horas.hora,
-           v->partida_prevista.horas.mins);
-    printf("Partida efetiva: %04d-%02d-%02d %02d:%02d\n",
-           v->partida_efetiva.data.ano,
-           v->partida_efetiva.data.mes,
-           v->partida_efetiva.data.dia,
-           v->partida_efetiva.horas.hora,
-           v->partida_efetiva.horas.mins);
-    printf("Partida prevista: %04d-%02d-%02d %02d:%02d\n",
-           v->chegada_prevista.data.ano,
-           v->chegada_prevista.data.mes,
-           v->chegada_prevista.data.dia,
-           v->chegada_prevista.horas.hora,
-           v->chegada_prevista.horas.mins);
-    printf("Partida efetiva: %04d-%02d-%02d %02d:%02d\n",
-           v->chegada_efetiva.data.ano,
-           v->chegada_efetiva.data.mes,
-           v->chegada_efetiva.data.dia,
-           v->chegada_efetiva.horas.hora,
-           v->chegada_efetiva.horas.mins);
-    printf("Porta embarque: %s\n", v->porta_embarque);
-    printf("Estado: %s\n", v->estado); // podes criar função para imprimir o enum como string
     printf("Origem: %s | Destino: %s\n", v->codigo_IATA_aer_origem, v->codigo_IATA_aer_destino);
-    printf("Aeronave: %s | Companhia: %s | Tracking: %s\n",
-           v->id_aeronave, v->companhia_aerea, v->tracking_url);
+    printf("Companhia: %s | Estado: %s\n", v->companhia_aerea, v->estado);
     printf("----------\n");
 }
 
-
-int main () {
-
-    GHashTable *tabela = g_hash_table_new(g_str_hash, g_str_equal);
-
-    FILE *ficheiro = fopen("flights_real.csv", "r");
-    if (ficheiro == NULL) {
-	perror ("Erro ao abrir o ficheiro.\n");
-	return 1;
-    }
-
-    char *linha = NULL;
-    size_t len = 0;
-
-    getline(&linha, &len, ficheiro);
-
-    while (getline(&linha, &len, ficheiro) != -1) {
-	Voo *voo_atual = malloc(sizeof(Voo));
-	int caso = 0;
-	char *token;
-	//char *token = strtok(linha, ",\n");
-  	while ((token = strsep(&linha, ",\n")) != NULL) {
-	    switch (caso) {
-		case 0: voo_atual->voo_id = g_strdup(token); break;
-		case 1: voo_atual->partida_prevista = parse_DataH(token); break;
-		case 2: voo_atual->partida_efetiva = parse_DataH(token); break;
-		case 3: voo_atual->chegada_prevista = parse_DataH(token); break;
-		case 4: voo_atual->chegada_efetiva = parse_DataH(token); break;
-		case 5: voo_atual->porta_embarque = g_strdup(token); break;
-		case 6: voo_atual->estado = g_strdup(token); break;//string_to_Estado(token); break;
-		case 7: voo_atual->codigo_IATA_aer_origem = g_strdup(token); break;
-		case 8: voo_atual->codigo_IATA_aer_destino = g_strdup(token); break;
-		case 9: voo_atual->id_aeronave = g_strdup(token); break;
-		case 10: voo_atual->companhia_aerea = g_strdup(token); break;
-		case 11: voo_atual->tracking_url = g_strdup(token); break;
-	    }
-            //printf("Campo: %s\n", token);
-            //token = strtok(NULL, ",\n");
-	    caso++;
-	}
-	g_hash_table_insert(tabela, voo_atual->voo_id, voo_atual);
-	//printf ("----------\n");
-    }
-
-// depois, no main ou depois de preencher a hash table:
-    g_hash_table_foreach(tabela, imprimir_voo, NULL);
-
-    free(linha);
-    fclose(ficheiro);
-    return 0;
-}
+// Este ficheiro contém apenas funções auxiliares de leitura e validação.
+// O main() está em src/main.c
