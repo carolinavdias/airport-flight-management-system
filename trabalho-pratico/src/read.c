@@ -5,7 +5,7 @@
 #include <glib.h>
 
 
-typedef struct data_def {
+typedef struct data_def {    j
    int ano, mes, dia;
 } Data;
 

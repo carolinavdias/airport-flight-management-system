@@ -2,25 +2,24 @@
 #define Q1_H
 
 #include <stdio.h> //tipo FILE*
+#include <glib.h>
 
-//aeroporto
-typedef struct {
-    char code[10];
-    char name[80];
-    char city[50];
-    char country[50];
-    char type[30];
+//aeroporto 
+typedef struct aeroporto {
+    char *code;
+    char *name;
+    char *city;
+    char *country;
+    char *type;
 } Aeroporto;
 
-//variaveis existentes noutros ficheiros (dá conflito se tiver no ficheiro q1.)
-extern Aeroporto aeroportos[1000]; //lista de aeroportos
-extern int numAeroportos; //número de aeroportos armazenados na memória
-
-
-//verifica se o código do aeroporto fornecido pelo utilizador está contido no ficheiro
-void query1(const char* code, Aeroporto* aeroporto, int numAeroporto, FILE* out);
+//carrega aeroportos de um ficheiro CSV para uma GHashTable
+GHashTable* carregarAeroportos(const char *caminhoFicheiro);
 
 //verifica se o código introduzido é constituído por 3 letras maiúsculas
 int codigoValido(const char* codigo);
+
+//verifica se o código do aeroporto fornecido pelo utilizador está contido no ficheiro
+void query1(const char *code, GHashTable *tabelaAeroportos, FILE *out);
 
 #endif
