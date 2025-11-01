@@ -6,7 +6,7 @@
 
 // função auxiliar para libertar memória de um aeroporto
 //static -> recomendado para modularidade e encapsulamento (torna a função visível só dentro do ficheiro)
-static void free_aeroporto(void *data) {
+static void libertaAeroporto(void *data) {
     Aeroporto *a = data;
     g_free(a->code);
     g_free(a->name);
@@ -25,18 +25,26 @@ GHashTable* carregarAeroportos(const char *caminhoFicheiro) {
     }
 
     // chave: code, valor: Aeroporto*
-    GHashTable *tabela = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, free_aeroporto);
+    GHashTable *tabela = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, libertaAeroporto);
 
-    char linha[512];
-    fgets(linha, sizeof(linha), f); //lê uma linha e guarda na string
+    char *linha = NULL;
+    size_t tamanho = 0; //size_t -> número inteiro sem sinal
 
-    while (fgets(linha, sizeof(linha), f)) {
-        linha[strcspn(linha, "\n")] = '\0';
+    //ignora designação dos dados (1ª linha -> "code", "name", "city", "country", "latitude", "longitude", "icao", "type")
+    getline(&linha, &tamanho, f);
 
-        char code[10], name[80], city[50], country[50], type[30];
-        // code;name;city;country;latitude;longitude;icao;type
-        if (sscanf(linha, "%9[^;];%79[^;];%49[^;];%49[^;];%*[^;];%*[^;];%*[^;];%29[^\n]",
-                   code, name, city, country, type) == 5) {
+    while (getline(&linha, &tamanho, f) != -1) {
+        linha[strcspn(linha, "\n")] = '\0'; // remove '\n'
+
+        //divide a linha em campos separados por ';'
+        gchar **campos = g_strsplit(linha, ";", 0); //gchar -> char definido pela glib
+        //espera 8 campos: code; name; city; country; latitude; longitude; icao; type
+        if (g_strv_length(campos) >= 8) {
+            const char *code = campos[0];
+            const char *name = campos[1];
+            const char *city = campos[2];
+            const char *country = campos[3];
+            const char *type = campos[7];
 
             if (codigoValido(code)) {
                 Aeroporto *a = g_new(Aeroporto, 1);
@@ -49,8 +57,10 @@ GHashTable* carregarAeroportos(const char *caminhoFicheiro) {
                 g_hash_table_insert(tabela, g_strdup(a->code), a);
             }
         }
+        g_strfreev(campos);
     }
 
+    free(linha);
     fclose(f);
     return tabela;
 }
@@ -64,7 +74,7 @@ int codigoValido(const char *codigo) {
     return 1;
 }
 
-//query 1 usando glib
+//query 1 (dado um código de aeroporto, procura-o na tabela de aeroportos e imprime as suas informações)
 void query1(const char *code, GHashTable *tabelaAeroportos, FILE *out) {
     if (!codigoValido(code)) {
         fprintf(out, "\n");

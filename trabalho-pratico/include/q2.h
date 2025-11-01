@@ -1,7 +1,7 @@
 #ifndef Q2_H
 #define Q2_H
 
-<<<<<<< HEAD
+#include <stdio.h> //tipo FILE*
 #include <glib.h>
 
 typedef struct aeronave {
@@ -13,9 +13,32 @@ typedef struct aeronave {
     float range;
 } Aeronave;
 
-=======
-#include <stdio.h> //tipo FILE*
-#include <glib.h>
+typedef struct aeronave {
+    char *identifier;
+    char *manufacturer;
+    char *model;
+    int year;
+    int capacity;
+    float range;
+} Aeronave;
 
->>>>>>> 959de35b227d690b39f34b8bc072a9717bfb23bd
+typedef struct {
+    char *identifier;
+    char *manufacturer;
+    char *model;
+    int count;
+} Contagem;
+
+//carrega aeronaves de um ficheiro CSV para uma GHashTable
+GHashTable* carregarAeronaves(const char *caminhoFicheiro);
+
+//verifica se o identificador é válido
+int identificadorValido(const char *id);
+
+//query 2 (imprime informações de uma aeronave com base no identificador)
+void query2(const char *linhaComando, GHashTable *tabelaAeronaves, FILE *out);
+
+//função auxiliar (ordenação)
+int comparaContagens(const Contagem *a, const Contagem *b);
+
 #endif
