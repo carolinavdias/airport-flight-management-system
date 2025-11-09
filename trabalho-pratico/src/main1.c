@@ -4,6 +4,7 @@
 #include <glib.h>
 #include "q1.h"
 #include "q2.h" 
+#include "q3.h"
 
 //VERIFICAR ficheiro_comandos
 int main(int argc, char **argv) {
@@ -20,10 +21,12 @@ int main(int argc, char **argv) {
     //carrega tabelas
     GHashTable *tabelaAeroportos = carregarAeroportos(caminhoAeroportos);
     GHashTable *tabelaAeronaves  = carregarAeronaves(caminhoAeronaves);
+    GHashTable *tabelaVoos       = carregarVoos(caminhoVoos);
 
     //liberta strings de caminho
     g_free(caminhoAeroportos);
     g_free(caminhoAeronaves);
+    g_free(caminhoVoos);
 
     //abre o ficheiro de comandos
     FILE *ficheiroComandos = fopen(argv[2], "r");
@@ -31,7 +34,7 @@ int main(int argc, char **argv) {
         perror("Erro ao abrir o ficheiro de comandos");
         g_hash_table_destroy(tabelaAeroportos);
         g_hash_table_destroy(tabelaAeronaves);
-        g_free(caminhoVoos);
+        g_hash_table_destroy(tabelaVoos);
         return EXIT_FAILURE;
     }
 
@@ -57,7 +60,7 @@ int main(int argc, char **argv) {
                 param = espaco + 1; //representa o que vem depois do espaço
         }
 
-        //prepara nome do ficheiro de output
+        //cria ficheiro de output
         gchar *nomeOutput = g_strdup_printf("resultados/comando%d_output.txt", numeroComando);
         FILE *out = fopen(nomeOutput, "w");
         if (!out) {
@@ -69,19 +72,29 @@ int main(int argc, char **argv) {
 
         //executa a query correspondente
         switch (idQuery) {
-            case 1: //executa se der 1
+            case 1: //executa query 1
                 if (param)
                     query1(param, tabelaAeroportos, out);
                 else
-                    fprintf(out, "\n"); // sem parâmetro válido
+                    fprintf(out, "\n"); //sem parâmetro válido
                 break;
 
-            case 2: //executa se der 2
+            case 2: //executa query 2
                 if (param)
-                    query2(param, tabelaAeronaves, caminhoVoos, out);
+                    query2(param, tabelaAeronaves, out);
                 else
                     fprintf(out, "\n");
                 break;
+            
+            case 3: { //executa query 3
+                //espera duas datas no formato: "YYYY-MM-DD HH:MM:SS"
+                char data_inicio[32], data_fim[32];
+                if (param && sscanf(param, "%31s %31s", data_inicio, data_fim) == 2) //%31s (máximo de caracteres)
+                    query3(data_inicio, data_fim, tabelaVoos, out);
+                else
+                    fprintf(out, "\n"); // parâmetros inválidos
+                break;
+            }
 
             default: //executa se der outro valor
                 fprintf(stderr, "Query desconhecida: %d\n", idQuery);
@@ -96,9 +109,10 @@ int main(int argc, char **argv) {
 
     free(linha);
     fclose(ficheiroComandos);
+    //liberta tabelas
     g_hash_table_destroy(tabelaAeroportos);
     g_hash_table_destroy(tabelaAeronaves);
-    g_free(caminhoVoos);
+    g_hash_table_destroy(tabelaVoos);
 
     return EXIT_SUCCESS;
 }

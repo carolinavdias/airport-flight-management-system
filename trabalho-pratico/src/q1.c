@@ -6,8 +6,10 @@
 
 // função auxiliar para libertar memória de um aeroporto
 //static -> recomendado para modularidade e encapsulamento (torna a função visível só dentro do ficheiro)
+//       -> utilizado para funções auxiliares
 static void libertaAeroporto(void *data) {
     Aeroporto *a = data;
+    if (!a) return;
     g_free(a->code);
     g_free(a->name);
     g_free(a->city);
@@ -65,7 +67,7 @@ GHashTable* carregarAeroportos(const char *caminhoFicheiro) {
     return tabela;
 }
 
-//verifica se o código é válido (3 letras maiúsculas)
+//verifica se o código do aeroporto é válido (3 letras maiúsculas)
 int codigoValido(const char *codigo) {
     if (strlen(codigo) != 3) return 0;
     for (int i = 0; i < 3; i++) {

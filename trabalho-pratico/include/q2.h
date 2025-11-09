@@ -4,15 +4,7 @@
 #include <stdio.h> //tipo FILE*
 #include <glib.h>
 
-typedef struct aeronave {
-    char identifier[20];
-    char manufacturer[50];
-    char model[50];
-    int year;
-    int capacity;
-    float range;
-} Aeronave;
-
+//aeronave
 typedef struct aeronave {
     char *identifier;
     char *manufacturer;
@@ -22,6 +14,7 @@ typedef struct aeronave {
     float range;
 } Aeronave;
 
+//contagem
 typedef struct {
     char *identifier;
     char *manufacturer;

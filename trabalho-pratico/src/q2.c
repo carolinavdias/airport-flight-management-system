@@ -1,21 +1,20 @@
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h> //para funcoes isupper e isalpha
+#include <ctype.h> //para funcoes isupper e isdigit
 #include <glib.h>
-#include "q1.h"
 #include "q2.h"
 
 //função auxiliar para libertar memória de uma aeronave
-//static -> recomendado para modularidade e encapsulamento (torna a função visível só dentro do ficheiro)
 static void libertaAeronave(void *data) {
     Aeronave *a = data;
+    if (!a) return;
     g_free(a->identifier);
     g_free(a->manufacturer);
     g_free(a->model);
     g_free(a);
 }
 
-//carrega aeronaves 
+//carrega aeronaves de um ficheiro CSV para uma GHashTable
 GHashTable* carregarAeronaves(const char *caminhoFicheiro) {
     FILE *f = fopen(caminhoFicheiro, "r");
     if (!f) {
@@ -55,7 +54,7 @@ GHashTable* carregarAeronaves(const char *caminhoFicheiro) {
     return tabela;
 }
 
-//verifica se o identificador é válido 
+//verifica se o identificador da aeronave é válido 
 int identificadorValido(const char *id) {
     if (strlen(id) != 8) return 0;
     if (!isupper((unsigned char)id[0]) || !isupper((unsigned char)id[1])) return 0;
