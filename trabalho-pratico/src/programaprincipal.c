@@ -88,6 +88,7 @@ int main(int argc, char **argv) {
             
             case 3: { //executa query 3
                 //espera duas datas no formato: "YYYY-MM-DD HH:MM:SS"
+                //não faz muito sentido usar apontadores, pois não veem de funções como getline / g_strdup / malloc
                 char data_inicio[32], data_fim[32];
                 if (param && sscanf(param, "%31s %31s", data_inicio, data_fim) == 2) //%31s (máximo de caracteres)
                     query3(data_inicio, data_fim, tabelaVoos, out);
