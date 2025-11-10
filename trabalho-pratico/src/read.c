@@ -590,8 +590,10 @@ switch (opcao) {
 				if (!valida_DataH(campos[1],&voo_atual->partida_prevista)) linha_valida = 0;
 			}
 			if (linha_valida) { //Falta validação logica voo cancelado
-				if (strcmp(campos[2],"N/A") == 0) e_maybe = 2;
-				else {
+				if (strcmp(campos[2],"N/A") == 0) {
+				 	e_maybe = 2;
+					voo_atual->partida_efetiva = g_strdup(campos[2]);
+				} else {
 					if (!valida_DataH(campos[2],&voo_atual->partida_efetiva)) linha_valida = 0;
 				}
 			}
@@ -599,8 +601,10 @@ switch (opcao) {
 				if (!valida_DataH(campos[3],&voo_atual->chegada_prevista)) linha_valida = 0;
  			}
 			if (linha_valida) {
-				if (e_maybe == 2 && strcmp(campos[4],"N/A") != 0) linha_valida = 0;
-				else {
+				if (e_maybe == 2) {
+					if (strcmp(campos[4],"N/A") != 0) linha_valida = 0;
+					else voo_atual->chegada_efetiva = g_strdup(campos[4]);
+				} else {
 					if (!valida_DataH(campos[4],&voo_atual->chegada_efetiva)) linha_valida = 0;
 				}
 			}
@@ -944,6 +948,7 @@ switch (opcao) {
 	}
    	return 1;
 }
+
 
 int main() {
 
