@@ -14,7 +14,6 @@
 
 
 //Por acabar:
-//Voos->e_maybe ->logica
 //passageiro->email->função segmentation core dumped resolver
 //reservas->seg fault total opççao 5
 //Validação lógica -> tirar de comentario
@@ -222,8 +221,61 @@ int valida_email2 (char *string, char **email) { // função c/ traducao e valid
 }
 
 
-int valida_email(const char *string, char **email) {
-    if (string == NULL || strlen(string) == 0) return 0;
+/*
+ O formato deverá ser sempre do tipo username@domínio, onde user-
+name corresponde a um conjunto de carateres do intervalo [a-z0-9],
+podendo incluir o caráter ., e o domínio corresponde a um domínio
+válido.
+– Um domínio válido segue o formato <lstring>.<rstring>, onde lstring
+corresponde a um conjunto de 1 ou mais caracteres, e onde rstring
+corresponde a um conjunto de 2 ou 3 caracteres.
+– Todos os carateres de lstring e rstring deverão pertencer ao intervalo
+[a-z].
+– Exemplos de endereços inválidos incluem: user@domain, user&email.p,
+@email.pt, . . .
+*/
+
+
+//carol.smith29096@example.com
+int valida_email(char *string, char **email) {
+     if (string == NULL || strlen(string) == 0) {printf("Nula\n"); return 0;}
+     int i = 0;
+     int mark = i;
+     //verificar username
+     for (; string[i] != '@' && string[i] != '\0'; i++) {
+	if (!(islower(string[i]) || isdigit(string[i]) || string[i] == '.')) {printf("Username invalido");return 0;} //estranho
+     }
+     if (string[i] == '\0') {printf ("Só username\n"); return 0;} // nada a seguir ao username
+     int j = i + 1;
+     if (j - mark < 2) {printf ("username nulo");return 0; }//username nulo -> inválido
+     mark = j;
+     for (; string[j] != '.' && string[j] != '\0'; j++) {
+	if (string[j] < 'a' || string[j] > 'z') {printf("lstring invalida"); return 0;} //lstring inválida
+     }
+     if (string[j] == '\0') return 0; //dominio invalido
+     int k = j + 1;
+     if (k - mark < 2) return 0; //lstring vazia
+     mark = k;
+     for (; string[k] != '\0'; k++) {
+	if (string[k] < 'a' || string[k] > 'z') return 0; //rstring sintaxe invalida
+     }
+     if (k - mark < 2 || k - mark > 3) return 0; // rstring tamanho invalido
+
+     *email = g_strdup(string);
+     return 1;
+}
+
+
+
+
+
+
+
+
+
+
+int valida_email3(const char *string, char **email) {
+    if (string == NULL || strlen(string) == 0) {printf("Nula\n"); return 0;}
 
     // 1. Separar username e domínio pelo '@'
     const char *at = strchr(string, '@');
@@ -474,15 +526,15 @@ int compara_dataH (char *datah1, char *datah2) { //se 1 for não anterior a 2, e
 
 
 
-/*
 
-int valida_VOO (Voo voo) {
+
+int valida_VOO (Voo voo, GHashTable *tabela) {
     //destino != origem
     if (strcmp (voo.codigo_IATA_aer_origem, voo.codigo_IATA_aer_destino) == 0) return 0;
 
     //cada voo tem uma aeronave correspondente EXISTENTE
     char *aeronave_chave = voo.id_aeronave;
-    if (!g_hash_table_contains(tabela3,aeronave_chave)) return 0;
+    if (!g_hash_table_contains(tabela,aeronave_chave)) return 0; //tabela3
 
     //if CANCELLED, actual departure e actual arrival == "N/A"
     if (voo.estado == 2) {
@@ -492,8 +544,8 @@ int valida_VOO (Voo voo) {
 
         //arrival >= departure
     	if (!compara_dataH(voo.chegada_prevista, voo.partida_prevista) ||
-            !compara_dataH(voo.chegada_prevista, voo.partida_efetiva)  || //Não tem de ser -> REVER
-            !compara_dataH(voo.chegada_efetiva, voo.partida_prevista)  ||
+  //          !compara_dataH(voo.chegada_prevista, voo.partida_efetiva)  || //Não tem de ser -> REVER
+    //        !compara_dataH(voo.chegada_efetiva, voo.partida_prevista)  ||
             !compara_dataH(voo.chegada_efetiva, voo.partida_efetiva)) return 0;
 
 	//if DELAYED, actual departure/arrival >= departure/arrival
@@ -505,6 +557,8 @@ int valida_VOO (Voo voo) {
 
     return 1; //Válido!
 }
+
+/*
 
 int valida_RESERVA (Reservas reserva) {
     //flights id -> lista de 1 ou 2 voos EXSITENTES
@@ -531,7 +585,6 @@ int valida_RESERVA (Reservas reserva) {
     return 1; //Reserva válida!
 
 }
-
 */
 
 //Validar email, id.voo e codigo iata
@@ -539,6 +592,8 @@ int valida_RESERVA (Reservas reserva) {
 int read () { //Para opção inserir
 // read (table, nome_ficheiro
 
+  int continua = 1; //flag para read no while, começa em 1
+  while (continua) {
 /*
 
 true main -> read function ----->
@@ -553,6 +608,12 @@ switch (opcao) {
     scanf ("%d", &opcao_inserida);
     if (opcao_inserida == 5) printf ("Entrou na opçao 5.\n");
     putchar ('\n');
+
+    GHashTable *tabela1 = g_hash_table_new(g_str_hash, g_str_equal);
+    GHashTable *tabela2 = g_hash_table_new(g_str_hash, g_str_equal);
+    GHashTable *tabela3 = g_hash_table_new(g_str_hash, g_str_equal);
+    GHashTable *tabela4 = g_hash_table_new(g_str_hash, g_str_equal);
+    GHashTable *tabela5 = g_hash_table_new(g_str_hash, g_str_equal);
     //int linhas_com_sucesso = 0;
     //int linhas_totais = 0;
 
@@ -560,7 +621,7 @@ switch (opcao) {
 	//case 1:
 	if (opcao_inserida == 1) {
 
-    		GHashTable *tabela1 = g_hash_table_new(g_str_hash, g_str_equal); //Voos ---> As tabelas vao ser iniciadas no main.c, aqui apenas para treino
+    		//GHashTable *tabela1 = g_hash_table_new(g_str_hash, g_str_equal); //Voos ---> As tabelas vao ser iniciadas no main.c, aqui apenas para treino
 
     		FILE *ficheiro = fopen("flights.csv", "r");
     			if (ficheiro == NULL) {
@@ -626,6 +687,8 @@ switch (opcao) {
 			//if (linha_valida) printf("Linha %d:\n%s\nD\nD\nD\nD\nOT\n\n", linhas_totais,voo_atual->voo_id);
 
 
+			//Validação lógica
+//			if (!valida_VOO (*voo_atual,tabela3)) linha_valida = 0;
 
 
                         if (!linha_valida) {
@@ -659,7 +722,7 @@ switch (opcao) {
     	}
 	else if (opcao_inserida == 2) {
 
-                GHashTable *tabela2 = g_hash_table_new(g_str_hash, g_str_equal); //Voos
+                //GHashTable *tabela2 = g_hash_table_new(g_str_hash, g_str_equal); //Voos
 
                 FILE *ficheiro = fopen("airports.csv", "r");
                         if (ficheiro == NULL) {
@@ -734,7 +797,7 @@ switch (opcao) {
 
         } else if (opcao_inserida == 3) {
 
-                GHashTable *tabela3 = g_hash_table_new(g_str_hash, g_str_equal); //Aeronaves
+                //GHashTable *tabela3 = g_hash_table_new(g_str_hash, g_str_equal); //Aeronaves
 
                 FILE *ficheiro = fopen("aircrafts.csv", "r"); // a alterar
                         if (ficheiro == NULL) {
@@ -801,7 +864,7 @@ switch (opcao) {
 
 	} else if (opcao_inserida == 4) {
 
-                GHashTable *tabela4 = g_hash_table_new(g_str_hash, g_str_equal); //Passageiros
+                //GHashTable *tabela4 = g_hash_table_new(g_str_hash, g_str_equal); //Passageiros
 
                 FILE *ficheiro = fopen("passengers.csv", "r");
                         if (ficheiro == NULL) {
@@ -837,6 +900,7 @@ switch (opcao) {
 				if (!valida_genero(campos[5],&passageiro_atual->genero_passageiro)) linha_valida = 0;
 			}
 			//if (linha_valida) passageiro_atual->email_passageiro = g_strdup("mine"); //campos[6]);
+			//linha_valida = 0;
 			if (linha_valida) { //problema
 				printf("%d\n",linha_valida);
 				if (!valida_email(campos[6],&passageiro_atual->email_passageiro)) linha_valida = 0;
@@ -858,6 +922,7 @@ switch (opcao) {
                                 fputs(buffer,ficheiro_erros);
                                 fprintf(ficheiro_erros, "\n");
                                 fclose(ficheiro_erros);
+				free(passageiro_atual);
 
                         }
                         else {
@@ -879,7 +944,7 @@ switch (opcao) {
 
         } else if (opcao_inserida == 5) {
 		printf("Entrou na opcao 5");
-                GHashTable *tabela5 = g_hash_table_new(g_str_hash, g_str_equal); //Voos ---> As tabelas vao ser iniciadas no main.c, aqui apenas para treino
+                //GHashTable *tabela5 = g_hash_table_new(g_str_hash, g_str_equal); //Voos ---> As tabelas vao ser iniciadas no main.c, aqui apenas para treino
 
                 FILE *ficheiro = fopen("reservations.csv", "r");
                 if (ficheiro == NULL) {
@@ -946,6 +1011,7 @@ switch (opcao) {
 
                 fclose(ficheiro);
 	}
+    }
    	return 1;
 }
 
