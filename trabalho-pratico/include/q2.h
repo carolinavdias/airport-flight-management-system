@@ -25,13 +25,13 @@ typedef struct {
 //carrega aeronaves de um ficheiro CSV para uma GHashTable
 GHashTable* carregarAeronaves(const char *caminhoFicheiro);
 
-//verifica se o identificador é válido
+//verifica se o identificador é válido (formato tipo PT-AB12)
 int identificadorValido(const char *id);
 
-//query 2 (imprime informações de uma aeronave com base no identificador)
+//query 2 (top N aeronaves com mais voos realizados, filtradas por fabricante opcional)
 void query2(const char *linhaComando, GHashTable *tabelaAeronaves, FILE *out);
 
-//função auxiliar (ordenação)
+//função auxiliar (ordenação por número de voos e depois por identificador)
 int comparaContagens(const Contagem *a, const Contagem *b);
 
 #endif

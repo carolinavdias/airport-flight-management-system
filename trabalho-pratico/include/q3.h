@@ -20,14 +20,13 @@ typedef struct voo {
     char *tracking_url;
 } Voo;
 
-
 //carrega voos de um ficheiro CSV para uma GHashTable
 GHashTable* carregarVoos(const char *caminhoFicheiro);
 
-//verifica se o identificador de voo é válido 
+//verifica se o identificador de voo é válido (7 caracteres alfanuméricos)
 int idVooValido(const char *id);
 
-//query 3 (aeroporto com mais partidas entre 2 datas)
+//query 3 (aeroporto com mais partidas reais entre 2 datas, ignora cancelados)
 void query3(const char *data_inicio, const char *data_fim, GHashTable *tabelaVoos, FILE *out);
 
 #endif

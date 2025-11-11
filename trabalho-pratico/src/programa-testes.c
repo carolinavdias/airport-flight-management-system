@@ -1,15 +1,16 @@
+#define _POSIX_C_SOURCE 200809L
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <sys/resource.h>
 
-//função para comparar dois ficheiros linha a linha
+// compara dois ficheiros linha a linha
 static int compare_files(const char *expected, const char *output) {
     FILE *f1 = fopen(expected, "r");
     FILE *f2 = fopen(output, "r");
     if (!f1 || !f2) {
-        printf("Erro a abrir ficheiros: '%s' ou '%s'\n", expected, output);
+        printf("✘ Erro a abrir ficheiros: '%s' ou '%s'\n", expected, output);
         if (f1) fclose(f1);
         if (f2) fclose(f2);
         return -1;
@@ -22,17 +23,16 @@ static int compare_files(const char *expected, const char *output) {
         char *r2 = fgets(line2, sizeof(line2), f2);
         if (!r1 || !r2) {
             if (r1 == r2) {
-                printf("Ficheiros iguais (linhas comparadas: %d)\n", line-1);
                 fclose(f1); fclose(f2);
                 return 0;
             } else {
-                printf("Diferenca no tamanho: um ficheiro terminou antes do outro (linha %d)\n", line);
+                printf("✘ Diferenca no tamanho (linha %d)\n", line);
                 fclose(f1); fclose(f2);
                 return 1;
             }
         }
         if (strcmp(line1, line2) != 0) {
-            printf("Diferenca na linha %d:\nEsperado: %sObtido  : %s\n", line, line1, line2);
+            printf("✘ Diferenca na linha %d:\nEsperado: %sObtido  : %s\n", line, line1, line2);
             fclose(f1); fclose(f2);
             return 1;
         }
@@ -40,7 +40,7 @@ static int compare_files(const char *expected, const char *output) {
     }
 }
 
-// Programa principal de testes
+// programa principal de testes
 int main(int argc, char *argv[]) {
     if (argc < 4) {
         printf("Uso: %s <dataset_dir> <input.txt> <resultados-esperados/>\n", argv[0]);
@@ -52,42 +52,51 @@ int main(int argc, char *argv[]) {
     const char *expected_dir = argv[3];
 
     printf("====================================\n");
-    printf("    ☑︎ Programa de Testes LI3\n");
+    printf("✔ Programa de Testes LI3\n");
     printf("====================================\n");
 
-    //1-executa o programa principal antes da comparação
-    printf("\nA executar ./bin/programa-principal...\n");
-    char command[256];
-    snprintf(command, sizeof(command), "./bin/programa-principal %s %s", dataset, input);
-    int ret = system(command);
-    if (ret != 0) {
-        printf("Erro: programa-principal terminou com código %d\n", ret);
-        return 1;
-    }
+    // garante que a pasta resultados está limpa
+    system("rm -rf resultados && mkdir -p resultados");
 
-    //2-cronometrar o tempo e medir memória
+    // executa o programa principal e mede tempo total
     struct timespec start, end;
     struct rusage usage;
     clock_gettime(CLOCK_REALTIME, &start);
 
-    char expected_path[256], output_path[256];
-    snprintf(expected_path, sizeof(expected_path), "%s/command1_output.txt", expected_dir);
-    snprintf(output_path, sizeof(output_path), "resultados/command1_output.txt");
-
-    int status = compare_files(expected_path, output_path);
+    char command[512];
+    snprintf(command, sizeof(command), "./bin/programa-principal %s %s", dataset, input);
+    int ret = system(command);
 
     clock_gettime(CLOCK_REALTIME, &end);
     getrusage(RUSAGE_SELF, &usage);
     double elapsed = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
 
-    //3-resumo final
+    if (ret != 0) {
+        printf("✘ Erro: programa-principal terminou com código %d\n", ret);
+        return 1;
+    }
+
+    // compara todos os ficheiros de saída
+    char expected_path[512], output_path[512];
+    for (int i = 1; i <= 120; i++) {
+        snprintf(expected_path, sizeof(expected_path), "%s/command%d_output.txt", expected_dir, i);
+        snprintf(output_path, sizeof(output_path), "resultados/command%d_output.txt", i);
+        printf("\n▶ Comparando comando %d...\n", i);
+        int status = compare_files(expected_path, output_path);
+        if (status != 0) {
+            printf("✘ Diferença encontrada no comando %d\n", i);
+            return 1;
+        }
+    }
+
+    // resumo final ;))
     printf("\n====================================\n");
-    printf("        ▶ Resumo dos Testes\n");
+    printf("           ✔ Resumo dos Testes\n");
     printf("====================================\n");
-    printf("Status comparacao: %s\n", status == 0 ? "✔ OK" : "✘ FALHOU");
+    printf("Todos os ficheiros coincidem com os resultados esperados.\n");
     printf("Tempo total: %.4f s\n", elapsed);
-    printf("Memoria usada: %ld KB\n", usage.ru_maxrss);
+    printf("Memória usada: %ld KB\n", usage.ru_maxrss);
     printf("====================================\n");
 
-    return status != 0;
+    return 0;
 }

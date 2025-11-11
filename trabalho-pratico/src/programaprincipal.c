@@ -1,12 +1,15 @@
+#define _POSIX_C_SOURCE 200809L
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <glib.h>
 #include "q1.h"
-#include "q2.h" 
+#include "q2.h"
 #include "q3.h"
+#include "errors.h"
+#include "read.h"
 
-//VERIFICAR ficheiro_comandos
+//programa principal (executa as queries a partir do ficheiro de comandos)
 int main(int argc, char **argv) {
     if (argc != 3) {
         fprintf(stderr, "Uso: %s <dataset-fase-1> <ficheiro_comandos>\n", argv[0]);
@@ -18,7 +21,10 @@ int main(int argc, char **argv) {
     gchar *caminhoAeronaves  = g_build_filename(argv[1], "aircrafts.csv", NULL);
     gchar *caminhoVoos       = g_build_filename(argv[1], "flights.csv", NULL);
 
-    //carrega tabelas
+    //inicia sistema de erros
+    errors_begin();
+
+    //carrega tabelas (fase 1)
     GHashTable *tabelaAeroportos = carregarAeroportos(caminhoAeroportos);
     GHashTable *tabelaAeronaves  = carregarAeronaves(caminhoAeronaves);
     GHashTable *tabelaVoos       = carregarVoos(caminhoVoos);
@@ -28,6 +34,13 @@ int main(int argc, char **argv) {
     g_free(caminhoAeronaves);
     g_free(caminhoVoos);
 
+    //verifica se os ficheiros principais foram carregados
+    if (!tabelaAeroportos || !tabelaAeronaves || !tabelaVoos) {
+        errors_write_csv("resultados/errors.csv");
+        errors_end();
+        return EXIT_FAILURE;
+    }
+
     //abre o ficheiro de comandos
     FILE *ficheiroComandos = fopen(argv[2], "r");
     if (!ficheiroComandos) {
@@ -35,6 +48,8 @@ int main(int argc, char **argv) {
         g_hash_table_destroy(tabelaAeroportos);
         g_hash_table_destroy(tabelaAeronaves);
         g_hash_table_destroy(tabelaVoos);
+        errors_write_csv("resultados/errors.csv");
+        errors_end();
         return EXIT_FAILURE;
     }
 
@@ -45,23 +60,21 @@ int main(int argc, char **argv) {
     size_t tamanho = 0;
     int numeroComando = 1;
 
+    //lê e executa cada comando do ficheiro
     while (getline(&linha, &tamanho, ficheiroComandos) != -1) {
-        //remove \n
         linha[strcspn(linha, "\n")] = '\0';
 
         int idQuery = 0;
         char *param = NULL;
 
-        //divide a linha em 2 componentes: número da query e parâmetro
         if (sscanf(linha, "%d", &idQuery) == 1) {
-            //encontra o espaço (se houver)
             char *espaco = strchr(linha, ' ');
             if (espaco != NULL)
-                param = espaco + 1; //representa o que vem depois do espaço
+                param = espaco + 1;
         }
 
-        //cria ficheiro de output
-        gchar *nomeOutput = g_strdup_printf("resultados/comando%d_output.txt", numeroComando);
+        //nome do ficheiro de output (seguindo o formato do enunciado)
+        gchar *nomeOutput = g_strdup_printf("resultados/command%d_output.txt", numeroComando);
         FILE *out = fopen(nomeOutput, "w");
         if (!out) {
             perror("Erro ao criar ficheiro de resultado");
@@ -72,34 +85,31 @@ int main(int argc, char **argv) {
 
         //executa a query correspondente
         switch (idQuery) {
-            case 1: //executa query 1
+            case 1:
                 if (param)
                     query1(param, tabelaAeroportos, out);
                 else
-                    fprintf(out, "\n"); //sem parâmetro válido
+                    fprintf(out, "\n");
                 break;
 
-            case 2: //executa query 2
+            case 2:
                 if (param)
                     query2(param, tabelaAeronaves, out);
                 else
                     fprintf(out, "\n");
                 break;
-            
-            case 3: { //executa query 3
-                //espera duas datas no formato: "YYYY-MM-DD HH:MM:SS"
-                //não faz muito sentido usar apontadores, pois não veem de funções como getline / g_strdup / malloc
+
+            case 3: {
                 char data_inicio[32], data_fim[32];
-                if (param && sscanf(param, "%31s %31s", data_inicio, data_fim) == 2) //%31s (máximo de caracteres)
+                if (param && sscanf(param, "%31s %31s", data_inicio, data_fim) == 2)
                     query3(data_inicio, data_fim, tabelaVoos, out);
                 else
-                    fprintf(out, "\n"); // parâmetros inválidos
+                    fprintf(out, "\n");
                 break;
             }
 
-            default: //executa se der outro valor
-                fprintf(stderr, "Query desconhecida: %d\n", idQuery);
-                fprintf(out, "\n");
+            default:
+                fprintf(out, "\n"); //query desconhecida
                 break;
         }
 
@@ -110,35 +120,14 @@ int main(int argc, char **argv) {
 
     free(linha);
     fclose(ficheiroComandos);
-    //liberta tabelas
+
+    //liberta tabelas e escreve erros
     g_hash_table_destroy(tabelaAeroportos);
     g_hash_table_destroy(tabelaAeronaves);
     g_hash_table_destroy(tabelaVoos);
 
+    errors_write_csv("resultados/errors.csv");
+    errors_end();
+
     return EXIT_SUCCESS;
 }
-
-
-//CAROLINA
-/*
-int main(int argc, char *argv[]) {
-    if (argc != 3) {
-        fprintf(stderr, "Uso: %s <pasta_dataset> <input.txt>\n", argv[0]);
-        return 1;
-    }
-    const char *dataset = argv[1];
-    const char *input = argv[2];
-    (void)dataset; (void)input;
-
-    // gera um output de exemplo para o test runner
-    FILE *f = fopen("resultados/command1_output.txt", "w");
-    if (!f) {
-        perror("resultados/command1_output.txt");
-        return 2;
-    }
-    fprintf(f, "OPO,Francisco de Sá Carneiro Airport,Porto,PT,large_airport\n");
-    fclose(f);
-    printf("OK: resultados/command1_output.txt gerado (dummy)\n");
-    return 0;
-}
-*/
