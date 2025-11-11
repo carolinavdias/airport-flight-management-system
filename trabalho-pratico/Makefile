@@ -22,7 +22,7 @@ SRCS_MAIN := $(filter-out $(SRC_DIR)/programa-testes.c, $(SRCS_ALL))
 OBJS_MAIN := $(SRCS_MAIN:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 # programa de testes (sem o principal)
-SRCS_TEST := $(filter-out $(SRC_DIR)/programaprincipal.c, $(SRCS_ALL))
+SRCS_TEST := $(filter-out $(SRC_DIR)/programa-principal.c, $(SRCS_ALL))
 OBJS_TEST := $(SRCS_TEST:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 # executáveis
