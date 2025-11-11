@@ -54,7 +54,9 @@ int main(int argc, char **argv) {
     }
 
     //garante que a pasta de resultados existe
-    g_mkdir_with_parents("resultados", 0755);
+    gchar *dirResultados = g_build_filename("trabalho-pratico", "resultados", NULL);
+    g_mkdir_with_parents(dirResultados, 0755);
+    g_free(dirResultados);
 
     char *linha = NULL;
     size_t tamanho = 0;
