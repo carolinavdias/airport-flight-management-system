@@ -21,12 +21,12 @@ SRCS_ALL := $(wildcard $(SRC_DIR)/*.c) \
             $(wildcard $(SRC_DIR)/*/*.c)
 
 # programa principal (sem o programa de testes)
-SRCS_MAIN := $(filter-out $(SRC_DIR)/programa-testes.c, $(SRCS_ALL))
-OBJS_MAIN := $(SRCS_MAIN:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+SRCS_MAIN := programa-principal.c $(filter-out $(SRC_DIR)/programa-testes.c, $(SRCS_ALL))
+OBJS_MAIN := $(SRCS_MAIN:%.c=$(OBJ_DIR)/%.o)
 
 # programa de testes (sem o principal)
-SRCS_TEST := $(filter-out $(SRC_DIR)/programa-principal.c, $(SRCS_ALL))
-OBJS_TEST := $(SRCS_TEST:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+SRCS_TEST := programa-testes.c $(filter-out $(SRC_DIR)/programa-principal.c, $(SRCS_ALL))
+OBJS_TEST := $(SRCS_TEST:%.c=$(OBJ_DIR)/%.o)
 
 # executáveis
 MAIN_BIN  = $(BIN_DIR)/programa-principal
@@ -58,6 +58,10 @@ $(TESTS_BIN): $(OBJS_TEST)
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/%.o: %.c
+	@mkdir -p $(OBJ_DIR)
+    $(CC) $(CFLAGS) -c $< -o $@
 
 # ===================================================
 # comandos rápidos
