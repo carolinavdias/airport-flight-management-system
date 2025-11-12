@@ -11,7 +11,8 @@ typedef struct aeronave {
     char *model;
     int year;
     int capacity;
-    float range;
+//    float range; --
+    int range; //++
 } Aeronave;
 
 //contagem

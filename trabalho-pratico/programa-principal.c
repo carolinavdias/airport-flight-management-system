@@ -25,9 +25,22 @@ int main(int argc, char **argv) {
     errors_begin();
 
     //carrega tabelas (fase 1)
-    GHashTable *tabelaAeroportos = carregarAeroportos(caminhoAeroportos);
-    GHashTable *tabelaAeronaves  = carregarAeronaves(caminhoAeronaves);
-    GHashTable *tabelaVoos       = carregarVoos(caminhoVoos);
+//    GHashTable *tabelaAeroportos = carregarAeroportos(caminhoAeroportos);
+//    GHashTable *tabelaAeronaves  = carregarAeronaves(caminhoAeronaves);
+//    GHashTable *tabelaVoos       = carregarVoos(caminhoVoos);
+    GHashTable *tabelaAeronaves = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, libertaAeronave);     //tabela3
+    GHashTable *tabelaVoos = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, libertaAeroporto);        //tabela1
+    GHashTable *tabelaAeroportos = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, libertaAeroporto);  //tabela2
+    GHashTable *tabelaPassageiros = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, NULL);         //tabela4
+    GHashTable *tabelaReservas = g_hash_table_new(g_str_hash, g_str_equal, g_free, libertaReserva);            //tabela5
+
+
+    read(3,tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+    read(1,tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+    read(2,tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+    read(4,tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+    read(5,tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+
 
     //liberta strings de caminho
     g_free(caminhoAeroportos);
@@ -48,6 +61,7 @@ int main(int argc, char **argv) {
         g_hash_table_destroy(tabelaAeroportos);
         g_hash_table_destroy(tabelaAeronaves);
         g_hash_table_destroy(tabelaVoos);
+        g_hash_table_destroy(tabelaReservas);
         errors_write_csv("resultados/errors.csv");
         errors_end();
         return EXIT_FAILURE;
@@ -127,6 +141,7 @@ int main(int argc, char **argv) {
     g_hash_table_destroy(tabelaAeroportos);
     g_hash_table_destroy(tabelaAeronaves);
     g_hash_table_destroy(tabelaVoos);
+    g_hash_table_destroy(tabelaReservas);
 
     errors_write_csv("resultados/errors.csv");
     errors_end();

@@ -3,6 +3,9 @@
 
 #include <stdbool.h>
 #include <time.h>
+#include "q1.h"
+#include "q3.h"
+#include "read.h"
 
 //datas: aceita "YYYY-MM-DD" e "YYYY-MM-DD hh:mm" (opcionalmente ":ss")
 bool v_parse_date(const char *s, struct tm *out);
@@ -26,5 +29,44 @@ bool v_is_gender(const char *s);               // M / F / O
 
 //estado de voo
 bool v_is_status_valid(const char *s);         // Scheduled, Delayed, Cancelled
+
+
+
+
+
+
+
+int valida_id_voo (char* string, char **voo_id);
+int qual_mes (int mes);
+int valida_DataH (char *string, char **datah); // com validação incluida
+int valida_Data (char *string, Data *data);
+int valida_Estado (char *string, Estado *e);
+int valida_codigoIATA (char* string, char **codigo_IATA); // funcao traducao e validacao token para codigo_IATA_aeroporto
+int valida_coordenadas (const char* string, int versao, double coordenada);
+int valida_tipo_aer (char *string, Tipo_aeroporto *t);
+int valida_id_passageiro(char* string, int *id_passageiro);
+int valida_genero (char* string, Genero *g);
+int valida_email(char *string, char **email);
+int valida_id_reserva (char* string, char **id_reserva);
+int valida_voos_reservados(char *string, Voos_reservados *lista); //char ***lista
+int valida_bool (char *string, bool *b);
+
+int compara_dataH (char *datah1, char *datah2); //se 1 for não anterior a 2, entao retorna 1 else retorna 0
+int valida_VOO (Voo voo, GHashTable *tabela);
+int valida_RESERVA (Reservas reserva, GHashTable *tabela_v, GHashTable *tabela_p);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #endif
