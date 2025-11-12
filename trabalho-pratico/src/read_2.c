@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+//#define _GNU_SOURCE
 #include <string.h>
 #include <stdbool.h>
 #include <glib.h>
@@ -52,6 +53,12 @@ typedef uint8_t Tipo_aeroporto;
 #define LARGE_AIRPORT 2
 #define HELIPORT 3
 #define SEAPLANE_BASE 4
+
+
+typedef struct voos_reservados {
+    char **lista_voos_reservados;
+    int n_voos;
+} Voos_reservados;
 
 typedef struct voos {
     char *voo_id;
@@ -107,7 +114,7 @@ typedef struct passageiros {
 
 typedef struct reservas {
     char *id_reserva;
-    char **voos_reservados; //lista
+    Voos_reservados reserva_lista; //lista
     int id_pessoa_reservou; //reserva em nome de
     char *lugar_reservado;
     double preco_reserva;
@@ -171,7 +178,7 @@ int valida_id_voo (char* string, char **voo_id) {
     }
 //Validação conluida
 
-    *voo_id = strdup(string);
+    *voo_id = g_strdup(string);
     return 1;
 }
 
@@ -197,7 +204,7 @@ int valida_DataH (char *string, char **datah) { // com validação incluida
 
 		return 0;
 
-	*datah = strdup(string);
+	*datah = g_strdup(string);
 	return 1;
 }
 
@@ -245,7 +252,7 @@ int valida_codigoIATA (char* string, char **codigo_IATA) { // funcao traducao e 
 
     //Verificação concluida
 
-    *codigo_IATA = strdup(string);
+    *codigo_IATA = g_strdup(string);
 
     return 1; //codigo_IATA valido
 }
@@ -261,7 +268,7 @@ int valida_coordenadas (const char* string, int versao, double coordenada) {
     int length = strlen(string);
 
 
-    int contador;
+    int contador = 0;
     for (int i = 0; i < length; i++) {
         if ((string[i] == '-' && i != 0) || string[i] < '0' || string[i] > '9' || string[i] != '.') return 0;
         if (string[i] == '.') contador++;
@@ -369,16 +376,17 @@ int valida_id_reserva (char* string, char **id_reserva) {
 
     //Validaçao concluida
 
-    *id_reserva = strdup(string);
+    *id_reserva = g_strdup(string);
     return 1;
 }
 
 
 //Valida a lista dos voos reservados, passa para o formato de uma lista e atribui a "Reserva"
-int valida_voos_reservados(char *string, char ***lista) {
+int valida_voos_reservados(char *string, Voos_reservados *lista) { //char ***lista
     if (string == NULL || strlen(string) < 3) return 0; //[] invalido
     int len = strlen(string);
     if (string[0] != '[' || string[len-1] != ']') return 0; //verifica se tem os parenteses retos no inicio e no final
+    Voos_reservados novo;
 
     //Limpar a string
     char *string_voos = g_strdup(string + 1); // pula '['
@@ -390,7 +398,8 @@ int valida_voos_reservados(char *string, char ***lista) {
         if (string_voos[i] == ',') n++;
     }
 
-    *lista = malloc(n * sizeof(char *));
+    novo.n_voos = n;
+    novo.lista_voos_reservados = malloc(n * sizeof(char *));
 
     char *ptr = string_voos;
     for (int i = 0; i < n; i++) {
@@ -398,8 +407,10 @@ int valida_voos_reservados(char *string, char ***lista) {
         while (*token == ' ' || *token == '\'') token++; //tira os espaços e aspas simples
         char *end = token + strlen(token) - 1; //
         while (*end == ' ' || *end == '\'') *end-- = '\0';
-        (*lista)[i] = g_strdup(token);
+        (novo.lista_voos_reservados)[i] = g_strdup(token);
     }
+
+    *lista = novo;
     g_free(string_voos);
     return 1;
 }
@@ -490,11 +501,12 @@ int valida_VOO (Voo voo, GHashTable *tabela) {
 
 int valida_RESERVA (Reservas reserva, GHashTable *tabela_v, GHashTable *tabela_p) {
     //flights id -> lista de 1 ou 2 voos EXSITENTES
-    int length_vr = sizeof (reserva.voos_reservados) / sizeof (reserva.voos_reservados[0]);
+//    int length_vr = sizeof (reserva.lista_voos_reservados) / sizeof (reserva.voos_reservados[0]);
+    int length_vr = reserva.reserva_lista.n_voos;
     if (length_vr < 1 || length_vr > 2) return 0;
     else {
 	for (int i = 0; i < length_vr; i++) {
-		char *voo_chave = reserva.voos_reservados[i];
+		char *voo_chave = reserva.reserva_lista.lista_voos_reservados[i];
 		if (!g_hash_table_contains(tabela_v,voo_chave))  return 0;
 	}
     }
@@ -505,8 +517,8 @@ int valida_RESERVA (Reservas reserva, GHashTable *tabela_v, GHashTable *tabela_p
 
     //if (flights ids == 2) -> destination1 == departure2, i.e., simulando uma escala
     if (length_vr == 2) {
-	Voo *voo1 = g_hash_table_lookup(tabela_v,reserva.voos_reservados[0]);
-	Voo *voo2 = g_hash_table_lookup(tabela_v,reserva.voos_reservados[1]);
+	Voo *voo1 = g_hash_table_lookup(tabela_v,reserva.reserva_lista.lista_voos_reservados[0]);
+	Voo *voo2 = g_hash_table_lookup(tabela_v,reserva.reserva_lista.lista_voos_reservados[1]);
 	if (strcmp(voo1->codigo_IATA_aer_destino, voo2->codigo_IATA_aer_origem) != 0) return 0;
     }
 
@@ -549,7 +561,7 @@ int read () { //Para opção inserir
                 int linhas_com_sucesso = 0;
 
                 GPtrArray *todas_as_linhas = g_ptr_array_new(); //lista de arrays de string iniciar
-                fgets(buffer,sizeof(buffer),ficheiro);
+                if (fgets(buffer,sizeof(buffer),ficheiro) == NULL) break;
 
                 while (fgets(buffer, sizeof(buffer),ficheiro)) {
                         Voo *voo_atual = malloc(sizeof(Voo));
@@ -800,7 +812,7 @@ int read () { //Para opção inserir
 			if (linha_valida) {
 				if (!valida_email(campos[6],&passageiro_atual->email_passageiro)) linha_valida = 0;
 			}
-			if (linha_valida) passageiro_atual->telefone_passageiro = strdup(campos[7]);
+			if (linha_valida) passageiro_atual->telefone_passageiro = g_strdup(campos[7]);
 			if (linha_valida) passageiro_atual->morada_passageiro = g_strdup(campos[8]);
 			if (linha_valida) passageiro_atual->fotografia_passageiro = g_strdup(campos[9]);
 
@@ -860,7 +872,7 @@ int read () { //Para opção inserir
 			//validação e atribuição dos campos
 			if (!valida_id_reserva(campos[0],&reserva_atual->id_reserva)) linha_valida = 0;
 			if (linha_valida) {
-				if (!valida_voos_reservados(campos[1],&reserva_atual->voos_reservados)) linha_valida = 0;
+				if (!valida_voos_reservados(campos[1],&reserva_atual->reserva_lista)) linha_valida = 0; //voos_reservados
 			}
 			if (linha_valida) reserva_atual->id_pessoa_reservou = atoi(campos[2]);
 			if (linha_valida) reserva_atual->lugar_reservado = g_strdup(campos[3]);
@@ -871,7 +883,7 @@ int read () { //Para opção inserir
 			if (linha_valida) {
 				if (!valida_bool(campos[6],&reserva_atual->prioridade)) linha_valida = 0;
                         }
-			if (linha_valida) reserva_atual->qr_code = strdup(campos[7]);
+			if (linha_valida) reserva_atual->qr_code = g_strdup(campos[7]);
 
 
 			//Validação Lógica
