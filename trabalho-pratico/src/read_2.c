@@ -12,7 +12,7 @@
 //gcc -g -Wall -Wextra read.c -o programa $(pkg-config --cflags --libs glib-2.0)
 //valgrind --leak-check=full ./programa
 //gcc read.c -o programa $(pkg-config --cflags --libs glib-2.0)
-
+//gcc -Wall -Wextra -O2 -Iinclude -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include  -c src/read_2.c -o obj/read_2.o
 
 //Por acabar:
 //Adaptar funções git
@@ -559,10 +559,13 @@ int read () { //Para opção inserir
 
                 int linhas_totais = 0;
                 int linhas_com_sucesso = 0;
+		//int no_header = 1;
 
                 GPtrArray *todas_as_linhas = g_ptr_array_new(); //lista de arrays de string iniciar
+		//if (fgets(buffer,sizeof(buffer),ficheiro) == NULL) no_header = 0;
                 if (fgets(buffer,sizeof(buffer),ficheiro) == NULL) break;
 
+		//while (fgets(buffer,sizeof(buffer),ficheiro) && no_header)
                 while (fgets(buffer, sizeof(buffer),ficheiro)) {
                         Voo *voo_atual = malloc(sizeof(Voo));
                         linhas_totais++;
@@ -661,7 +664,7 @@ int read () { //Para opção inserir
                 int linhas_com_sucesso = 0;
 
 		GPtrArray *todas_as_linhas = g_ptr_array_new(); //lista de arrays de string iniciar
-                fgets(buffer,sizeof(buffer),ficheiro);
+                if (fgets(buffer,sizeof(buffer),ficheiro) == NULL) break;
 
                 while (fgets(buffer, sizeof(buffer),ficheiro)) {
                         Aeroporto *aeroporto_atual = malloc(sizeof(Aeroporto));
@@ -728,7 +731,7 @@ int read () { //Para opção inserir
 		int linhas_com_sucesso = 0;
 
 		GPtrArray *todas_as_linhas = g_ptr_array_new(); //lista de arrays de string iniciar
-		fgets(buffer,sizeof(buffer),ficheiro);
+		if (fgets(buffer,sizeof(buffer),ficheiro) == NULL) break;
 
 		while (fgets(buffer, sizeof(buffer),ficheiro)) {
 			Aeronave *aeronave_atual = malloc(sizeof(Aeronave));
@@ -789,7 +792,7 @@ int read () { //Para opção inserir
                 int linhas_com_sucesso = 0;
 
                 GPtrArray *todas_as_linhas = g_ptr_array_new(); //lista de arrays de string iniciar
-                fgets(buffer,sizeof(buffer),ficheiro);
+                if (fgets(buffer,sizeof(buffer),ficheiro) == NULL) break;
 
                 while (fgets(buffer, sizeof(buffer),ficheiro)) {
                         Passageiros *passageiro_atual = malloc(sizeof(Passageiros));
@@ -860,7 +863,7 @@ int read () { //Para opção inserir
                 int linhas_com_sucesso = 0;
 
                 GPtrArray *todas_as_linhas = g_ptr_array_new(); //lista de arrays de string iniciar
-                fgets(buffer,sizeof(buffer),ficheiro);
+                if (fgets(buffer,sizeof(buffer),ficheiro) == NULL) break;
 
                 while (fgets(buffer, sizeof(buffer),ficheiro)) {
 			Reservas *reserva_atual = malloc(sizeof(Reservas));

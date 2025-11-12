@@ -3,7 +3,10 @@
 # ===================================================
 
 CC       = gcc
-CFLAGS   = -Wall -Wextra -pedantic -O2 -std=c99 -Iinclude $(shell pkg-config --cflags glib-2.0)
+
+# Professor pediu para mudar
+ #CFLAGS   = -Wall -Wextra -pedantic -O2 -std=c99 -Iinclude $(shell pkg-config --cflags glib-2.0)
+CFLAGS   = -Wall -Wextra -O2 -Iinclude $(shell pkg-config --cflags glib-2.0)
 LDLIBS   = $(shell pkg-config --libs glib-2.0) -lm
 
 SRC_DIR  = src
