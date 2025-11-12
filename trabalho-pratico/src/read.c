@@ -15,12 +15,14 @@
 // o main e a lógica principal estão no programaprincipal.c
 // ---------------------------------------------------------
 
+/*
 // devolve o tipo de mês (1 → 31 dias, 2 → 30 dias, 3 → fevereiro)
 int qual_mes(int mes) {
     if (mes == 2) return 3; // fevereiro
     if (mes == 4 || mes == 6 || mes == 9 || mes == 11) return 2; // 30 dias
     return 1; // 31 dias
 }
+*/
 
 // verifica se a string é vazia ou só tem espaços (para evitar erros parvos)
 int string_vazia_ou_espacos(const char *s) {
