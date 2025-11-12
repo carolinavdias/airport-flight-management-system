@@ -29,10 +29,10 @@ int main(int argc, char **argv) {
 //    GHashTable *tabelaAeronaves  = carregarAeronaves(caminhoAeronaves);
 //    GHashTable *tabelaVoos       = carregarVoos(caminhoVoos);
     GHashTable *tabelaAeronaves = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, libertaAeronave);     //tabela3
-    GHashTable *tabelaVoos = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, libertaAeroporto);        //tabela1
+    GHashTable *tabelaVoos = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, libertaVoo);        //tabela1
     GHashTable *tabelaAeroportos = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, libertaAeroporto);  //tabela2
     GHashTable *tabelaPassageiros = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, NULL);         //tabela4
-    GHashTable *tabelaReservas = g_hash_table_new(g_str_hash, g_str_equal, g_free, libertaReserva);            //tabela5
+    GHashTable *tabelaReservas = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, libertaReserva);            //tabela5
 
 
     read(3,tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);

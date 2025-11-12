@@ -10,14 +10,15 @@
 //função auxiliar para libertar memória de um aeroporto
 //static -> recomendado para modularidade e encapsulamento (torna a função visível só dentro do ficheiro)
 //        -> utilizado para funções auxiliares
-static void libertaAeroporto(void *data) {
+void libertaAeroporto(void *data) {
     Aeroporto *a = data;
     if (!a) return;
-    g_free(a->code);
+    g_free(a->code_IATA);
     g_free(a->name);
     g_free(a->city);
     g_free(a->country);
-    g_free(a->type);
+    g_free(a->code_ICAO); //++
+//    g_free(a->type);
     g_free(a);
 }
 
@@ -103,12 +104,12 @@ GHashTable* carregarAeroportos(const char *caminhoFicheiro) {
 
         if (campos_ok && codigoValido(code) && tipoValido(type)) {
             Aeroporto *a = g_new(Aeroporto, 1);
-            a->code    = g_strdup(code);
+            a->code_IATA = g_strdup(code);
             a->name    = g_strdup(name);
             a->city    = g_strdup(city);
             a->country = g_strdup(country);
-            a->type    = g_strdup(type);
-            g_hash_table_insert(tabela, g_strdup(a->code), a);
+            a->type    = atoi(type); //g_strdup
+            g_hash_table_insert(tabela, g_strdup(a->code_IATA), a);
         } else {
             //mensagem de erro mais informativa
             if (!codigoValido(code))
@@ -146,8 +147,8 @@ void query1(const char *code, GHashTable *tabelaAeroportos, FILE *out) {
 
     Aeroporto *a = g_hash_table_lookup(tabelaAeroportos, code);
     if (a != NULL) {
-        fprintf(out, "%s;%s;%s;%s;%s\n",
-                a->code, a->name, a->city, a->country, a->type);
+        fprintf(out, "%s;%s;%s;%s;%d\n",
+                a->code_IATA, a->name, a->city, a->country, a->type);
     } else {
         fprintf(out, "\n");
     }

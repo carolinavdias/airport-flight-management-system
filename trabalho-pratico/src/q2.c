@@ -8,7 +8,7 @@
 #include "errors.h"
 
 //função auxiliar para libertar memória de uma aeronave
-static void libertaAeronave(void *data) {
+void libertaAeronave(void *data) {
     Aeronave *a = data;
     if (!a) return;
     g_free(a->identifier);

@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <glib.h>
+#include <stdint.h>
 
 typedef uint8_t Estado;
 
@@ -37,5 +38,7 @@ int idVooValido(const char *id);
 
 //query 3 (aeroporto com mais partidas reais entre 2 datas, ignora cancelados)
 void query3(const char *data_inicio, const char *data_fim, GHashTable *tabelaVoos, FILE *out);
+
+void libertaVoo (void *data);
 
 #endif

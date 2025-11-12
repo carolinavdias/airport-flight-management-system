@@ -35,4 +35,6 @@ void query2(const char *linhaComando, GHashTable *tabelaAeronaves, FILE *out);
 //função auxiliar (ordenação por número de voos e depois por identificador)
 int comparaContagens(const Contagem *a, const Contagem *b);
 
+void libertaAeronave(void *data);
+
 #endif

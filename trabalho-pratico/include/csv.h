@@ -2,6 +2,7 @@
 #define CSV_H
 
 #include <stddef.h>
+#include <glib.h>
 
 // Parser CSV (RFC-4180 simplificado):
 // - separador vírgula ','

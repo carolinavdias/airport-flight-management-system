@@ -9,7 +9,7 @@
 #include "errors.h"
 
 //função auxiliar para libertar memória de um voo
-static void free_voo(void *data) {
+void libertaVoo (void *data) {
     Voo *v = data;
     if (!v) return;
     g_free(v->flight_id);
@@ -18,10 +18,10 @@ static void free_voo(void *data) {
     g_free(v->arrival);
     g_free(v->actual_arrival);
     g_free(v->gate);
-    g_free(v->status);
-    g_free(v->origin);
-    g_free(v->destination);
-    g_free(v->aircraft);
+//    g_free(v->status);
+    g_free(v->code_origin);
+    g_free(v->code_destination);
+    g_free(v->id_aircraft);
     g_free(v->airline);
     g_free(v->tracking_url);
     g_free(v);
@@ -55,7 +55,7 @@ GHashTable* carregarVoos(const char *caminhoFicheiro) {
         return NULL;
     }
 
-    GHashTable *tabela = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, free_voo);
+    GHashTable *tabela = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, libertaVoo);
     char *linha = NULL;
     size_t len = 0;
     ssize_t nread;
@@ -102,10 +102,10 @@ GHashTable* carregarVoos(const char *caminhoFicheiro) {
         v->arrival          = g_strdup(campos[3]);
         v->actual_arrival   = g_strdup(campos[4]);
         v->gate             = g_strdup(campos[5]);
-        v->status           = g_strdup(campos[6]);
-        v->origin           = g_strdup(campos[7]);
-        v->destination      = g_strdup(campos[8]);
-        v->aircraft         = g_strdup(campos[9]);
+        v->status           = atoi(campos[6]);
+        v->code_origin      = g_strdup(campos[7]);
+        v->code_destination = g_strdup(campos[8]);
+        v->id_aircraft      = g_strdup(campos[9]);
         v->airline          = g_strdup(campos[10]);
         v->tracking_url     = g_strdup(campos[11]);
 
@@ -196,13 +196,13 @@ void query3(const char *data_inicio, const char *data_fim, GHashTable *tabelaVoo
                                 ? v->actual_departure : v->departure;
 
         if (dataEntre(partida, data_inicio, data_fim)) {
-            int *count = g_hash_table_lookup(contagens, v->origin);
+            int *count = g_hash_table_lookup(contagens, v->code_origin);
             if (count) {
                 (*count)++;
             } else {
                 int *novo = g_new(int, 1);
                 *novo = 1;
-                g_hash_table_insert(contagens, g_strdup(v->origin), novo);
+                g_hash_table_insert(contagens, g_strdup(v->code_origin), novo);
             }
         }
     }

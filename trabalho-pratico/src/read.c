@@ -197,7 +197,7 @@ int read () { //Para opção inserir
 */
 
 
-static void libertaReserva(void *data) {
+void libertaReserva(void *data) {
     Reservas *a = data;
     if (!a) return;
     g_free(a->id_reserva);
