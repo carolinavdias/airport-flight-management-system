@@ -209,6 +209,20 @@ void libertaReserva(void *data) {
     g_free(a);
 }
 
+
+void libertaPassageiro(void *data) {
+    Passageiros *a = data;
+    if (!a) return;
+    g_free(a->primeiro_nome);
+    g_free(a->ultimo_nome);
+    g_free(a->nacionalidade);
+    g_free(a->email_passageiro);
+    g_free(a->telefone_passageiro);
+    g_free(a->morada_passageiro);
+    g_free(a->fotografia_passageiro);
+    g_free(a);
+}
+
 FILE *abrir_ficheiro (Contexto *ctx, const char *nome_ficheiro, const char *modo) {
     char path[1024];
     snprintf (path, sizeof(path), "%s/%s", ctx->dataset_dir, nome_ficheiro);
@@ -220,7 +234,7 @@ FILE *abrir_ficheiro (Contexto *ctx, const char *nome_ficheiro, const char *modo
     return ficheiro;
 }
 
-int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable *tabela2, GHashTable *tabela3, GHashTable *tabela4, GHashTable *tabela5) {
+int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable *tabela2, GHashTable *tabela3) { //, GHashTable *tabela4, GHashTable *tabela5) {
 
         if (opcao_inserida == 1) {
 /*
@@ -363,7 +377,15 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
 
                 while (fgets(buffer, sizeof(buffer),ficheiro) && no_header) {
                         Aeroporto *aeroporto_atual = malloc(sizeof(Aeroporto));
-			//aeroporto_atual->
+			aeroporto_atual->code_IATA = NULL;
+			aeroporto_atual->name = NULL;
+			aeroporto_atual->city = NULL;
+			aeroporto_atual->country = NULL;
+			aeroporto_atual->latitude = 0.0;
+			aeroporto_atual->longitude = 0.0;
+			aeroporto_atual->code_ICAO = NULL;
+			aeroporto_atual->type = -1;
+
                         linhas_totais++;
                         int linha_valida = 1;
                         buffer[strcspn(buffer,"\n")] = '\0'; //remove \n do final
@@ -436,6 +458,13 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
 
                 while (fgets(buffer, sizeof(buffer),ficheiro) && no_header) {
                         Aeronave *aeronave_atual = malloc(sizeof(Aeronave));
+			aeronave_atual->identifier = NULL;
+			aeronave_atual->manufacturer = NULL;
+			aeronave_atual->model = NULL;
+			aeronave_atual->year = -1;
+			aeronave_atual->capacity = -1;
+			aeronave_atual->range = -1;
+
                         linhas_totais++;
                         int linha_valida = 1;
                         buffer[strcspn(buffer,"\n")] = '\0'; //remove \n do final
@@ -500,6 +529,18 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
 
                 while (fgets(buffer, sizeof(buffer),ficheiro) && no_header) {
                         Passageiros *passageiro_atual = malloc(sizeof(Passageiros));
+			passageiro_atual->id_passageiro = -1;
+			passageiro_atual->primeiro_nome = NULL;
+			passageiro_atual->ultimo_nome = NULL;
+			//Data data_nascimento;
+    			passageiro_atual->nacionalidade = NULL;
+    			//Genero genero_passageiro;
+    			passageiro_atual->email_passageiro = NULL;
+    			passageiro_atual->telefone_passageiro = NULL;
+			passageiro_atual->morada_passageiro = NULL;
+			passageiro_atual->fotografia_passageiro = NULL;
+
+
                         linhas_totais++;
                         int linha_valida = 1;
                         buffer[strcspn(buffer,"\n")] = '\0'; //remove \n do final
@@ -541,7 +582,7 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                         else {
                                 linhas_com_sucesso++;
                                 g_ptr_array_add(todas_as_linhas,campos);
-                                g_hash_table_insert(tabela4, GINT_TO_POINTER (passageiro_atual->id_passageiro), passageiro_atual);
+                                //g_hash_table_insert(tabela4, GINT_TO_POINTER (passageiro_atual->id_passageiro), passageiro_atual);
                         }
                 }
                 printf ("Foram inseridas com sucesso na tabela dos voos %d linhas de %d.\n", linhas_com_sucesso, linhas_totais);
@@ -581,6 +622,16 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
   //              printf("Entrou na opcao 5.\n");
 
                         Reservas *reserva_atual = malloc(sizeof(Reservas));
+			reserva_atual->id_reserva = NULL;
+			//    Voos_reservados reserva_lista; //lista
+    			//int id_pessoa_reservou; //reserva em nome de
+    			reserva_atual->lugar_reservado = NULL;
+			reserva_atual->preco_reserva = -1.0;
+			//bagagem_extra;
+    			//bool prioridade; //priority boarding
+    			reserva_atual->qr_code = NULL;;
+
+
 			//reserva_atual->reserva_lista.n_voos = 0;
 			//reserva_atual->reserva_lista.lista_voos_reservados = NULL;
 
@@ -612,7 +663,7 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                         if (linha_valida) reserva_atual->qr_code = g_strdup(campos[7]);
 
                         //Validação Lógica
-                        if (!valida_RESERVA (*reserva_atual,tabela1,tabela4)) linha_valida = 0;
+                        //if (!valida_RESERVA (*reserva_atual,tabela1,tabela4)) linha_valida = 0;
 
 //printf("linhavalida%d\n", linha_valida);
 
@@ -632,7 +683,7 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                         else {
                                 linhas_com_sucesso++;
                                 g_ptr_array_add(todas_as_linhas,campos);
-                                g_hash_table_insert(tabela5, reserva_atual->id_reserva, reserva_atual);
+                                //g_hash_table_insert(tabela5, reserva_atual->id_reserva, reserva_atual);
                         }
                 }
                 printf ("Foram inseridas com sucesso na tabela dos voos %d linhas de %d.\n", linhas_com_sucesso, linhas_totais);
