@@ -181,7 +181,7 @@ void query2(const char *linhaComando, GHashTable *tabelaAeronaves, FILE *out) {
     int printed = 0;
     for (GList *l = filtrada; l != NULL && printed < n; l = l->next, printed++) {
         Contagem *c = l->data;
-        fprintf(out, "%s;%s;%s;%d\n", c->identifier, c->manufacturer, c->model, c->count);
+        fprintf(out, "%s,%s,%s,%d\n", c->identifier, c->manufacturer, c->model, c->count);
     }
 
     //liberta memória

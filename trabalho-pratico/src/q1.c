@@ -17,8 +17,8 @@ void libertaAeroporto(void *data) {
     g_free(a->name);
     g_free(a->city);
     g_free(a->country);
-    g_free(a->code_ICAO); //++
-//    g_free(a->type);
+    //g_free(a->code_ICAO); //++
+    g_free(a->type);
     g_free(a);
 }
 
@@ -62,13 +62,11 @@ GHashTable* carregarAeroportos(const char *caminhoFicheiro) {
     char *linha = NULL;
     size_t tamanho = 0;
 
-    //ignora cabeçalho
-    ssize_t nread = getline(&linha, &tamanho, f);
-    (void)nread;
+    getline(&linha, &tamanho, f); // ignore header
 
     int numeroLinha = 2; //linha real do ficheiro (1 é o cabeçalho)
 
-    while ((nread = getline(&linha, &tamanho, f)) != -1) {
+    while (getline(&linha, &tamanho, f) != -1) {
         linha[strcspn(linha, "\n")] = '\0';
 
         //divide pelos separadores de vírgula
@@ -108,7 +106,7 @@ GHashTable* carregarAeroportos(const char *caminhoFicheiro) {
             a->name    = g_strdup(name);
             a->city    = g_strdup(city);
             a->country = g_strdup(country);
-            a->type    = atoi(type); //g_strdup
+            a->type    = g_strdup(type); 
             g_hash_table_insert(tabela, g_strdup(a->code_IATA), a);
         } else {
             //mensagem de erro mais informativa
@@ -147,7 +145,7 @@ void query1(const char *code, GHashTable *tabelaAeroportos, FILE *out) {
 
     Aeroporto *a = g_hash_table_lookup(tabelaAeroportos, code);
     if (a != NULL) {
-        fprintf(out, "%s;%s;%s;%s;%d\n",
+        fprintf(out, "%s,%s,%s,%s,%s\n",
                 a->code_IATA, a->name, a->city, a->country, a->type);
     } else {
         fprintf(out, "\n");

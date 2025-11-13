@@ -221,7 +221,7 @@ void query3(const char *data_inicio, const char *data_fim, GHashTable *tabelaVoo
     }
 
     if (aeroportoTop)
-        fprintf(out, "%s;%d\n", aeroportoTop, maxPartidas);
+        fprintf(out, "%s,%d\n", aeroportoTop, maxPartidas);
     else
         fprintf(out, "\n");
 
