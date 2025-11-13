@@ -6,7 +6,6 @@
 #include <glib.h>
 #include <ctype.h>
 #include <stdint.h>
-//#include "read.h"
 
 
 //gcc -g -Wall -Wextra read.c -o programa $(pkg-config --cflags --libs glib-2.0)
@@ -17,8 +16,8 @@
 //Por acabar:
 //Adaptar funções git
 
-
 /*
+
 #define MAX_LINHAS 20000
 gchar buffer[MAX_LINHAS];
 
@@ -124,7 +123,6 @@ typedef struct reservas {
     bool prioridade; //priority boarding
     char *qr_code;
 } Reservas;
-
 
 
 // Função para parse CSV com aspas duplas como delimitadores
@@ -944,8 +942,8 @@ int main() {
 //Ficheiro flights_sem erros -> todo: dá merda; uns 5 inicio -> da tudo bem! 	whyyyyy??? :((
 //Os ficheiros com/sem erros é suposto o utilizador escolher, ou mudar no código???
 
-*/
 
+*/
 
 
 

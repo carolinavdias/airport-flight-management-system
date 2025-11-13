@@ -209,16 +209,31 @@ void libertaReserva(void *data) {
     g_free(a);
 }
 
+FILE *abrir_ficheiro (Contexto *ctx, const char *nome_ficheiro, const char *modo) {
+    char path[1024];
+    snprintf (path, sizeof(path), "%s/%s", ctx->dataset_dir, nome_ficheiro);
+    FILE *ficheiro = fopen (path,modo);
+    if (ficheiro == NULL) {
+    	perror ("Erro ao abrir o ficheiro.\n");
+    	return NULL;
+    }
+    return ficheiro;
+}
 
-int read (int opcao_inserida, GHashTable *tabela1, GHashTable *tabela2, GHashTable *tabela3, GHashTable *tabela4, GHashTable *tabela5) {
+int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable *tabela2, GHashTable *tabela3, GHashTable *tabela4, GHashTable *tabela5) {
 
         if (opcao_inserida == 1) {
-
-                FILE *ficheiro = fopen("flights.csv", "r");
+/*
+                FILE *ficheiro = fopen("dataset/flights.csv", "r");
                         if (ficheiro == NULL) {
                         perror ("Erro ao abrir o ficheiro.\n");
                         return 0;
                 }
+*/
+
+		FILE *ficheiro = abrir_ficheiro (&ctx,"flights.csv", "r");
+		if (ficheiro == NULL) return 0;
+
 
                 int linhas_totais = 0;
                 int linhas_com_sucesso = 0;
@@ -316,12 +331,15 @@ int read (int opcao_inserida, GHashTable *tabela1, GHashTable *tabela2, GHashTab
 
         }
         else if (opcao_inserida == 2) {
-
+/*
                 FILE *ficheiro = fopen("airports.csv", "r");
                         if (ficheiro == NULL) {
                         perror ("Erro ao abrir o ficheiro.\n");
                         return 0;
                 }
+*/
+                FILE *ficheiro = abrir_ficheiro (&ctx,"airports.csv", "r");
+                if (ficheiro == NULL) return 0;
 
                 int linhas_totais = 0;
                 int linhas_com_sucesso = 0;
@@ -385,11 +403,15 @@ int read (int opcao_inserida, GHashTable *tabela1, GHashTable *tabela2, GHashTab
 
         } else if (opcao_inserida == 3) {
 
-                FILE *ficheiro = fopen("aircrafts.csv", "r"); // a alterar
+/*
+                FILE *ficheiro = fopen("dataset/aircrafts.csv", "r"); // a alterar
                         if (ficheiro == NULL) {
                         perror ("Erro ao abrir o ficheiro.\n");
                         return 0;
                 }
+*/
+                FILE *ficheiro = abrir_ficheiro (&ctx,"aircrafts.csv", "r");
+                if (ficheiro == NULL) return 0;
 
                 int linhas_totais = 0;
                 int linhas_com_sucesso = 0;
@@ -445,12 +467,15 @@ int read (int opcao_inserida, GHashTable *tabela1, GHashTable *tabela2, GHashTab
                 fclose(ficheiro);
 
         } else if (opcao_inserida == 4) {
-
+/*
                 FILE *ficheiro = fopen("passengers.csv", "r");
                         if (ficheiro == NULL) {
                                 perror ("Erro ao abrir o ficheiro.\n");
                                 return 0;
                 }
+*/
+                FILE *ficheiro = abrir_ficheiro (&ctx,"passengers.csv", "r");
+                if (ficheiro == NULL) return 0;
 
                 int linhas_totais = 0;
                 int linhas_com_sucesso = 0;
@@ -518,46 +543,64 @@ int read (int opcao_inserida, GHashTable *tabela1, GHashTable *tabela2, GHashTab
 
         } else if (opcao_inserida == 5) {
 
-                FILE *ficheiro = fopen("reservations.csv", "r");
+                FILE *ficheiro = fopen("dataset/reservations.csv", "r");
                 if (ficheiro == NULL) {
                     perror ("Erro ao abrir o ficheiro.\n");
                     return 0;
                 }
 
+/*
+                FILE *ficheiro = abrir_ficheiro (&ctx,"reservations.csv", "r");
+                if (ficheiro == NULL) return 0;
+//                printf("Entrou na opcao 5.\n");
+*/
                 int linhas_totais = 0;
                 int linhas_com_sucesso = 0;
 		int no_header = 1;
 
                 GPtrArray *todas_as_linhas = g_ptr_array_new(); //lista de arrays de string iniciar
                 if (fgets(buffer,sizeof(buffer),ficheiro) == NULL) no_header = 0;
+                //printf("%d.\n", no_header);
+
 
                 while (fgets(buffer, sizeof(buffer),ficheiro) && no_header) {
+  //              printf("Entrou na opcao 5.\n");
+
                         Reservas *reserva_atual = malloc(sizeof(Reservas));
+			//reserva_atual->reserva_lista.n_voos = 0;
+			//reserva_atual->reserva_lista.lista_voos_reservados = NULL;
+
                         linhas_totais++;
                         int linha_valida = 1;
                         buffer[strcspn(buffer,"\n")] = '\0'; //remove \n do final
                         gchar **campos = parse_csv_line(buffer); //faz o parsing da linha
+//			printf("%s\n", campos[1]);
 
                         //validação e atribuição dos campos
                         if (!valida_id_reserva(campos[0],&reserva_atual->id_reserva)) linha_valida = 0;
+
                         if (linha_valida) {
                                 if (!valida_voos_reservados(campos[1],&reserva_atual->reserva_lista)) linha_valida = 0; //voos_reservados
+				//printf("linhavalida%d\n", linha_valida);
                         }
                         if (linha_valida) reserva_atual->id_pessoa_reservou = atoi(campos[2]);
                         if (linha_valida) reserva_atual->lugar_reservado = g_strdup(campos[3]);
                         if (linha_valida) reserva_atual->preco_reserva = atof(campos[4]);
+
                         if (linha_valida) {
                                 if (!valida_bool(campos[5],&reserva_atual->bagagem_extra)) linha_valida = 0;
                         }
+//printf("%d\n", linha_valida);
                         if (linha_valida) {
                                 if (!valida_bool(campos[6],&reserva_atual->prioridade)) linha_valida = 0;
                         }
+//printf("linhavalida%d\n", linha_valida);
                         if (linha_valida) reserva_atual->qr_code = g_strdup(campos[7]);
-
 
                         //Validação Lógica
                         if (!valida_RESERVA (*reserva_atual,tabela1,tabela4)) linha_valida = 0;
 
+//printf("linhavalida%d\n", linha_valida);
 
                         //if !valida escreve no ficheiro_erros
                         if (!linha_valida && no_header) {

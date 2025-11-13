@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #define _XOPEN_SOURCE 700
 #include "validators.h"
 #include <ctype.h>
@@ -225,7 +226,7 @@ int valida_voos_reservados(char *string, Voos_reservados *lista) { //char ***lis
     if (string == NULL || strlen(string) < 3) return 0; //[] invalido
     int len = strlen(string);
     if (string[0] != '[' || string[len-1] != ']') return 0; //verifica se tem os parenteses retos no inicio e no final
-    Voos_reservados novo;
+    //Voos_reservados novo;
 
     //Limpar a string
     char *string_voos = g_strdup(string + 1); // pula '['
@@ -237,6 +238,7 @@ int valida_voos_reservados(char *string, Voos_reservados *lista) { //char ***lis
         if (string_voos[i] == ',') n++;
     }
 
+    Voos_reservados novo;
     novo.n_voos = n;
     novo.lista_voos_reservados = malloc(n * sizeof(char *));
 
@@ -250,6 +252,15 @@ int valida_voos_reservados(char *string, Voos_reservados *lista) { //char ***lis
     }
 
     *lista = novo;
+    for (int i = 0; i < lista->n_voos; i++) {
+	lista->lista_voos_reservados[i] = g_strdup(novo.lista_voos_reservados[i]);
+    }
+    //printf("%s\n", lista->lista_voos_reservados[0]);
+/*    for (int i = 0; i < novo.n_voos; i++) {
+	g_free(novo.lista_voos_reservados[i]);
+	printf("%s\n", lista->lista_voos_reservados[i]);
+    }
+*/
     g_free(string_voos);
     return 1;
 }
@@ -339,23 +350,25 @@ int valida_RESERVA (Reservas reserva, GHashTable *tabela_v, GHashTable *tabela_p
     //flights id -> lista de 1 ou 2 voos EXSITENTES
 //    int length_vr = sizeof (reserva.lista_voos_reservados) / sizeof (reserva.voos_reservados[0]);
     int length_vr = reserva.reserva_lista.n_voos;
-    if (length_vr < 1 || length_vr > 2) return 0;
+    if (length_vr < 1 || length_vr > 2) {printf("N"); return 0;}
     else {
         for (int i = 0; i < length_vr; i++) {
-                char *voo_chave = reserva.reserva_lista.lista_voos_reservados[i];
-                if (!g_hash_table_contains(tabela_v,voo_chave))  return 0;
+                char *voo_chave = g_strdup(reserva.reserva_lista.lista_voos_reservados[i]);
+		//printf("%s\n", reserva.reserva_lista.lista_voos_reservados[i]);
+		//printf("%s\n", voo_chave);
+                if (!g_hash_table_contains(tabela_v,voo_chave)) return 0; // {printf("C_V"); return 0;}
         }
     }
 
     //document number -> passageiro EXISTENTE
     int passageiro_chave = reserva.id_pessoa_reservou;
-    if (!g_hash_table_contains(tabela_p,GINT_TO_POINTER(passageiro_chave))) return 0;
+    if (!g_hash_table_contains(tabela_p,GINT_TO_POINTER(passageiro_chave))) {printf("C_P"); return 0;}
 
     //if (flights ids == 2) -> destination1 == departure2, i.e., simulando uma escala
     if (length_vr == 2) {
         Voo *voo1 = g_hash_table_lookup(tabela_v,reserva.reserva_lista.lista_voos_reservados[0]);
         Voo *voo2 = g_hash_table_lookup(tabela_v,reserva.reserva_lista.lista_voos_reservados[1]);
-        if (strcmp(voo1->code_destination, voo2->code_origin) != 0) return 0;
+        if (strcmp(voo1->code_destination, voo2->code_origin) != 0) {printf("L"); return 0;}
     }
 
     return 1; //Reserva válida!
