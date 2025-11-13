@@ -1,0 +1,2 @@
+> > ficheiro para receber os ficheiros comando_X output recebidos da execução do código
+
