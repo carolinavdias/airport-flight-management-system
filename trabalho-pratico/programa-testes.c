@@ -56,7 +56,10 @@ int main(int argc, char *argv[]) {
     printf("====================================\n");
 
     // garante que a pasta resultados está limpa
-    system("rm -rf resultados && mkdir -p resultados");
+//    system("rm -rf resultados && mkdir -p resultados");
+    if (system("rm -rf resultados && mkdir -p resultados") != 0) {
+	fprintf(stderr, "Erro ao criar diretório de resultados.\n");
+    }
 
     // executa o programa principal e mede tempo total
     struct timespec start, end;
