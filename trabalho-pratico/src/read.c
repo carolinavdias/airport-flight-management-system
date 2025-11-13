@@ -210,15 +210,44 @@ void libertaReserva(void *data) {
 }
 
 
-int read (int opcao_inserida, GHashTable *tabela1, GHashTable *tabela2, GHashTable *tabela3, GHashTable *tabela4, GHashTable *tabela5) {
+void libertaPassageiro(void *data) {
+    Passageiros *a = data;
+    if (!a) return;
+    g_free(a->primeiro_nome);
+    g_free(a->ultimo_nome);
+    g_free(a->nacionalidade);
+    g_free(a->email_passageiro);
+    g_free(a->telefone_passageiro);
+    g_free(a->morada_passageiro);
+    g_free(a->fotografia_passageiro);
+    g_free(a);
+}
+
+FILE *abrir_ficheiro (Contexto *ctx, const char *nome_ficheiro, const char *modo) {
+    char path[1024];
+    snprintf (path, sizeof(path), "%s/%s", ctx->dataset_dir, nome_ficheiro);
+    FILE *ficheiro = fopen (path,modo);
+    if (ficheiro == NULL) {
+    	perror ("Erro ao abrir o ficheiro.\n");
+    	return NULL;
+    }
+    return ficheiro;
+}
+
+int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable *tabela2, GHashTable *tabela3, GHashTable *tabela4, GHashTable *tabela5) {
 
         if (opcao_inserida == 1) {
-
-                FILE *ficheiro = fopen("flights.csv", "r");
+/*
+                FILE *ficheiro = fopen("dataset/flights.csv", "r");
                         if (ficheiro == NULL) {
                         perror ("Erro ao abrir o ficheiro.\n");
                         return 0;
                 }
+*/
+
+		FILE *ficheiro = abrir_ficheiro (&ctx,"flights.csv", "r");
+		if (ficheiro == NULL) return 0;
+
 
                 int linhas_totais = 0;
                 int linhas_com_sucesso = 0;
@@ -231,6 +260,19 @@ int read (int opcao_inserida, GHashTable *tabela1, GHashTable *tabela2, GHashTab
                 while (fgets(buffer,sizeof(buffer),ficheiro) && no_header) {
                 //while (fgets(buffer, sizeof(buffer),ficheiro)) {
                         Voo *voo_atual = malloc(sizeof(Voo));
+			voo_atual->flight_id = NULL;
+			voo_atual->departure = NULL;
+			voo_atual->actual_departure = NULL;
+			voo_atual->arrival = NULL;
+			voo_atual->actual_arrival = NULL;
+			voo_atual->gate = NULL;
+			voo_atual->status = 0;
+			voo_atual->code_origin = NULL;
+			voo_atual->code_destination = NULL;
+			voo_atual->id_aircraft = NULL;
+			voo_atual->airline = NULL;
+			voo_atual->tracking_url = NULL;
+
                         linhas_totais++;
                         int linha_valida = 1;
                         int e_maybe = -1; // verificação datas baseado no estado do voo
@@ -316,12 +358,15 @@ int read (int opcao_inserida, GHashTable *tabela1, GHashTable *tabela2, GHashTab
 
         }
         else if (opcao_inserida == 2) {
-
+/*
                 FILE *ficheiro = fopen("airports.csv", "r");
                         if (ficheiro == NULL) {
                         perror ("Erro ao abrir o ficheiro.\n");
                         return 0;
                 }
+*/
+                FILE *ficheiro = abrir_ficheiro (&ctx,"airports.csv", "r");
+                if (ficheiro == NULL) return 0;
 
                 int linhas_totais = 0;
                 int linhas_com_sucesso = 0;
@@ -332,6 +377,15 @@ int read (int opcao_inserida, GHashTable *tabela1, GHashTable *tabela2, GHashTab
 
                 while (fgets(buffer, sizeof(buffer),ficheiro) && no_header) {
                         Aeroporto *aeroporto_atual = malloc(sizeof(Aeroporto));
+			aeroporto_atual->code_IATA = NULL;
+			aeroporto_atual->name = NULL;
+			aeroporto_atual->city = NULL;
+			aeroporto_atual->country = NULL;
+			aeroporto_atual->latitude = 0.0;
+			aeroporto_atual->longitude = 0.0;
+			aeroporto_atual->code_ICAO = NULL;
+			aeroporto_atual->type = -1;
+
                         linhas_totais++;
                         int linha_valida = 1;
                         buffer[strcspn(buffer,"\n")] = '\0'; //remove \n do final
@@ -385,11 +439,15 @@ int read (int opcao_inserida, GHashTable *tabela1, GHashTable *tabela2, GHashTab
 
         } else if (opcao_inserida == 3) {
 
-                FILE *ficheiro = fopen("aircrafts.csv", "r"); // a alterar
+/*
+                FILE *ficheiro = fopen("dataset/aircrafts.csv", "r"); // a alterar
                         if (ficheiro == NULL) {
                         perror ("Erro ao abrir o ficheiro.\n");
                         return 0;
                 }
+*/
+                FILE *ficheiro = abrir_ficheiro (&ctx,"aircrafts.csv", "r");
+                if (ficheiro == NULL) return 0;
 
                 int linhas_totais = 0;
                 int linhas_com_sucesso = 0;
@@ -400,6 +458,13 @@ int read (int opcao_inserida, GHashTable *tabela1, GHashTable *tabela2, GHashTab
 
                 while (fgets(buffer, sizeof(buffer),ficheiro) && no_header) {
                         Aeronave *aeronave_atual = malloc(sizeof(Aeronave));
+			aeronave_atual->identifier = NULL;
+			aeronave_atual->manufacturer = NULL;
+			aeronave_atual->model = NULL;
+			aeronave_atual->year = -1;
+			aeronave_atual->capacity = -1;
+			aeronave_atual->range = -1;
+
                         linhas_totais++;
                         int linha_valida = 1;
                         buffer[strcspn(buffer,"\n")] = '\0'; //remove \n do final
@@ -445,12 +510,15 @@ int read (int opcao_inserida, GHashTable *tabela1, GHashTable *tabela2, GHashTab
                 fclose(ficheiro);
 
         } else if (opcao_inserida == 4) {
-
+/*
                 FILE *ficheiro = fopen("passengers.csv", "r");
                         if (ficheiro == NULL) {
                                 perror ("Erro ao abrir o ficheiro.\n");
                                 return 0;
                 }
+*/
+                FILE *ficheiro = abrir_ficheiro (&ctx,"passengers.csv", "r");
+                if (ficheiro == NULL) return 0;
 
                 int linhas_totais = 0;
                 int linhas_com_sucesso = 0;
@@ -461,6 +529,18 @@ int read (int opcao_inserida, GHashTable *tabela1, GHashTable *tabela2, GHashTab
 
                 while (fgets(buffer, sizeof(buffer),ficheiro) && no_header) {
                         Passageiros *passageiro_atual = malloc(sizeof(Passageiros));
+			passageiro_atual->id_passageiro = -1;
+			passageiro_atual->primeiro_nome = NULL;
+			passageiro_atual->ultimo_nome = NULL;
+			//Data data_nascimento;
+    			passageiro_atual->nacionalidade = NULL;
+    			//Genero genero_passageiro;
+    			passageiro_atual->email_passageiro = NULL;
+    			passageiro_atual->telefone_passageiro = NULL;
+			passageiro_atual->morada_passageiro = NULL;
+			passageiro_atual->fotografia_passageiro = NULL;
+
+
                         linhas_totais++;
                         int linha_valida = 1;
                         buffer[strcspn(buffer,"\n")] = '\0'; //remove \n do final
@@ -518,46 +598,74 @@ int read (int opcao_inserida, GHashTable *tabela1, GHashTable *tabela2, GHashTab
 
         } else if (opcao_inserida == 5) {
 
-                FILE *ficheiro = fopen("reservations.csv", "r");
+                FILE *ficheiro = fopen("dataset/reservations.csv", "r");
                 if (ficheiro == NULL) {
                     perror ("Erro ao abrir o ficheiro.\n");
                     return 0;
                 }
 
+/*
+                FILE *ficheiro = abrir_ficheiro (&ctx,"reservations.csv", "r");
+                if (ficheiro == NULL) return 0;
+//                printf("Entrou na opcao 5.\n");
+*/
                 int linhas_totais = 0;
                 int linhas_com_sucesso = 0;
 		int no_header = 1;
 
                 GPtrArray *todas_as_linhas = g_ptr_array_new(); //lista de arrays de string iniciar
                 if (fgets(buffer,sizeof(buffer),ficheiro) == NULL) no_header = 0;
+                //printf("%d.\n", no_header);
+
 
                 while (fgets(buffer, sizeof(buffer),ficheiro) && no_header) {
+  //              printf("Entrou na opcao 5.\n");
+
                         Reservas *reserva_atual = malloc(sizeof(Reservas));
+			reserva_atual->id_reserva = NULL;
+			//    Voos_reservados reserva_lista; //lista
+    			//int id_pessoa_reservou; //reserva em nome de
+    			reserva_atual->lugar_reservado = NULL;
+			reserva_atual->preco_reserva = -1.0;
+			//bagagem_extra;
+    			//bool prioridade; //priority boarding
+    			reserva_atual->qr_code = NULL;;
+
+
+			//reserva_atual->reserva_lista.n_voos = 0;
+			//reserva_atual->reserva_lista.lista_voos_reservados = NULL;
+
                         linhas_totais++;
                         int linha_valida = 1;
                         buffer[strcspn(buffer,"\n")] = '\0'; //remove \n do final
                         gchar **campos = parse_csv_line(buffer); //faz o parsing da linha
+//			printf("%s\n", campos[1]);
 
                         //validação e atribuição dos campos
                         if (!valida_id_reserva(campos[0],&reserva_atual->id_reserva)) linha_valida = 0;
+
                         if (linha_valida) {
                                 if (!valida_voos_reservados(campos[1],&reserva_atual->reserva_lista)) linha_valida = 0; //voos_reservados
+				//printf("linhavalida%d\n", linha_valida);
                         }
                         if (linha_valida) reserva_atual->id_pessoa_reservou = atoi(campos[2]);
                         if (linha_valida) reserva_atual->lugar_reservado = g_strdup(campos[3]);
                         if (linha_valida) reserva_atual->preco_reserva = atof(campos[4]);
+
                         if (linha_valida) {
                                 if (!valida_bool(campos[5],&reserva_atual->bagagem_extra)) linha_valida = 0;
                         }
+//printf("%d\n", linha_valida);
                         if (linha_valida) {
                                 if (!valida_bool(campos[6],&reserva_atual->prioridade)) linha_valida = 0;
                         }
+//printf("linhavalida%d\n", linha_valida);
                         if (linha_valida) reserva_atual->qr_code = g_strdup(campos[7]);
-
 
                         //Validação Lógica
                         if (!valida_RESERVA (*reserva_atual,tabela1,tabela4)) linha_valida = 0;
 
+//printf("linhavalida%d\n", linha_valida);
 
                         //if !valida escreve no ficheiro_erros
                         if (!linha_valida && no_header) {

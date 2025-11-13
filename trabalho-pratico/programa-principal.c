@@ -12,9 +12,11 @@
 //programa principal (executa as queries a partir do ficheiro de comandos)
 int main(int argc, char **argv) {
     if (argc != 3) {
-        fprintf(stderr, "Uso: %s <dataset-fase-1> <ficheiro_comandos>\n", argv[0]);
+        fprintf(stderr, "Uso: %s <dataset-fase-1> <ficheiro_comandos>\n", argv[0]); //<dataser-fase-1>, agrv[0] só
         return EXIT_FAILURE;
     }
+    Contexto ctx;
+    strncpy(ctx.dataset_dir, argv[1], sizeof(ctx.dataset_dir)-1);
 
     //construção dinâmica dos caminhos
     gchar *caminhoAeroportos = g_build_filename(argv[1], "airports.csv", NULL);
@@ -28,24 +30,25 @@ int main(int argc, char **argv) {
 //    GHashTable *tabelaAeroportos = carregarAeroportos(caminhoAeroportos);
 //    GHashTable *tabelaAeronaves  = carregarAeronaves(caminhoAeronaves);
 //    GHashTable *tabelaVoos       = carregarVoos(caminhoVoos);
-    GHashTable *tabelaAeronaves = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, libertaAeronave);     //tabela3
-    GHashTable *tabelaVoos = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, libertaVoo);        //tabela1
-    GHashTable *tabelaAeroportos = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, libertaAeroporto);  //tabela2
-    GHashTable *tabelaPassageiros = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, NULL);         //tabela4
-    GHashTable *tabelaReservas = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, libertaReserva);            //tabela5
+    GHashTable *tabelaAeronaves = g_hash_table_new(g_str_hash, g_str_equal); //, g_free, libertaAeronave);     //tabela3
+    GHashTable *tabelaVoos = g_hash_table_new (g_str_hash, g_str_equal); //, g_free, libertaVoo);        //tabela1
+    GHashTable *tabelaAeroportos = g_hash_table_new(g_str_hash, g_str_equal); // g_free, libertaAeroporto);  //tabela2
+    GHashTable *tabelaPassageiros = g_hash_table_new (g_direct_hash, g_direct_equal); // NULL, NULL);         //tabela4
+    GHashTable *tabelaReservas = g_hash_table_new(g_str_hash, g_str_equal); // g_free, libertaReserva);            //tabela5
 
 
-    read(3,tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
-    read(1,tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
-    read(2,tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
-    read(4,tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
-    read(5,tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
-
+    le_tabela(3,ctx,tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+    le_tabela(1,ctx,tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+    le_tabela(2,ctx,tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+    le_tabela(4,ctx,tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+    le_tabela(5,ctx,tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+    printf ("Acabou de ler as tabelas.\n");
 
     //liberta strings de caminho
     g_free(caminhoAeroportos);
     g_free(caminhoAeronaves);
     g_free(caminhoVoos);
+    printf ("Acabou de libertar os caminhos.\n");
 
     //verifica se os ficheiros principais foram carregados
     if (!tabelaAeroportos || !tabelaAeronaves || !tabelaVoos) {
@@ -53,28 +56,38 @@ int main(int argc, char **argv) {
         errors_end();
         return EXIT_FAILURE;
     }
+    printf ("Acabou de verificar se os ficheiros foram carregados.\n");
 
     //abre o ficheiro de comandos
     FILE *ficheiroComandos = fopen(argv[2], "r");
     if (!ficheiroComandos) {
         perror("Erro ao abrir o ficheiro de comandos");
-        g_hash_table_destroy(tabelaAeroportos);
-        g_hash_table_destroy(tabelaAeronaves);
-        g_hash_table_destroy(tabelaVoos);
-        g_hash_table_destroy(tabelaReservas);
+        //g_hash_table_destroy(tabelaAeroportos);
+        //g_hash_table_destroy(tabelaAeronaves);
+        //g_hash_table_destroy(tabelaVoos);
+        //g_hash_table_destroy(tabelaReservas);
         errors_write_csv("resultados/errors.csv");
         errors_end();
         return EXIT_FAILURE;
     }
+    printf ("Abriu o ficheiro de comandos.\n");
 
     //garante que a pasta de resultados existe
     gchar *dirResultados = g_build_filename("trabalho-pratico", "resultados", NULL);
+    printf("D\n");
     g_mkdir_with_parents(dirResultados, 0755);
+    printf("E\n");
     g_free(dirResultados);
+    printf ("Garantiu que a pasta de resultados existe.\n");
 
     char *linha = NULL;
+    printf("A\n");
     size_t tamanho = 0;
+    printf("B\n");
     int numeroComando = 1;
+    printf("C\n");
+
+    printf("Aqui");
 
     //lê e executa cada comando do ficheiro
     while (getline(&linha, &tamanho, ficheiroComandos) != -1) {
@@ -134,14 +147,16 @@ int main(int argc, char **argv) {
         numeroComando++;
     }
 
+    printf("Aqui2");
+
     free(linha);
     fclose(ficheiroComandos);
 
     //liberta tabelas e escreve erros
-    g_hash_table_destroy(tabelaAeroportos);
-    g_hash_table_destroy(tabelaAeronaves);
-    g_hash_table_destroy(tabelaVoos);
-    g_hash_table_destroy(tabelaReservas);
+    //g_hash_table_destroy(tabelaAeroportos);
+    //g_hash_table_destroy(tabelaAeronaves);
+    //g_hash_table_destroy(tabelaVoos);
+    //g_hash_table_destroy(tabelaReservas);
 
     errors_write_csv("resultados/errors.csv");
     errors_end();

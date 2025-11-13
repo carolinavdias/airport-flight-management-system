@@ -12,6 +12,7 @@ LDLIBS   = $(shell pkg-config --libs glib-2.0) -lm
 SRC_DIR  = src
 OBJ_DIR  = obj
 BIN_DIR  = bin
+BIN_DIR = trabalho-pratico
 DATA_DIR = data-fase-1
 OUT_DIR  = resultados
 EXPECTED = resultados-esperados
@@ -29,8 +30,10 @@ SRCS_TEST := programa-testes.c $(filter-out $(SRC_DIR)/programa-principal.c, $(S
 OBJS_TEST := $(SRCS_TEST:%.c=$(OBJ_DIR)/%.o)
 
 # executáveis
-MAIN_BIN  = $(BIN_DIR)/programa-principal
-TESTS_BIN = $(BIN_DIR)/programa-testes
+#MAIN_BIN  = $(BIN_DIR)/programa-principal
+#TESTS_BIN = $(BIN_DIR)/programa-testes
+MAIN_BIN = programa-principal
+TESTS_BIN = programa-testes
 
 # ===================================================
 # alvos principais
@@ -60,8 +63,9 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(OBJ_DIR)/%.o: %.c
-	@mkdir -p $(OBJ_DIR)
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
+#       @mkdir -p $(OBJ_DIR)
 
 # ===================================================
 # comandos rápidos

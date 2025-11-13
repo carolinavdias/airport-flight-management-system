@@ -21,7 +21,7 @@ typedef struct voo {
     char *actual_arrival; //chegada efetiva
     char *gate; //porta_embarque
     //char *status; --
-    int status; //++ Estado
+    Estado status; //++ Estado
     char *code_origin; //codigo IATA origem
     char *code_destination; //codigo IATA destino
     char *id_aircraft; //id_aeronave

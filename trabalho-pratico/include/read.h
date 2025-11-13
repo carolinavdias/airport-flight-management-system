@@ -4,6 +4,11 @@
 #include <glib.h>
 #include <stdbool.h>
 
+
+typedef struct {
+    char dataset_dir[256];
+} Contexto;
+
 //estrutura para data (YYYY-MM-DD)
 typedef struct data_def {
     int ano, mes, dia;
@@ -111,7 +116,8 @@ GHashTable* carregarAeronaves(const char *caminho);
 
 
 void libertaReserva(void *data);
-int read (int opcao_inserida, GHashTable *tabela1, GHashTable *tabela2, GHashTable *tabela3, GHashTable *tabela4, GHashTable *tabela5);
+void libertaPassageiro(void *data);
+int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable *tabela2, GHashTable *tabela3, GHashTable *tabela4, GHashTable *tabela5);
 
 
 #endif
