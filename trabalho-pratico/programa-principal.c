@@ -30,11 +30,11 @@ int main(int argc, char **argv) {
 //    GHashTable *tabelaAeroportos = carregarAeroportos(caminhoAeroportos);
 //    GHashTable *tabelaAeronaves  = carregarAeronaves(caminhoAeronaves);
 //    GHashTable *tabelaVoos       = carregarVoos(caminhoVoos);
-    GHashTable *tabelaAeronaves = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, libertaAeronave);     //tabela3
-    GHashTable *tabelaVoos = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, libertaVoo);        //tabela1
-    GHashTable *tabelaAeroportos = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, libertaAeroporto);  //tabela2
-    GHashTable *tabelaPassageiros = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, NULL);         //tabela4
-    GHashTable *tabelaReservas = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, libertaReserva);            //tabela5
+    GHashTable *tabelaAeronaves = g_hash_table_new(g_str_hash, g_str_equal); //, g_free, libertaAeronave);     //tabela3
+    GHashTable *tabelaVoos = g_hash_table_new (g_str_hash, g_str_equal); //, g_free, libertaVoo);        //tabela1
+    GHashTable *tabelaAeroportos = g_hash_table_new(g_str_hash, g_str_equal); // g_free, libertaAeroporto);  //tabela2
+    GHashTable *tabelaPassageiros = g_hash_table_new (g_direct_hash, g_direct_equal); // NULL, NULL);         //tabela4
+    GHashTable *tabelaReservas = g_hash_table_new(g_str_hash, g_str_equal); // g_free, libertaReserva);            //tabela5
 
 
     le_tabela(3,ctx,tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
@@ -62,10 +62,10 @@ int main(int argc, char **argv) {
     FILE *ficheiroComandos = fopen(argv[2], "r");
     if (!ficheiroComandos) {
         perror("Erro ao abrir o ficheiro de comandos");
-        g_hash_table_destroy(tabelaAeroportos);
-        g_hash_table_destroy(tabelaAeronaves);
-        g_hash_table_destroy(tabelaVoos);
-        g_hash_table_destroy(tabelaReservas);
+        //g_hash_table_destroy(tabelaAeroportos);
+        //g_hash_table_destroy(tabelaAeronaves);
+        //g_hash_table_destroy(tabelaVoos);
+        //g_hash_table_destroy(tabelaReservas);
         errors_write_csv("resultados/errors.csv");
         errors_end();
         return EXIT_FAILURE;
@@ -153,10 +153,10 @@ int main(int argc, char **argv) {
     fclose(ficheiroComandos);
 
     //liberta tabelas e escreve erros
-    g_hash_table_destroy(tabelaAeroportos);
-    g_hash_table_destroy(tabelaAeronaves);
-    g_hash_table_destroy(tabelaVoos);
-    g_hash_table_destroy(tabelaReservas);
+    //g_hash_table_destroy(tabelaAeroportos);
+    //g_hash_table_destroy(tabelaAeronaves);
+    //g_hash_table_destroy(tabelaVoos);
+    //g_hash_table_destroy(tabelaReservas);
 
     errors_write_csv("resultados/errors.csv");
     errors_end();

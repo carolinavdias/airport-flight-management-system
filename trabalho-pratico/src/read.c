@@ -234,7 +234,7 @@ FILE *abrir_ficheiro (Contexto *ctx, const char *nome_ficheiro, const char *modo
     return ficheiro;
 }
 
-int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable *tabela2, GHashTable *tabela3) { //, GHashTable *tabela4, GHashTable *tabela5) {
+int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable *tabela2, GHashTable *tabela3, GHashTable *tabela4, GHashTable *tabela5) {
 
         if (opcao_inserida == 1) {
 /*
@@ -582,7 +582,7 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                         else {
                                 linhas_com_sucesso++;
                                 g_ptr_array_add(todas_as_linhas,campos);
-                                //g_hash_table_insert(tabela4, GINT_TO_POINTER (passageiro_atual->id_passageiro), passageiro_atual);
+                                g_hash_table_insert(tabela4, GINT_TO_POINTER (passageiro_atual->id_passageiro), passageiro_atual);
                         }
                 }
                 printf ("Foram inseridas com sucesso na tabela dos voos %d linhas de %d.\n", linhas_com_sucesso, linhas_totais);
@@ -663,7 +663,7 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                         if (linha_valida) reserva_atual->qr_code = g_strdup(campos[7]);
 
                         //Validação Lógica
-                        //if (!valida_RESERVA (*reserva_atual,tabela1,tabela4)) linha_valida = 0;
+                        if (!valida_RESERVA (*reserva_atual,tabela1,tabela4)) linha_valida = 0;
 
 //printf("linhavalida%d\n", linha_valida);
 
@@ -683,7 +683,7 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                         else {
                                 linhas_com_sucesso++;
                                 g_ptr_array_add(todas_as_linhas,campos);
-                                //g_hash_table_insert(tabela5, reserva_atual->id_reserva, reserva_atual);
+                                g_hash_table_insert(tabela5, reserva_atual->id_reserva, reserva_atual);
                         }
                 }
                 printf ("Foram inseridas com sucesso na tabela dos voos %d linhas de %d.\n", linhas_com_sucesso, linhas_totais);

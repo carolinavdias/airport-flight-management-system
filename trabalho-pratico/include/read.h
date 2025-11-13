@@ -117,7 +117,7 @@ GHashTable* carregarAeronaves(const char *caminho);
 
 void libertaReserva(void *data);
 void libertaPassageiro(void *data);
-int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable *tabela2, GHashTable *tabela3); //, GHashTable *tabela4, GHashTable *tabela5);
+int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable *tabela2, GHashTable *tabela3, GHashTable *tabela4, GHashTable *tabela5);
 
 
 #endif
