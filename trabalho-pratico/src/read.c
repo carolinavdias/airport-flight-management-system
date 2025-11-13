@@ -246,6 +246,19 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                 while (fgets(buffer,sizeof(buffer),ficheiro) && no_header) {
                 //while (fgets(buffer, sizeof(buffer),ficheiro)) {
                         Voo *voo_atual = malloc(sizeof(Voo));
+			voo_atual->flight_id = NULL;
+			voo_atual->departure = NULL;
+			voo_atual->actual_departure = NULL;
+			voo_atual->arrival = NULL;
+			voo_atual->actual_arrival = NULL;
+			voo_atual->gate = NULL;
+			voo_atual->status = 0;
+			voo_atual->code_origin = NULL;
+			voo_atual->code_destination = NULL;
+			voo_atual->id_aircraft = NULL;
+			voo_atual->airline = NULL;
+			voo_atual->tracking_url = NULL;
+
                         linhas_totais++;
                         int linha_valida = 1;
                         int e_maybe = -1; // verificação datas baseado no estado do voo
@@ -350,6 +363,7 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
 
                 while (fgets(buffer, sizeof(buffer),ficheiro) && no_header) {
                         Aeroporto *aeroporto_atual = malloc(sizeof(Aeroporto));
+			//aeroporto_atual->
                         linhas_totais++;
                         int linha_valida = 1;
                         buffer[strcspn(buffer,"\n")] = '\0'; //remove \n do final

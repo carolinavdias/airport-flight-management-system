@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
     printf("D\n");
     g_mkdir_with_parents(dirResultados, 0755);
     printf("E\n");
-    //g_free(dirResultados);
+    g_free(dirResultados);
     printf ("Garantiu que a pasta de resultados existe.\n");
 
     char *linha = NULL;

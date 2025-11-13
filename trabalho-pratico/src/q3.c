@@ -18,7 +18,6 @@ void libertaVoo (void *data) {
     g_free(v->arrival);
     g_free(v->actual_arrival);
     g_free(v->gate);
-//    g_free(v->status);
     g_free(v->code_origin);
     g_free(v->code_destination);
     g_free(v->id_aircraft);
