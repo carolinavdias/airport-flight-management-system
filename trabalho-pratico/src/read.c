@@ -260,9 +260,9 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                 //if (fgets(buffer,sizeof(buffer),ficheiro) == NULL) break;
 
                 while (fgets(buffer,sizeof(buffer),ficheiro) && no_header) {
-                //while (fgets(buffer, sizeof(buffer),ficheiro)) {
+              //while (fgets(buffer, sizeof(buffer),ficheiro)) {
                         Voo *voo_atual = malloc(sizeof(Voo));
-			voo_atual->flight_id = NULL;
+	/*		voo_atual->flight_id = NULL;
 			voo_atual->departure = NULL;
 			voo_atual->actual_departure = NULL;
 			voo_atual->arrival = NULL;
@@ -274,7 +274,7 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
 			voo_atual->id_aircraft = NULL;
 			voo_atual->airline = NULL;
 			voo_atual->tracking_url = NULL;
-
+*/
                         linhas_totais++;
                         int linha_valida = 1;
                         int e_maybe = -1; // verificação datas baseado no estado do voo
@@ -288,7 +288,7 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
 
                         if (linha_valida) {
                                 if (!valida_DataH(campos[1],&voo_atual->departure)) linha_valida = 0;
-				printf("%s-%d\n", campos[1], linha_valida);
+			//	printf("%s-%d\n", campos[1], linha_valida);
                         }
                         if (linha_valida) {
                                 if (strcmp(campos[2],"N/A") == 0) {
@@ -328,7 +328,9 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
 
 
                         //Validação lógica
-                        if (!valida_VOO (*voo_atual,tabela3)) linha_valida = 0;
+                        if (linha_valida) {
+				if (!valida_VOO (*voo_atual,tabela3)) linha_valida = 0;
+			}
 
 
                         // if !valida escreve no ficheiro_erros
