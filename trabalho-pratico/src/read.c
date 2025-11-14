@@ -237,6 +237,8 @@ FILE *abrir_ficheiro (Contexto *ctx, const char *nome_ficheiro, const char *modo
 int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable *tabela2, GHashTable *tabela3, GHashTable *tabela4, GHashTable *tabela5) {
 
         if (opcao_inserida == 1) {
+
+	printf("Entrou no 1.\n");
 /*
                 FILE *ficheiro = fopen("dataset/flights.csv", "r");
                         if (ficheiro == NULL) {
@@ -282,8 +284,11 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                         //validação dos campos
 
                         if (!valida_id_voo(campos[0],&voo_atual->flight_id)) linha_valida = 0;
+			//printf("%s-%d\n", campos[0], linha_valida);
+
                         if (linha_valida) {
                                 if (!valida_DataH(campos[1],&voo_atual->departure)) linha_valida = 0;
+				printf("%s-%d\n", campos[1], linha_valida);
                         }
                         if (linha_valida) {
                                 if (strcmp(campos[2],"N/A") == 0) {
@@ -474,8 +479,10 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                         aeronave_atual->identifier = g_strdup(campos[0]);
                         aeronave_atual->manufacturer = g_strdup(campos[1]);
                         aeronave_atual->model = g_strdup(campos[2]);
-                        if (atoi(campos[3]) >= 0 && atoi(campos[3]) <= 2025) aeronave_atual->year = atoi(campos[3]);
-                        else linha_valida = 0;
+			if (!valida_year(campos[3],&aeronave_atual->year)) linha_valida = 0;
+                        //if (atoi(campos[3]) >= 0 && atoi(campos[3]) <= 2025) aeronave_atual->year = atoi(campos[3]);
+                        //else linha_valida = 0;
+			//printf("%s-%ld\n", campos[3], strlen(campos[3])); //'
                         if (linha_valida) aeronave_atual->capacity = atoi(campos[4]);
                         if (linha_valida) aeronave_atual->range = atoi(campos[5]);
 

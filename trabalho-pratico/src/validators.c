@@ -35,6 +35,10 @@ int qual_mes (int mes) {
 
 //Valida a datah (ano-mes-dia horas:mins) e passa para a estrutura previamente definida para DataH
 int valida_DataH (char *string, char **datah) { // com validação incluida
+	if (string == NULL || strlen(string) != 16) return 0;
+	if (string[4] != '-' || string[7] != '-' || string[10] != ' ' || string[13] != ':') return 0;
+        //for (int i = 0; i < 16; i++) {
+		//if (!isdigit(string[i]) && (i != 
 
         DataH novo;
         int narg = sscanf (string, "%d-%d-%d %d:%d", &novo.data.ano, &novo.data.mes, &novo.data.dia, &novo.horas.hora, &novo.horas.mins);
@@ -150,6 +154,22 @@ int valida_tipo_aer(const char *string, Tipo_aeroporto *t) {
 
     return 1;
 }
+
+
+//AERONAVES -> VALIDAÇÃO SINTÁTICA
+
+int valida_year (char *string, int *year) {
+    if (string == NULL || strlen(string) != 4) return 0;
+    for (int i = 0; i < 4; i++) {
+	if (!isdigit(string[i])) return 0;
+    }
+
+//Validação concluida
+
+    *year = atoi(string);
+    return 1;
+}
+
 
 //PASSAGEIROS -> VALIDAÇÃO SINTÁTICA
 
