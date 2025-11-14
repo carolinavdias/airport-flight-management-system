@@ -66,7 +66,15 @@ GHashTable* carregarAeroportos(const char *caminhoFicheiro) {
 
     int numeroLinha = 2; //linha real do ficheiro (1 é o cabeçalho)
 
-    (void)getline(&linha, &tamanho, f);
+    // ignora cabeçalho
+    ssize_t nread = getline(&linha, &tamanho, f);
+    if (nread == -1) {
+    // ficheiro vazio ou erro ao ler
+        fclose(f);
+        free(linha);
+        return NULL; // ou trata conforme a tua lógica
+    }
+
 
     while (getline(&linha, &tamanho, f) != -1) {
         linha[strcspn(linha, "\n")] = '\0';

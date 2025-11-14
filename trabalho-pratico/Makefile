@@ -32,8 +32,9 @@ OBJS_TEST := $(SRCS_TEST:%.c=$(OBJ_DIR)/%.o)
 # executáveis
 #MAIN_BIN  = $(BIN_DIR)/programa-principal
 #TESTS_BIN = $(BIN_DIR)/programa-testes
-MAIN_BIN = programa-principal
-TESTS_BIN = programa-testes
+MAIN_BIN  = $(BIN_DIR)/programa-principal
+TESTS_BIN = $(BIN_DIR)/programa-testes
+
 
 # ===================================================
 # alvos principais
@@ -77,6 +78,7 @@ run: $(MAIN_BIN)
 	@echo "A executar o programa principal..."
 	@$(MAIN_BIN) $(DATA_DIR) inputs_fase1.txt
 	@echo "✔ Execução terminada! Resultados guardados em $(OUT_DIR)/"
+
 
 # compara os outputs com os resultados esperados
 check:
