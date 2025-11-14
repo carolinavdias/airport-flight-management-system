@@ -433,7 +433,7 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                                 g_hash_table_insert(tabela2, aeroporto_atual->code_IATA, aeroporto_atual);
                         }
                 }
-                printf ("Foram inseridas com sucesso na tabela dos voos %d linhas de %d.\n", linhas_com_sucesso, linhas_totais);
+                printf ("Foram inseridas com sucesso na tabela dos aeroportos %d linhas de %d.\n", linhas_com_sucesso, linhas_totais);
 
                 for (guint i = 0; i < todas_as_linhas->len; i++) {
                         gchar **campos = g_ptr_array_index(todas_as_linhas,i); //associa os campos *a linha
@@ -508,7 +508,7 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                                 g_hash_table_insert(tabela3, aeronave_atual->identifier, aeronave_atual);
                         }
                 }
-                printf ("Foram inseridas com sucesso na tabela dos voos %d linhas de %d.\n", linhas_com_sucesso, linhas_totais);
+                printf ("Foram inseridas com sucesso na tabela das aeronaves %d linhas de %d.\n", linhas_com_sucesso, linhas_totais);
 
                 for (guint i = 0; i < todas_as_linhas->len; i++) {
                         gchar **campos = g_ptr_array_index(todas_as_linhas,i); //associa os campos *a linha
@@ -594,7 +594,7 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                                 g_hash_table_insert(tabela4, GINT_TO_POINTER (passageiro_atual->id_passageiro), passageiro_atual);
                         }
                 }
-                printf ("Foram inseridas com sucesso na tabela dos voos %d linhas de %d.\n", linhas_com_sucesso, linhas_totais);
+                printf ("Foram inseridas com sucesso na tabela dos passageiros %d linhas de %d.\n", linhas_com_sucesso, linhas_totais);
 
                 for (guint i = 0; i < todas_as_linhas->len; i++) {
                         gchar **campos = g_ptr_array_index(todas_as_linhas,i); //associa os campos *a linha
@@ -672,8 +672,9 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                         if (linha_valida) reserva_atual->qr_code = g_strdup(campos[7]);
 
                         //Validação Lógica
-                        if (!valida_RESERVA (*reserva_atual,tabela1,tabela4)) linha_valida = 0;
-
+			if (linha_valida) {
+                        	if (!valida_RESERVA (*reserva_atual,tabela1,tabela4)) linha_valida = 0;
+			}
 //printf("linhavalida%d\n", linha_valida);
 
                         //if !valida escreve no ficheiro_erros
@@ -695,7 +696,7 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                                 g_hash_table_insert(tabela5, reserva_atual->id_reserva, reserva_atual);
                         }
                 }
-                printf ("Foram inseridas com sucesso na tabela dos voos %d linhas de %d.\n", linhas_com_sucesso, linhas_totais);
+                printf ("Foram inseridas com sucesso na tabela das reservas %d linhas de %d.\n", linhas_com_sucesso, linhas_totais);
 
                 for (guint i = 0; i < todas_as_linhas->len; i++) {
                         gchar **campos = g_ptr_array_index(todas_as_linhas,i); //associa os campos *a linha

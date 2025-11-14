@@ -209,19 +209,19 @@ int valida_genero(const char *string, Genero *g) {
 
 //Valida o email e faz o strdup (passageiros)
 int valida_email(char *string, char **email) {
-     if (string == NULL || strlen(string) == 0) {printf("Nula\n"); return 0;}
+     if (string == NULL || strlen(string) == 0) return 0;
      int i = 0;
      int mark = i;
      //verificar username
      for (; string[i] != '@' && string[i] != '\0'; i++) {
-        if (!(islower(string[i]) || isdigit(string[i]) || string[i] == '.')) {printf("Username invalido");return 0;} //estranho
+        if (!(islower(string[i]) || isdigit(string[i]) || string[i] == '.')) return 0; //estranho
      }
-     if (string[i] == '\0') {printf ("Só username\n"); return 0;} // nada a seguir ao username
+     if (string[i] == '\0') return 0; // nada a seguir ao username
      int j = i + 1;
-     if (j - mark < 2) {printf ("username nulo");return 0; }//username nulo -> inválido
+     if (j - mark < 2) return 0;//username nulo -> inválido
      mark = j;
      for (; string[j] != '.' && string[j] != '\0'; j++) {
-        if (string[j] < 'a' || string[j] > 'z') {printf("lstring invalida"); return 0;} //lstring inválida
+        if (string[j] < 'a' || string[j] > 'z') return 0; //lstring inválida
      }
      if (string[j] == '\0') return 0; //dominio invalido
      int k = j + 1;
