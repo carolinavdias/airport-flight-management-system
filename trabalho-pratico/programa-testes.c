@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
     clock_gettime(CLOCK_REALTIME, &start);
 
     char command[512];
-    snprintf(command, sizeof(command), "./bin/programa-principal %s %s", dataset, input);
+    snprintf(command, sizeof(command), "./programa-principal %s %s", dataset, input);
     int ret = system(command);
 
     clock_gettime(CLOCK_REALTIME, &end);

@@ -6,6 +6,8 @@
 #include <glib.h>
 #include "q2.h"
 #include "errors.h"
+#include "read.h"
+#include "q3.h"
 
 //função auxiliar para libertar memória de uma aeronave
 void libertaAeronave(void *data) {
@@ -149,42 +151,63 @@ int comparaContagens(const Contagem *a, const Contagem *b) {
 }
 
 //query 2 (top N aeronaves de um determinado fabricante com mais voos realizados)
-void query2(const char *linhaComando, GHashTable *tabelaAeronaves, FILE *out) {
+void query2(const char *linhaComando,
+            GHashTable *tabelaAeronaves,
+            GHashTable *tabelaVoos,
+            FILE *out)
+{
     int n;
     char fabricante[100] = "";
+
     if (sscanf(linhaComando, "%d %99s", &n, fabricante) < 1) {
         fprintf(out, "\n");
         return;
     }
 
-    //cria lista com todos os elementos da hash table
-    GList *lista = g_hash_table_get_values(tabelaAeronaves);
+    GList *listaAeronaves = g_hash_table_get_values(tabelaAeronaves);
+    GList *listaVoos = g_hash_table_get_values(tabelaVoos);
 
-    //filtra por fabricante se especificado
     GList *filtrada = NULL;
-    for (GList *l = lista; l != NULL; l = l->next) {
-        Aeronave *a = l->data;
-        if (strlen(fabricante) == 0 || g_strcmp0(a->manufacturer, fabricante) == 0) {
+
+    for (GList *l = listaAeronaves; l != NULL; l = l->next) {
+
+        Aeronave *a = (Aeronave *) l->data;
+
+        if (strlen(fabricante) == 0 ||
+            g_strcmp0(a->manufacturer, fabricante) == 0)
+        {
+            int counter = 0;
+
+            for (GList *v = listaVoos; v != NULL; v = v->next) {
+                Voo *voo = (Voo *) v->data;
+                if (voo->id_aircraft &&
+                    strcmp(voo->id_aircraft, a->identifier) == 0)
+                {
+                    counter++;
+                }
+            }
+
             Contagem *c = g_new(Contagem, 1);
             c->identifier = g_strdup(a->identifier);
             c->manufacturer = g_strdup(a->manufacturer);
             c->model = g_strdup(a->model);
-            c->count = 1; //fase 1 ainda sem voos reais associados
+            c->count = counter;
             filtrada = g_list_prepend(filtrada, c);
         }
     }
 
-    //ordena por count e depois por identifier
-    filtrada = g_list_sort(filtrada, (GCompareFunc)comparaContagens);
+    g_list_free(listaVoos);
+    g_list_free(listaAeronaves);
 
-    //imprime top N
+    filtrada = g_list_sort(filtrada, (GCompareFunc) comparaContagens);
+
     int printed = 0;
     for (GList *l = filtrada; l != NULL && printed < n; l = l->next, printed++) {
         Contagem *c = l->data;
-        fprintf(out, "%s,%s,%s,%d\n", c->identifier, c->manufacturer, c->model, c->count);
+        fprintf(out, "%s,%s,%s,%d\n",
+                c->identifier, c->manufacturer, c->model, c->count);
     }
 
-    //liberta memória
     for (GList *l = filtrada; l != NULL; l = l->next) {
         Contagem *c = l->data;
         g_free(c->identifier);
@@ -193,5 +216,4 @@ void query2(const char *linhaComando, GHashTable *tabelaAeronaves, FILE *out) {
         g_free(c);
     }
     g_list_free(filtrada);
-    g_list_free(lista);
 }

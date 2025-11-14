@@ -35,7 +35,7 @@ int qual_mes (int mes) {
 
 //Valida a datah (ano-mes-dia horas:mins) e passa para a estrutura previamente definida para DataH
 int valida_DataH (char *string, char **datah) { // com validação incluida
-	if (string == NULL || strlen(string) != 16) return 0;
+    if (string == NULL || (strlen(string) != 16 && strlen(string) != 19)) return 0;
 	if (string[4] != '-' || string[7] != '-' || string[10] != ' ' || string[13] != ':') return 0;
         //for (int i = 0; i < 16; i++) {
 		//if (!isdigit(string[i]) && (i != 
@@ -73,7 +73,7 @@ int valida_Data (char *string, Data *data) {
 //Valida o estado (voo) e passa para a estrutura previamente definida para estado
 int valida_Estado (char *string, Estado *e) {
     if (string == NULL || strlen(string) == 0) return 0;
-    if (strcmp(string, "On Time") == 0) *e = ESTADO_ON_TIME;
+    if (strcmp(string, "On_Time") == 0) *e = ESTADO_ON_TIME;
     else if (strcmp(string, "Delayed") == 0) *e = ESTADO_DELAYED;
     else if (strcmp(string, "Cancelled") == 0) *e = ESTADO_CANCELLED;
     else return 0;
@@ -115,7 +115,8 @@ int valida_coordenadas (const char* string, int versao, double coordenada) {
 
     int contador = 0;
     for (int i = 0; i < length; i++) {
-        if ((string[i] == '-' && i != 0) || string[i] < '0' || string[i] > '9' || string[i] != '.') return 0;
+    if (string[i] == '-' && i != 0) return 0;
+    if (!(isdigit(string[i]) || string[i] == '.' || string[i] == '-')) return 0;
         if (string[i] == '.') contador++;
     }
     if (contador > 1) return 0;
@@ -277,23 +278,15 @@ int valida_voos_reservados(char *string, Voos_reservados *lista) { //char ***lis
 
     char *ptr = string_voos;
     for (int i = 0; i < n; i++) {
-        char *token = strsep(&ptr,",");
-        while (*token == ' ' || *token == '\'') token++; //tira os espaços e aspas simples
-        char *end = token + strlen(token) - 1; //
-        while (*end == ' ' || *end == '\'') *end-- = '\0';
-        (novo.lista_voos_reservados)[i] = g_strdup(token);
+        char *token = strsep(&ptr, ",");
+        while (*token == ' ' || *token == '\'') token++;
+        char *end = token + strlen(token) - 1;
+        while (end >= token && (*end == ' ' || *end == '\'')) *end-- = '\0';
+
+        novo.lista_voos_reservados[i] = g_strdup(token);
     }
 
     *lista = novo;
-    for (int i = 0; i < lista->n_voos; i++) {
-	lista->lista_voos_reservados[i] = g_strdup(novo.lista_voos_reservados[i]);
-    }
-    //printf("%s\n", lista->lista_voos_reservados[0]);
-/*    for (int i = 0; i < novo.n_voos; i++) {
-	g_free(novo.lista_voos_reservados[i]);
-	printf("%s\n", lista->lista_voos_reservados[i]);
-    }
-*/
     g_free(string_voos);
     return 1;
 }
@@ -386,10 +379,10 @@ int valida_RESERVA (Reservas reserva, GHashTable *tabela_v, GHashTable *tabela_p
     if (length_vr < 1 || length_vr > 2) {printf("N"); return 0;}
     else {
         for (int i = 0; i < length_vr; i++) {
-                char *voo_chave = g_strdup(reserva.reserva_lista.lista_voos_reservados[i]);
+                char *voo_chave = reserva.reserva_lista.lista_voos_reservados[i];
 		//printf("%s\n", reserva.reserva_lista.lista_voos_reservados[i]);
 		//printf("%s\n", voo_chave);
-                if (!g_hash_table_contains(tabela_v,voo_chave)) return 0; // {printf("C_V"); return 0;}
+                if (!g_hash_table_contains(tabela_v, voo_chave)) return 0;
         }
     }
 
