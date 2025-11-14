@@ -11,8 +11,7 @@ typedef struct aeronave {
     char *model;
     int year;
     int capacity;
-//    float range; --
-    int range; //++
+    float range;
 } Aeronave;
 
 //contagem
@@ -30,11 +29,13 @@ GHashTable* carregarAeronaves(const char *caminhoFicheiro);
 int identificadorValido(const char *id);
 
 //query 2 (top N aeronaves com mais voos realizados, filtradas por fabricante opcional)
-void query2(const char *linhaComando, GHashTable *tabelaAeronaves, FILE *out);
+void query2(const char *linhaComando,
+            GHashTable *tabelaAeronaves,
+            GHashTable *tabelaVoos,
+            FILE *out);
+
 
 //função auxiliar (ordenação por número de voos e depois por identificador)
 int comparaContagens(const Contagem *a, const Contagem *b);
-
-void libertaAeronave(void *data);
 
 #endif

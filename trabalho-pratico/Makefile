@@ -1,23 +1,22 @@
 # ===================================================
-# Makefile — Fase 1
+# Makefile — Fase 1 (arrumado para o AutoTester)
 # ===================================================
 
 CC       = gcc
 
-# Professor pediu para mudar
- #CFLAGS   = -Wall -Wextra -pedantic -O2 -std=c99 -Iinclude $(shell pkg-config --cflags glib-2.0)
+# flags de compilação (sem -std=c99 porque o prof pediu para tirar)
 CFLAGS   = -Wall -Wextra -O2 -Iinclude $(shell pkg-config --cflags glib-2.0)
 LDLIBS   = $(shell pkg-config --libs glib-2.0) -lm
 
 SRC_DIR  = src
 OBJ_DIR  = obj
-#BIN_DIR  = bin
-BIN_DIR = trabalho-pratico
 DATA_DIR = data-fase-1
 OUT_DIR  = resultados
 EXPECTED = resultados-esperados
 
+# ---------------------------------------------------
 # ficheiros .c principais
+# ---------------------------------------------------
 SRCS_ALL := $(wildcard $(SRC_DIR)/*.c) \
             $(wildcard $(SRC_DIR)/*/*.c)
 
@@ -29,12 +28,9 @@ OBJS_MAIN := $(SRCS_MAIN:%.c=$(OBJ_DIR)/%.o)
 SRCS_TEST := programa-testes.c $(filter-out $(SRC_DIR)/programa-principal.c, $(SRCS_ALL))
 OBJS_TEST := $(SRCS_TEST:%.c=$(OBJ_DIR)/%.o)
 
-# executáveis
-MAIN_BIN  = $(BIN_DIR)/programa-principal
-TESTS_BIN = $(BIN_DIR)/programa-testes
-#MAIN_BIN  = programa-principal
-#TESTS_BIN = programa-testes
-
+# executáveis (na pasta atual, como o AutoTester espera)
+MAIN_BIN  = programa-principal
+TESTS_BIN = programa-testes
 
 # ===================================================
 # alvos principais
@@ -46,14 +42,12 @@ testes: $(TESTS_BIN)
 	@echo "✔ Programa de testes compilado com sucesso!"
 
 # ===================================================
-# regras de compilação
+# regras de ligação
 # ===================================================
 $(MAIN_BIN): $(OBJS_MAIN)
-	@mkdir -p $(BIN_DIR)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS)
 
 $(TESTS_BIN): $(OBJS_TEST)
-	@mkdir -p $(BIN_DIR)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS)
 
 # ===================================================
@@ -66,7 +60,6 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
-##       @mkdir -p $(OBJ_DIR)
 
 # ===================================================
 # comandos rápidos
@@ -76,9 +69,8 @@ $(OBJ_DIR)/%.o: %.c
 run: $(MAIN_BIN)
 	@mkdir -p $(OUT_DIR)
 	@echo "A executar o programa principal..."
-	@$(MAIN_BIN) $(DATA_DIR) inputs_fase1.txt
+	@./$(MAIN_BIN) dataset inputs_fase1.txt
 	@echo "✔ Execução terminada! Resultados guardados em $(OUT_DIR)/"
-
 
 # compara os outputs com os resultados esperados
 check:
@@ -88,7 +80,7 @@ check:
 
 # limpeza e debug
 clean:
-	rm -rf $(OBJ_DIR) $(BIN_DIR)
+	rm -rf $(OBJ_DIR) $(MAIN_BIN) $(TESTS_BIN) $(OUT_DIR)
 
 debug: CFLAGS += -g
 debug: all
