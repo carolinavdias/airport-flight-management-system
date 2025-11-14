@@ -131,19 +131,25 @@ int valida_coordenadas (const char* string, int versao, double coordenada) {
 
 
 //Valido o tipo do aeroporto e passa para a estrutura previamente definida para o tipo de aeroporto
-int valida_tipo_aer (char *string, Tipo_aeroporto *t) {
-    if (string == NULL || strlen(string) == 0) return 0;
-    if (strcmp(string, "small_airport") == 0) *t = SMALL_AIRPORT;
-    else if (strcmp(string, "medium_airport") == 0) *t = MEDIUM_AIRPORT;
-    else if (strcmp(string, "large_airport") == 0) *t = LARGE_AIRPORT;
-    else if (strcmp(string, "heliport") == 0) *t = HELIPORT;
-    else if (strcmp(string, "seaplane_base") == 0) *t = SEAPLANE_BASE;
-    else return 0;
+int valida_tipo_aer(const char *string, Tipo_aeroporto *t) {
+    if (string == NULL || strlen(string) == 0) {
+        *t = TIPO_ERROR;
+        return 0;
+    }
+
+    if (strcmp(string, "small_airport") == 0) *t = TIPO_SMALL_AIRPORT;
+    else if (strcmp(string, "medium_airport") == 0) *t = TIPO_MEDIUM_AIRPORT;
+    else if (strcmp(string, "large_airport") == 0) *t = TIPO_LARGE_AIRPORT;
+    else if (strcmp(string, "heliport") == 0) *t = TIPO_HELIPORT;
+    else if (strcmp(string, "seaplane_base") == 0) *t = TIPO_SEAPLANE_BASE;
+    else if (strcmp(string, "closed_airport") == 0) *t = TIPO_CLOSED_AIRPORT;
+    else {
+        *t = TIPO_ERROR;
+        return 0;
+    }
 
     return 1;
 }
-
-
 
 //PASSAGEIROS -> VALIDAÇÃO SINTÁTICA
 
@@ -163,12 +169,19 @@ int valida_id_passageiro(char* string, int *id_passageiro) {
 
 
 //Valida o Genero(passageiro) e passa para a estrutura previamente definida para o genero
-int valida_genero (char* string, Genero *g) {
-    if (string == NULL || strlen(string) != 1) return 0;
-    if (strcmp(string, "M") == 0) *g = M;
-    else if (strcmp(string, "F") == 0) *g = F;
-    else if (strcmp(string, "O") == 0) *g = O;
-    else return 0;
+int valida_genero(const char *string, Genero *g) {
+    if (string == NULL || strlen(string) != 1) {
+        *g = GENERO_ERROR;
+        return 0;
+    }
+
+    if (strcmp(string, "M") == 0) *g = GENERO_M;
+    else if (strcmp(string, "F") == 0) *g = GENERO_F;
+    else if (strcmp(string, "O") == 0) *g = GENERO_O;
+    else {
+        *g = GENERO_ERROR;
+        return 0;
+    }
 
     return 1;
 }

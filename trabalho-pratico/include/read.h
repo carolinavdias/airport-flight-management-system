@@ -3,6 +3,7 @@
 
 #include <glib.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 
 typedef struct {
@@ -14,10 +15,13 @@ typedef struct data_def {
     int ano, mes, dia;
 } Data;
 
-typedef uint8_t Genero;
-#define O 0
-#define F 1
-#define M 2
+typedef enum {
+    GENERO_F,
+    GENERO_M,
+    GENERO_O,
+    GENERO_ERROR
+} Genero;
+
 
 
 typedef struct voos_reservados {

@@ -18,7 +18,7 @@ void libertaAeroporto(void *data) {
     g_free(a->city);
     g_free(a->country);
     //g_free(a->code_ICAO); //++
-    g_free(a->type);
+    //g_free(a->type);
     g_free(a);
 }
 
@@ -62,9 +62,11 @@ GHashTable* carregarAeroportos(const char *caminhoFicheiro) {
     char *linha = NULL;
     size_t tamanho = 0;
 
-    getline(&linha, &tamanho, f); // ignore header
+    // getline(&linha, &tamanho, f); // ignore header
 
     int numeroLinha = 2; //linha real do ficheiro (1 é o cabeçalho)
+
+    (void)getline(&linha, &tamanho, f);
 
     while (getline(&linha, &tamanho, f) != -1) {
         linha[strcspn(linha, "\n")] = '\0';
@@ -106,7 +108,16 @@ GHashTable* carregarAeroportos(const char *caminhoFicheiro) {
             a->name    = g_strdup(name);
             a->city    = g_strdup(city);
             a->country = g_strdup(country);
-            a->type    = g_strdup(type); 
+            //a->type    = g_strdup(type); 
+
+            if (strcmp(type, "small_airport") == 0) a->type = TIPO_SMALL_AIRPORT;
+            else if (strcmp(type, "medium_airport") == 0) a->type = TIPO_MEDIUM_AIRPORT;
+            else if (strcmp(type, "large_airport") == 0) a->type = TIPO_LARGE_AIRPORT;
+            else if (strcmp(type, "heliport") == 0) a->type = TIPO_HELIPORT;
+            else if (strcmp(type, "seaplane_base") == 0) a->type = TIPO_SEAPLANE_BASE;
+            else if (strcmp(type, "closed_airport") == 0) a->type = TIPO_CLOSED_AIRPORT;
+            else a->type = TIPO_ERROR;
+
             g_hash_table_insert(tabela, g_strdup(a->code_IATA), a);
         } else {
             //mensagem de erro mais informativa
@@ -136,6 +147,18 @@ int codigoValido(const char *codigo) {
     return 1;
 }
 
+const char* tipoToString(Tipo_aeroporto t) {
+    switch (t) {
+        case TIPO_SMALL_AIRPORT: return "small_airport";
+        case TIPO_MEDIUM_AIRPORT: return "medium_airport";
+        case TIPO_LARGE_AIRPORT: return "large_airport";
+        case TIPO_HELIPORT: return "heliport";
+        case TIPO_SEAPLANE_BASE: return "seaplane_base";
+        case TIPO_CLOSED_AIRPORT: return "closed_airport";
+        default: return "error";
+    }
+}
+
 //query 1 (dado um código de aeroporto, procura-o na tabela e imprime as suas informações)
 void query1(const char *code, GHashTable *tabelaAeroportos, FILE *out) {
     if (!codigoValido(code)) {
@@ -146,7 +169,7 @@ void query1(const char *code, GHashTable *tabelaAeroportos, FILE *out) {
     Aeroporto *a = g_hash_table_lookup(tabelaAeroportos, code);
     if (a != NULL) {
         fprintf(out, "%s,%s,%s,%s,%s\n",
-                a->code_IATA, a->name, a->city, a->country, a->type);
+                a->code_IATA, a->name, a->city, a->country, tipoToString(a->type));
     } else {
         fprintf(out, "\n");
     }

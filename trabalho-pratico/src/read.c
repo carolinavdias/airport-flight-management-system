@@ -384,7 +384,7 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
 			aeroporto_atual->latitude = 0.0;
 			aeroporto_atual->longitude = 0.0;
 			aeroporto_atual->code_ICAO = NULL;
-			aeroporto_atual->type = -1;
+			aeroporto_atual->type = TIPO_ERROR;
 
                         linhas_totais++;
                         int linha_valida = 1;
@@ -700,4 +700,3 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
 //    }
         return 1;
 }
-
