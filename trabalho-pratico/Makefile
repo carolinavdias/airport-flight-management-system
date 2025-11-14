@@ -11,7 +11,7 @@ LDLIBS   = $(shell pkg-config --libs glib-2.0) -lm
 
 SRC_DIR  = src
 OBJ_DIR  = obj
-BIN_DIR  = bin
+# BIN_DIR  = bin
 BIN_DIR = trabalho-pratico
 DATA_DIR = data-fase-1
 OUT_DIR  = resultados

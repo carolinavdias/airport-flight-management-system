@@ -44,7 +44,7 @@ int valida_codigoIATA (char* string, char **codigo_IATA); // funcao traducao e v
 int valida_coordenadas (const char* string, int versao, double coordenada);
 int valida_tipo_aer(const char *string, Tipo_aeroporto *t);
 int valida_id_passageiro(char* string, int *id_passageiro);
-int valida_genero (char* string, Genero *g);
+int valida_genero (const char* string, Genero *g);
 int valida_email(char *string, char **email);
 int valida_id_reserva (char* string, char **id_reserva);
 int valida_voos_reservados(char *string, Voos_reservados *lista); //char ***lista
