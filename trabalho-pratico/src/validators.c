@@ -73,7 +73,7 @@ int valida_Data (char *string, Data *data) {
 //Valida o estado (voo) e passa para a estrutura previamente definida para estado
 int valida_Estado (char *string, Estado *e) {
     if (string == NULL || strlen(string) == 0) return 0;
-    if (strcmp(string, "On_Time") == 0) *e = ESTADO_ON_TIME;
+    if (strcmp(string, "On Time") == 0) *e = ESTADO_ON_TIME;
     else if (strcmp(string, "Delayed") == 0) *e = ESTADO_DELAYED;
     else if (strcmp(string, "Cancelled") == 0) *e = ESTADO_CANCELLED;
     else return 0;
@@ -376,7 +376,7 @@ int valida_RESERVA (Reservas reserva, GHashTable *tabela_v, GHashTable *tabela_p
     //flights id -> lista de 1 ou 2 voos EXSITENTES
 //    int length_vr = sizeof (reserva.lista_voos_reservados) / sizeof (reserva.voos_reservados[0]);
     int length_vr = reserva.reserva_lista.n_voos;
-    if (length_vr < 1 || length_vr > 2) {printf("N"); return 0;}
+    if (length_vr < 1 || length_vr > 2) return 0;
     else {
         for (int i = 0; i < length_vr; i++) {
                 char *voo_chave = reserva.reserva_lista.lista_voos_reservados[i];
@@ -388,13 +388,13 @@ int valida_RESERVA (Reservas reserva, GHashTable *tabela_v, GHashTable *tabela_p
 
     //document number -> passageiro EXISTENTE
     int passageiro_chave = reserva.id_pessoa_reservou;
-    if (!g_hash_table_contains(tabela_p,GINT_TO_POINTER(passageiro_chave))) {printf("C_P"); return 0;}
+    if (!g_hash_table_contains(tabela_p,GINT_TO_POINTER(passageiro_chave))) return 0;
 
     //if (flights ids == 2) -> destination1 == departure2, i.e., simulando uma escala
     if (length_vr == 2) {
         Voo *voo1 = g_hash_table_lookup(tabela_v,reserva.reserva_lista.lista_voos_reservados[0]);
         Voo *voo2 = g_hash_table_lookup(tabela_v,reserva.reserva_lista.lista_voos_reservados[1]);
-        if (strcmp(voo1->code_destination, voo2->code_origin) != 0) {printf("L"); return 0;}
+        if (strcmp(voo1->code_destination, voo2->code_origin) != 0) return 0;
     }
 
     return 1; //Reserva válida!
