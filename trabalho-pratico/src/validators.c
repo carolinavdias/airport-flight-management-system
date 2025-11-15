@@ -115,8 +115,8 @@ int valida_coordenadas (const char* string, int versao, double coordenada) {
 
     int contador = 0;
     for (int i = 0; i < length; i++) {
-    if (string[i] == '-' && i != 0) return 0;
-    if (!(isdigit(string[i]) || string[i] == '.' || string[i] == '-')) return 0;
+    	if (string[i] == '-' && i != 0) return 0;
+    	if (!isdigit(string[i]) && string[i] != '.' && string[i] != '-') return 0;
         if (string[i] == '.') contador++;
     }
     if (contador > 1) return 0;

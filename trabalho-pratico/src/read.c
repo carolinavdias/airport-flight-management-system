@@ -6,6 +6,7 @@
 #include <glib.h>
 #include <ctype.h>
 #include <stdint.h>
+#include <unistd.h>
 #include "read.h"
 #include "validators.h"
 #include "csv.h"
@@ -466,10 +467,14 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                 int linhas_totais = 0;
                 int linhas_com_sucesso = 0;
 		int no_header = 1;
+		char header[256];
 
                 GPtrArray *todas_as_linhas = g_ptr_array_new(); //lista de arrays de string iniciar
                 if (fgets(buffer,sizeof(buffer),ficheiro) == NULL) no_header = 0;
-
+		else {
+			buffer[strcspn(buffer,"\n")] = '\0';
+             		strcpy(header,buffer); // = g_strdup(buffer);
+		}
                 while (fgets(buffer, sizeof(buffer),ficheiro) && no_header) {
                         Aeronave *aeronave_atual = malloc(sizeof(Aeronave));
 			aeronave_atual->identifier = NULL;
@@ -498,14 +503,22 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
 
                         //if !valida escreve no ficheiro_erros
                         if (!linha_valida && no_header) {
+				const char *path = "resultados/aircrafts_errors.csv";
+				int existia = (access(path,F_OK) == 0);
+
                                 FILE *ficheiro_erros = fopen("resultados/aircrafts_errors.csv", "a");
                                 if (ficheiro_erros == NULL) {
                                         perror ("Erro ao abrir o ficheiro_aeronave_erros.\n");
                                         return 0;
                                 }
+				if (!existia) {
+					fputs(header,ficheiro_erros);
+					fputc('\n',ficheiro_erros);
+				}
                                 fputs(buffer,ficheiro_erros);
                                 fprintf(ficheiro_erros, "\n");
                                 fclose(ficheiro_erros);
+				free(aeronave_atual);
 
                         }
                         //if valida adiciona à tabela
@@ -627,6 +640,7 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
 
                 GPtrArray *todas_as_linhas = g_ptr_array_new(); //lista de arrays de string iniciar
                 if (fgets(buffer,sizeof(buffer),ficheiro) == NULL) no_header = 0;
+		//char *header = g_strdup(buffer); //++
                 //printf("%d.\n", no_header);
 
 
@@ -690,6 +704,7 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                                 fputs(buffer,ficheiro_erros);
                                 fprintf(ficheiro_erros, "\n");
                                 fclose(ficheiro_erros);
+				free(reserva_atual);
 
                         }
                         //if valida adiciona à tabela

@@ -227,16 +227,34 @@ void query2(const char *linhaComando,GHashTable *tabelaAeronaves,GHashTable *tab
     char fabricante_raw[200];
 
     // Lê "N fabricante", permitindo fabricantes com espaços
+    int n_arg = sscanf(linhaComando, "%d %[^\n]", &n, fabricante_raw);
+    if (n_arg < 1 || n <= 0) {
+	fprintf(out,"\n");
+	return;
+    }
+/*
     if (sscanf(linhaComando, "%d %[^\n]", &n, fabricante_raw) < 1) {
     	fprintf(out, "\n");
     	return;
+    }*/
+
+    if (n_arg == 2) {
+	char *p = fabricante_raw;
+	while(*p && isspace((unsigned char)*p)) p++;
+	if ( p != fabricante_raw) memmove(fabricante_raw,p,strlen(p)+1);
+    } else {
+	fabricante_raw[0] = '\0';
     }
 
+    int filtra_por_fabricante = (fabricante_raw[0] != 0);
+
     // Se fabricante vier vazio, não filtramos
-    int filtra_por_fabricante = (strlen(fabricante_raw) > 0);
+    //int filtra_por_fabricante = (strlen(fabricante_raw) > 0);
 
     // Normalizar para comparação case-insensitive
-    gchar *fabricante = g_ascii_strdown(fabricante_raw, -1);
+    gchar *fabricante = NULL;
+    if (filtra_por_fabricante) fabricante = g_ascii_strdown(fabricante_raw, -1);
+//    gchar *fabricante = g_ascii_strdown(fabricante_raw, -1);
 
     // ================================================
     // 1) Criar tabela de contagens
@@ -304,7 +322,7 @@ for (GList *l = aeronaves; l != NULL; l = l->next) {
 }  
 
 g_list_free(aeronaves);  
-g_free(fabricante);  
+if (fabricante) g_free(fabricante); //+
 
 // ================================================  
 // 3) Ordenar  
