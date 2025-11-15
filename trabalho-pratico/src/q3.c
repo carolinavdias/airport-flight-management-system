@@ -232,7 +232,7 @@ void query31(const char *data_inicio, const char *data_fim, GHashTable *tabelaVo
 
 
 //Nova para merge
-void query3(const char *data_inicio, const char *data_fim, GHashTable *tabelaVoos, GHashTable *tabelaAeroportos, FILE *out) {
+void query32(const char *data_inicio, const char *data_fim, GHashTable *tabelaVoos, GHashTable *tabelaAeroportos, FILE *out) {
     if (!data_inicio || !data_fim || !tabelaVoos) {
         fprintf(out, "\n");
         return;
@@ -320,6 +320,103 @@ void query3(const char *data_inicio, const char *data_fim, GHashTable *tabelaVoo
         fprintf(out, "\n");
 
     g_hash_table_destroy(ts_cache);
+    g_hash_table_destroy(contagens);
+}
+
+char *estado_to_string (Estado e) {
+	if (e == 0) return "On Time";
+	if (e == 1) return "Delayed";
+	if (e == 2) return "Cancelled";
+	return NULL;
+}
+
+/*
+static void debugVoo(Voo *v) {
+    printf("DEBUG Voo: id=%s, status='%s', origin=%s, departure='%s'\n", 
+           v->flight_id, estado_to_string(v->status), v->code_origin, v->actual_departure);
+}
+*/
+
+
+//antiga
+//query 3 (aeroporto com mais partidas entre 2 datas)
+void query3(const char *data_inicio, const char *data_fim, 
+           GHashTable *tabelaVoos, GHashTable *tabelaAeroportos, FILE *out) {
+    
+    if (!data_inicio || !data_fim || !tabelaVoos || !tabelaAeroportos) {
+        fprintf(out, "\n");
+        return;
+    }
+
+    time_t t_inicio = parseDate(data_inicio);
+    time_t t_fim = parseDate(data_fim);
+
+    if (t_inicio == (time_t)-1 || t_fim == (time_t)-1) {
+        fprintf(out, "\n");
+        return;
+    }
+
+    GHashTable *contagens = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+    const char *top_code = NULL;  // ⚠️ MUDADO: agora é const char*
+    int max_count = 0;
+
+    GHashTableIter iter;
+    gpointer key, value;
+    
+    g_hash_table_iter_init(&iter, tabelaVoos);
+    while (g_hash_table_iter_next(&iter, &key, &value)) {
+        Voo *v = value;
+
+        // Ignorar voos cancelados
+ //       if (v->status && strcmp(v->status, "Cancelled") == 0) {
+	if (v->status == 2) { 
+           continue;
+        }
+
+        // Usar partida REAL
+        const char *partida = (v->actual_departure && strlen(v->actual_departure) > 0) 
+                            ? v->actual_departure : v->departure;
+        if (!partida) continue;
+
+        time_t t_partida = parseDate(partida);
+        if (t_partida == (time_t)-1) continue;
+
+        // Verificar intervalo
+        if (t_partida >= t_inicio && t_partida <= t_fim) {
+            int *count = g_hash_table_lookup(contagens, v->code_origin);
+
+            if (count) {
+                (*count)++;
+            } else {
+                int *novo = g_new(int, 1);
+                *novo = 1;
+                g_hash_table_insert(contagens, g_strdup(v->code_origin), novo);
+                count = novo;
+            }
+
+            // ATUALIZAR MÁXIMO - APENAS REFERÊNCIA, SEM DUPLICAR
+            if (*count > max_count || 
+                (*count == max_count && top_code && strcmp(v->code_origin, top_code) < 0)) {
+                top_code = v->code_origin;  // ⚠️ APENAS REFERÊNCIA, não duplica!
+                max_count = *count;
+            }
+        }
+    }
+
+    // OUTPUT
+    if (top_code && max_count > 0) {
+        Aeroporto *aero = g_hash_table_lookup(tabelaAeroportos, top_code);
+        if (aero) {
+            fprintf(out, "%s,%s,%s,%s,%d\n", 
+                   aero->code_IATA, aero->name, aero->city, aero->country, max_count);
+        } else {
+            fprintf(out, "\n");
+        }
+        // ⚠️ NÃO PRECISA g_free(top_code) - é apenas referência
+    } else {
+        fprintf(out, "\n");
+    }
+
     g_hash_table_destroy(contagens);
 }
 

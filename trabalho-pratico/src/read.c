@@ -349,12 +349,12 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
 
                         // if !valida escreve no ficheiro_erros
                         if (!linha_valida && no_header) {
-                                const char *path = "resultados/reservations_errors.csv";
+                                const char *path = "resultados/flights_errors.csv";
                                 int existia = (access(path,F_OK) == 0);
 
-                                FILE *ficheiro_erros = fopen("resultados/reservations_errors.csv", "a");
+                                FILE *ficheiro_erros = fopen("resultados/flights_errors.csv", "a");
                                 if (ficheiro_erros == NULL) {
-                                        perror ("Erro ao abrir o ficheiro_reservas_erros.\n");
+                                        perror ("Erro ao abrir o ficheiro_voos_erros.\n");
                                         return 0;
                                 }
                                 if (!existia) {
