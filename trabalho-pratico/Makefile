@@ -21,11 +21,11 @@ SRCS_ALL := $(wildcard $(SRC_DIR)/*.c) \
             $(wildcard $(SRC_DIR)/*/*.c)
 
 # programa principal (sem o programa de testes)
-SRCS_MAIN := programa-principal.c $(filter-out $(SRC_DIR)/programa-testes.c, $(SRCS_ALL))
+SRCS_MAIN := programa-principal.c $(filter-out $(SRC_DIR)/programa-testes.c,$(SRCS_ALL))
 OBJS_MAIN := $(SRCS_MAIN:%.c=$(OBJ_DIR)/%.o)
 
 # programa de testes (sem o principal)
-SRCS_TEST := programa-testes.c $(filter-out $(SRC_DIR)/programa-principal.c, $(SRCS_ALL))
+SRCS_TEST := programa-testes.c $(filter-out $(SRC_DIR)/programa-principal.c,$(SRCS_ALL))
 OBJS_TEST := $(SRCS_TEST:%.c=$(OBJ_DIR)/%.o)
 
 # executáveis (na pasta atual, como o AutoTester espera)
@@ -60,6 +60,12 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
+
+# ficheiros .c na raiz (programa-principal.c e programa-testes.c)
+$(OBJ_DIR)/%.o: %.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
+
 
 # ===================================================
 # comandos rápidos
