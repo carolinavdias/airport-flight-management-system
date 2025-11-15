@@ -221,8 +221,8 @@ void query21(const char *linhaComando,
 }
 
 
-//nova para merge
-void query2(const char *linhaComando,GHashTable *tabelaAeronaves,GHashTable *tabelaVoos,FILE *out) {
+//nova para merge errada
+void query22(const char *linhaComando,GHashTable *tabelaAeronaves,GHashTable *tabelaVoos,FILE *out) {
     int n;
     char fabricante_raw[200];
 
@@ -358,5 +358,122 @@ g_hash_table_destroy(contagens);
 }
 
 
+//nova para merge nova
+void query2(const char *linhaComando,
+            GHashTable *tabelaAeronaves,
+            GHashTable *tabelaVoos,
+            FILE *out)
+{
+    int N;
+    char fabricante_raw[200] = "";
 
+    // Lê "<N> [fabricante opcional]" permitindo espaços no fabricante
+    int arg = sscanf(linhaComando, "%d %[^\n]", &N, fabricante_raw);
+//    if (sscanf(linhaComando, "%d %[^\n]", &N, fabricante_raw) < 1) {
+    if (arg < 1) {
+        fprintf(out, "\n");
+        return;
+    }
+
+    // Filtro opcional
+    int usar_filtro = (strlen(fabricante_raw) > 0);
+    gchar *fabricante = usar_filtro ? g_ascii_strdown(fabricante_raw, -1) : NULL;
+
+    // ================================
+    // PASSO 1 — Contar voos por aeronave
+    // ================================
+    GHashTable *contagens = g_hash_table_new_full(
+        g_str_hash, g_str_equal, g_free, NULL
+    );
+
+    GList *listaVoos = g_hash_table_get_values(tabelaVoos);
+
+    for (GList *l = listaVoos; l != NULL; l = l->next) {
+        Voo *v = l->data;
+
+        if (v->status == 2)   // 2 = Cancelled (no teu código)
+            continue;
+
+        //if (!v->id_aircraft)
+          //  continue;
+
+        gpointer val = g_hash_table_lookup(contagens, v->id_aircraft);
+	if (v->status != 2) {
+        	if (val == NULL) {
+            		g_hash_table_insert(contagens, g_strdup(v->id_aircraft), GINT_TO_POINTER(1));
+        	} else {
+            		int novo = GPOINTER_TO_INT(val) + 1;
+            		g_hash_table_replace(contagens,g_strdup(v->id_aircraft), GINT_TO_POINTER(novo));
+		}
+        }
+    }
+
+    g_list_free(listaVoos);
+
+    // ================================
+    // PASSO 2 — Criar lista de aeronaves válidas
+    // ================================
+    GList *listaAeronaves = g_hash_table_get_values(tabelaAeronaves);
+    GList *resultado = NULL;
+
+    for (GList *l = listaAeronaves; l != NULL; l = l->next) {
+        Aeronave *a = l->data;
+
+        // Aplicar filtro opcional
+        if (usar_filtro) {
+            gchar *fab = g_ascii_strdown(a->manufacturer, -1);
+            int ok = (g_strcmp0(fab, fabricante) == 0);
+            g_free(fab);
+            if (!ok) continue;
+        }
+
+        int count = 0;
+        gpointer val = g_hash_table_lookup(contagens, a->identifier);
+        if (val) count = GPOINTER_TO_INT(val);
+
+        Contagem *c = g_new(Contagem, 1); //equivalente a malloc
+        c->identifier   = g_strdup(a->identifier);
+        c->manufacturer = g_strdup(a->manufacturer);
+        c->model        = g_strdup(a->model);
+        c->count        = count;
+
+        resultado = g_list_prepend(resultado, c);
+    }
+
+    g_list_free(listaAeronaves);
+    if (fabricante) g_free(fabricante);
+
+    // ================================
+    // PASSO 3 — Ordenar resultado
+    // ================================
+    resultado = g_list_sort(resultado, (GCompareFunc) comparaContagens);
+
+    // ================================
+    // PASSO 4 — Imprimir top N
+    // ================================
+    int printed = 0;
+    for (GList *l = resultado; l != NULL && printed < N; l = l->next, printed++) {
+        Contagem *c = l->data;
+
+        fprintf(out, "%s,%s,%s,%d\n",
+                c->identifier, c->manufacturer, c->model, c->count);
+    }
+    if (printed == 0) {
+	fprintf(out,"\n");
+    }
+
+    // ================================
+    // PASSO 5 — Libertar memória
+    // ================================
+    for (GList *l = resultado; l != NULL; l = l->next) {
+        Contagem *c = l->data;
+        g_free(c->identifier);
+        g_free(c->manufacturer);
+        g_free(c->model);
+        g_free(c);
+    }
+
+    g_list_free(resultado);
+    g_hash_table_destroy(contagens);
+}
 

@@ -283,7 +283,8 @@ int valida_voos_reservados(char *string, Voos_reservados *lista) { //char ***lis
         char *end = token + strlen(token) - 1;
         while (end >= token && (*end == ' ' || *end == '\'')) *end-- = '\0';
 
-        novo.lista_voos_reservados[i] = g_strdup(token);
+	if (!valida_id_voo(token,&novo.lista_voos_reservados[i])) return 0; //flight id invalido
+//        novo.lista_voos_reservados[i] = g_strdup(token);
     }
 
     *lista = novo;
@@ -351,6 +352,7 @@ int valida_VOO (Voo voo, GHashTable *tabela) {
     //if CANCELLED, actual departure e actual arrival == "N/A"
     if (voo.status == 2) {
         if (strcmp(voo.actual_departure, "N/A") != 0 || strcmp(voo.actual_arrival, "N/A") != 0) return 0;
+        if (!compara_dataH(voo.arrival, voo.departure)) return 0; //++
     }
     else {
 
@@ -394,6 +396,7 @@ int valida_RESERVA (Reservas reserva, GHashTable *tabela_v, GHashTable *tabela_p
     if (length_vr == 2) {
         Voo *voo1 = g_hash_table_lookup(tabela_v,reserva.reserva_lista.lista_voos_reservados[0]);
         Voo *voo2 = g_hash_table_lookup(tabela_v,reserva.reserva_lista.lista_voos_reservados[1]);
+	//if g_strcmp???
         if (strcmp(voo1->code_destination, voo2->code_origin) != 0) return 0;
     }
 

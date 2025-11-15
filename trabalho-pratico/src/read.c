@@ -262,9 +262,15 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                 int linhas_totais = 0;
                 int linhas_com_sucesso = 0;
                 int no_header = 1;
+		char header[256];
 
                 GPtrArray *todas_as_linhas = g_ptr_array_new(); //lista de arrays de string iniciar
                 if (fgets(buffer,sizeof(buffer),ficheiro) == NULL) no_header = 0;
+                else {
+                        buffer[strcspn(buffer,"\n")] = '\0';
+                        strcpy(header,buffer); // = g_strdup(buffer);
+                }
+
                 //if (fgets(buffer,sizeof(buffer),ficheiro) == NULL) break;
 
                 while (fgets(buffer,sizeof(buffer),ficheiro) && no_header) {
@@ -343,11 +349,24 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
 
                         // if !valida escreve no ficheiro_erros
                         if (!linha_valida && no_header) {
+                                const char *path = "resultados/reservations_errors.csv";
+                                int existia = (access(path,F_OK) == 0);
+
+                                FILE *ficheiro_erros = fopen("resultados/reservations_errors.csv", "a");
+                                if (ficheiro_erros == NULL) {
+                                        perror ("Erro ao abrir o ficheiro_reservas_erros.\n");
+                                        return 0;
+                                }
+                                if (!existia) {
+                                        fputs(header,ficheiro_erros);
+                                        fputc('\n',ficheiro_erros);
+                                }
+/*
                                 FILE *ficheiro_erros = fopen("resultados/flights_errors.csv", "a");
                                 if (ficheiro_erros == NULL) {
                                         perror ("Erro ao abrir o ficheiro_voos_erros.\n");
                                         return 0;
-                                }
+                                }*/
                                 fputs(buffer,ficheiro_erros);
                                 fprintf(ficheiro_erros, "\n");
                                 fclose(ficheiro_erros);
@@ -386,9 +405,15 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                 int linhas_totais = 0;
                 int linhas_com_sucesso = 0;
 		int no_header = 1;
+		char header[256];
 
                 GPtrArray *todas_as_linhas = g_ptr_array_new(); //lista de arrays de string iniciar
                 if (fgets(buffer,sizeof(buffer),ficheiro) == NULL) no_header = 0;
+                else {
+                        buffer[strcspn(buffer,"\n")] = '\0';
+                        strcpy(header,buffer); // = g_strdup(buffer);
+                }
+
 
                 while (fgets(buffer, sizeof(buffer),ficheiro) && no_header) {
                         Aeroporto *aeroporto_atual = malloc(sizeof(Aeroporto));
@@ -428,15 +453,27 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
 
                         //if !valida escreve no ficheiro_erros
                         if (!linha_valida && no_header) {
+                                const char *path = "resultados/airports_errors.csv";
+                                int existia = (access(path,F_OK) == 0);
+
                                 FILE *ficheiro_erros = fopen("resultados/airports_errors.csv", "a");
                                 if (ficheiro_erros == NULL) {
                                         perror ("Erro ao abrir o ficheiro_aeroportos_erros.\n");
                                         return 0;
                                 }
+                                if (!existia) {
+                                        fputs(header,ficheiro_erros);
+                                        fputc('\n',ficheiro_erros);
+                                }
+/*
+                                FILE *ficheiro_erros = fopen("resultados/airports_errors.csv", "a");
+                                if (ficheiro_erros == NULL) {
+                                        perror ("Erro ao abrir o ficheiro_aeroportos_erros.\n");
+                                        return 0;
+                                } */
                                 fputs(buffer,ficheiro_erros);
                                 fprintf(ficheiro_erros, "\n");
                                 fclose(ficheiro_erros);
-
                         }
                         //if valida adiciona à tabela
                         else {
@@ -522,7 +559,6 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                                 fputs(buffer,ficheiro_erros);
                                 fprintf(ficheiro_erros, "\n");
                                 fclose(ficheiro_erros);
-				free(aeronave_atual);
 
                         }
                         //if valida adiciona à tabela
@@ -556,9 +592,14 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                 int linhas_totais = 0;
                 int linhas_com_sucesso = 0;
 		int no_header = 1;
+		char header[256];
 
                 GPtrArray *todas_as_linhas = g_ptr_array_new(); //lista de arrays de string iniciar
                 if (fgets(buffer,sizeof(buffer),ficheiro) == NULL) no_header = 0;
+                else {
+                        buffer[strcspn(buffer,"\n")] = '\0';
+                        strcpy(header,buffer); // = g_strdup(buffer);
+                }
 
                 while (fgets(buffer, sizeof(buffer),ficheiro) && no_header) {
                         Passageiros *passageiro_atual = malloc(sizeof(Passageiros));
@@ -600,6 +641,22 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
 
                         //if !valida escreve no ficheiro_erros
                         if (!linha_valida && no_header) {
+                                const char *path = "resultados/passengers_errors.csv";
+                                int existia = (access(path,F_OK) == 0);
+
+                                FILE *ficheiro_erros = fopen("resultados/passengers_errors.csv", "a");
+                                if (ficheiro_erros == NULL) {
+                                        perror ("Erro ao abrir o ficheiro_passageiros_erros.\n");
+                                        return 0;
+                                }
+                                if (!existia) {
+                                        fputs(header,ficheiro_erros);
+                                        fputc('\n',ficheiro_erros);
+                                }
+                                fputs(buffer,ficheiro_erros);
+                                fprintf(ficheiro_erros, "\n");
+                                fclose(ficheiro_erros);
+/*
                                 FILE *ficheiro_erros = fopen("resultados/passengers_errors.csv", "a");
                                 if (ficheiro_erros == NULL) {
                                         perror ("Erro ao abrir o ficheiro_passageiros_erros.\n");
@@ -608,8 +665,8 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                                 fputs(buffer,ficheiro_erros);
                                 fprintf(ficheiro_erros, "\n");
                                 fclose(ficheiro_erros);
-                                free(passageiro_atual);
-
+                                //free(passageiro_atual);
+*/
                         }
                         //if valida adiciona à tabela
                         else {
@@ -641,10 +698,15 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                 int linhas_totais = 0;
                 int linhas_com_sucesso = 0;
 		int no_header = 1;
+		char header[256];
 
                 GPtrArray *todas_as_linhas = g_ptr_array_new(); //lista de arrays de string iniciar
                 if (fgets(buffer,sizeof(buffer),ficheiro) == NULL) no_header = 0;
-		//char *header = g_strdup(buffer); //++
+                else {
+                        buffer[strcspn(buffer,"\n")] = '\0';
+                        strcpy(header,buffer); // = g_strdup(buffer);
+                }
+
                 //printf("%d.\n", no_header);
 
 
@@ -700,15 +762,28 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
 
                         //if !valida escreve no ficheiro_erros
                         if (!linha_valida && no_header) {
+                                const char *path = "resultados/reservations_errors.csv";
+                                int existia = (access(path,F_OK) == 0);
+
                                 FILE *ficheiro_erros = fopen("resultados/reservations_errors.csv", "a");
                                 if (ficheiro_erros == NULL) {
                                         perror ("Erro ao abrir o ficheiro_reservas_erros.\n");
                                         return 0;
                                 }
+                                if (!existia) {
+                                        fputs(header,ficheiro_erros);
+                                        fputc('\n',ficheiro_erros);
+                                }
+/*
+                                FILE *ficheiro_erros = fopen("resultados/reservations_errors.csv", "a");
+                                if (ficheiro_erros == NULL) {
+                                        perror ("Erro ao abrir o ficheiro_reservas_erros.\n");
+					free(reserva_atual);
+                                        return 0;
+                                }*/
                                 fputs(buffer,ficheiro_erros);
                                 fprintf(ficheiro_erros, "\n");
                                 fclose(ficheiro_erros);
-				free(reserva_atual);
 
                         }
                         //if valida adiciona à tabela
@@ -717,6 +792,7 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                                 g_ptr_array_add(todas_as_linhas,campos);
                                 g_hash_table_insert(tabela5, g_strdup(reserva_atual->id_reserva), reserva_atual);
                         }
+			free(reserva_atual);
                 }
                 printf ("Foram inseridas com sucesso na tabela das reservas %d linhas de %d.\n", linhas_com_sucesso, linhas_totais);
 
