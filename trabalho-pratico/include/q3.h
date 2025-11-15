@@ -3,14 +3,7 @@
 
 #include <stdio.h>
 #include <glib.h>
-#include <stdint.h>
-
-typedef uint8_t Estado;
-
-#define ESTADO_ON_TIME 0
-#define ESTADO_DELAYED 1
-#define ESTADO_CANCELLED 2
-
+#include "q1.h"
 
 //voo
 typedef struct voo {
@@ -20,15 +13,13 @@ typedef struct voo {
     char *arrival; //chegada prevista
     char *actual_arrival; //chegada efetiva
     char *gate; //porta_embarque
-    //char *status; --
-    Estado status; //++ Estado
+    char *status; //--
     char *code_origin; //codigo IATA origem
     char *code_destination; //codigo IATA destino
     char *id_aircraft; //id_aeronave
     char *airline; //companhia aerea
     char *tracking_url;
 } Voo;
-
 
 //carrega voos de um ficheiro CSV para uma GHashTable
 GHashTable* carregarVoos(const char *caminhoFicheiro);
@@ -37,7 +28,7 @@ GHashTable* carregarVoos(const char *caminhoFicheiro);
 int idVooValido(const char *id);
 
 //query 3 (aeroporto com mais partidas reais entre 2 datas, ignora cancelados)
-void query3(const char *data_inicio, const char *data_fim, GHashTable *tabelaVoos, FILE *out);
+void query3(const char *data_inicio, const char *data_fim, GHashTable *tabelaVoos, GHashTable *tabelaAeroportos, FILE *out);
 
 void libertaVoo (void *data);
 

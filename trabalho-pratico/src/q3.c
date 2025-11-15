@@ -18,6 +18,7 @@ void libertaVoo (void *data) {
     g_free(v->arrival);
     g_free(v->actual_arrival);
     g_free(v->gate);
+    g_free(v->status);
     g_free(v->code_origin);
     g_free(v->code_destination);
     g_free(v->id_aircraft);
@@ -30,7 +31,7 @@ void libertaVoo (void *data) {
 //verifica se o estado do voo é válido
 static int estadoValido(const char *estado) {
     if (!estado) return 0;
-    return (strcmp(estado, "On_Time") == 0 ||
+    return (strcmp(estado, "On Time") == 0 ||
             strcmp(estado, "Delayed") == 0 ||
             strcmp(estado, "Cancelled") == 0 ||
             strcmp(estado, "Scheduled") == 0);
@@ -101,7 +102,7 @@ GHashTable* carregarVoos(const char *caminhoFicheiro) {
         v->arrival          = g_strdup(campos[3]);
         v->actual_arrival   = g_strdup(campos[4]);
         v->gate             = g_strdup(campos[5]);
-        v->status           = atoi(campos[6]);
+        v->status           = g_strdup(campos[6]);
         v->code_origin      = g_strdup(campos[7]);
         v->code_destination = g_strdup(campos[8]);
         v->id_aircraft      = g_strdup(campos[9]);
@@ -143,17 +144,23 @@ int idVooValido(const char *id) {
 
 //função auxiliar (converte uma data no formato "YYYY-MM-DD" ou "YYYY-MM-DD HH:MM:SS")
 static time_t parseDate(const char *dateStr) {
+    if (!dateStr || strlen(dateStr) == 0) return (time_t)-1;
+    
     struct tm tm = {0};
-    if (!dateStr) return (time_t)-1;
-
-    // tenta com hora e segundos
-    if (strptime(dateStr, "%Y-%m-%d %H:%M:%S", &tm) != NULL)
+    char *result = NULL;
+    
+    // Tenta formato com hora
+    result = strptime(dateStr, "%Y-%m-%d %H:%M:%S", &tm);
+    if (result != NULL && *result == '\0') {
         return mktime(&tm);
-
-    // tenta apenas data
-    if (strptime(dateStr, "%Y-%m-%d", &tm) != NULL)
+    }
+    
+    // Tenta formato apenas data
+    result = strptime(dateStr, "%Y-%m-%d", &tm);
+    if (result != NULL && *result == '\0') {
         return mktime(&tm);
-
+    }
+    
     return (time_t)-1;
 }
 
@@ -169,156 +176,88 @@ static int dataEntre(const char *data, const char *inicio, const char *fim) {
     return (t_data >= t_inicio && t_data <= t_fim);
 }
 
-//antiga
-//query 3 (aeroporto com mais partidas entre 2 datas)
-void query31(const char *data_inicio, const char *data_fim, GHashTable *tabelaVoos, FILE *out) {
-    if (!data_inicio || !data_fim || !tabelaVoos) {
-        fprintf(out, "\n");
-        return;
-    }
-
-    if (parseDate(data_inicio) == (time_t)-1 || parseDate(data_fim) == (time_t)-1) {
-        fprintf(out, "\n");
-        return;
-    }
-
-    GHashTable *contagens = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-
-    GHashTableIter iter;
-    gpointer key, value;
-    g_hash_table_iter_init(&iter, tabelaVoos);
-
-    while (g_hash_table_iter_next(&iter, &key, &value)) {
-        Voo *v = value;
-
-        //usa partida real se existir, senão usa partida planeada
-        const char *partida = (v->actual_departure && strlen(v->actual_departure) > 0)
-                                ? v->actual_departure : v->departure;
-
-        if (dataEntre(partida, data_inicio, data_fim)) {
-            int *count = g_hash_table_lookup(contagens, v->code_origin);
-            if (count) {
-                (*count)++;
-            } else {
-                int *novo = g_new(int, 1);
-                *novo = 1;
-//void query3(const char *data_inicio, const char *data_fim, GHashTable *tabelaVoos, FILE *out) {
-                g_hash_table_insert(contagens, g_strdup(v->code_origin), novo);
-            }
-        }
-    }
-
-    //encontra o aeroporto com mais partidas
-    char *aeroportoTop = NULL;
-    int maxPartidas = 0;
-
-    g_hash_table_iter_init(&iter, contagens);
-    while (g_hash_table_iter_next(&iter, &key, &value)) {
-        int *count = value;
-        if (*count > maxPartidas) {
-            maxPartidas = *count;
-            aeroportoTop = key;
-        }
-    }
-
-    if (aeroportoTop)
-        fprintf(out, "%s,%d\n", aeroportoTop, maxPartidas);
-    else
-        fprintf(out, "\n");
-
-    g_hash_table_destroy(contagens);
+static void debugVoo(Voo *v) {
+    printf("DEBUG Voo: id=%s, status='%s', origin=%s, departure='%s'\n", 
+           v->flight_id, v->status, v->code_origin, v->actual_departure);
 }
 
-
-//Nova para merge
-void query3(const char *data_inicio, const char *data_fim, GHashTable *tabelaVoos, FILE *out) {
-    if (!data_inicio || !data_fim || !tabelaVoos) {
+//antiga
+//query 3 (aeroporto com mais partidas entre 2 datas)
+void query3(const char *data_inicio, const char *data_fim, 
+           GHashTable *tabelaVoos, GHashTable *tabelaAeroportos, FILE *out) {
+    
+    if (!data_inicio || !data_fim || !tabelaVoos || !tabelaAeroportos) {
         fprintf(out, "\n");
         return;
     }
 
     time_t t_inicio = parseDate(data_inicio);
-    time_t t_fim    = parseDate(data_fim);
+    time_t t_fim = parseDate(data_fim);
 
     if (t_inicio == (time_t)-1 || t_fim == (time_t)-1) {
         fprintf(out, "\n");
         return;
     }
 
-    /* Cache temporária: key = flight_id, value = time_t convertido para pointer */
-    GHashTable *ts_cache = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
+    GHashTable *contagens = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+    const char *top_code = NULL;  // ⚠️ MUDADO: agora é const char*
+    int max_count = 0;
 
-    /* 1) Pré-processamento — calcular timestamp uma vez por voo */
-    GHashTableIter it;
-    gpointer key, val;
-    g_hash_table_iter_init(&it, tabelaVoos);
+    GHashTableIter iter;
+    gpointer key, value;
+    
+    g_hash_table_iter_init(&iter, tabelaVoos);
+    while (g_hash_table_iter_next(&iter, &key, &value)) {
+        Voo *v = value;
 
-    while (g_hash_table_iter_next(&it, &key, &val)) {
-        Voo *v = val;
-
-        time_t t;
-        if (v->actual_departure && strlen(v->actual_departure) > 0)
-            t = parseDate(v->actual_departure);
-        else
-            t = parseDate(v->departure);
-
-        g_hash_table_insert(ts_cache, v->flight_id, GINT_TO_POINTER(t));
-    }
-
-    /* 2) Tabela de contagens */
-    GHashTable *contagens = g_hash_table_new_full(
-        g_str_hash, g_str_equal, g_free, g_free);
-
-    g_hash_table_iter_init(&it, tabelaVoos);
-
-    while (g_hash_table_iter_next(&it, &key, &val)) {
-        Voo *v = val;
-
-        if (v->status == 2)   // Cancelado
+        // Ignorar voos cancelados
+        if (v->status && strcmp(v->status, "Cancelled") == 0) {
             continue;
+        }
 
-        time_t t = GPOINTER_TO_INT(
-            g_hash_table_lookup(ts_cache, v->flight_id)
-        );
+        // Usar partida REAL
+        const char *partida = (v->actual_departure && strlen(v->actual_departure) > 0) 
+                            ? v->actual_departure : v->departure;
+        if (!partida) continue;
 
-        if (t == (time_t)-1) continue;
+        time_t t_partida = parseDate(partida);
+        if (t_partida == (time_t)-1) continue;
 
-        if (t >= t_inicio && t <= t_fim) {
+        // Verificar intervalo
+        if (t_partida >= t_inicio && t_partida <= t_fim) {
             int *count = g_hash_table_lookup(contagens, v->code_origin);
-            if (count)
+            
+            if (count) {
                 (*count)++;
-            else {
+            } else {
                 int *novo = g_new(int, 1);
                 *novo = 1;
                 g_hash_table_insert(contagens, g_strdup(v->code_origin), novo);
+                count = novo;
+            }
+            
+            // ATUALIZAR MÁXIMO - APENAS REFERÊNCIA, SEM DUPLICAR
+            if (*count > max_count || 
+                (*count == max_count && top_code && strcmp(v->code_origin, top_code) < 0)) {
+                top_code = v->code_origin;  // ⚠️ APENAS REFERÊNCIA, não duplica!
+                max_count = *count;
             }
         }
     }
 
-    /* 3) Encontrar o aeroporto top (lexicográfico em caso de empate) */
-    char *top = NULL;
-    int max = 0;
-
-    g_hash_table_iter_init(&it, contagens);
-    while (g_hash_table_iter_next(&it, &key, &val)) {
-        char *airport = key;
-        int count = *(int*)val;
-
-        if (count > max ||
-            (count == max && top && strcmp(airport, top) < 0)) {
-            top = airport;
-            max = count;
+    // OUTPUT
+    if (top_code && max_count > 0) {
+        Aeroporto *aero = g_hash_table_lookup(tabelaAeroportos, top_code);
+        if (aero) {
+            fprintf(out, "%s,%s,%s,%s,%d\n", 
+                   aero->code_IATA, aero->name, aero->city, aero->country, max_count);
+        } else {
+            fprintf(out, "\n");
         }
+        // ⚠️ NÃO PRECISA g_free(top_code) - é apenas referência
+    } else {
+        fprintf(out, "\n");
     }
 
-    if (top)
-        fprintf(out, "%s,%d\n", top, max);
-    else
-        fprintf(out, "\n");
-
-    g_hash_table_destroy(ts_cache);
     g_hash_table_destroy(contagens);
 }
-
-
-
