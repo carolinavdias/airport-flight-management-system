@@ -307,7 +307,7 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                         if (linha_valida) {
                                 if (strcmp(campos[2],"N/A") == 0) {
                                         e_maybe = 2;
-                                        voo_atual->actual_departure = g_strdup(campos[2]);
+                                        voo_atual->actual_departure = -2;//g_strdup(campos[2]);
                                 } else {
                                         if (!valida_DataH(campos[2],&voo_atual->actual_departure)) linha_valida = 0;
                                 }
@@ -318,7 +318,7 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                         if (linha_valida) {
                                 if (e_maybe == 2) {
                                         if (strcmp(campos[4],"N/A") != 0) linha_valida = 0;
-                                        else voo_atual->actual_arrival = g_strdup(campos[4]);
+                                        else voo_atual->actual_arrival = -2; //g_strdup(campos[4]);
                                 } else {
                                         if (!valida_DataH(campos[4],&voo_atual->actual_arrival)) linha_valida = 0;
                                 }
@@ -340,11 +340,12 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
 
                         //if (linha_valida) printf("Linha %d:\n%s\nD\nD\nD\nD\nOT\n\n", linhas_totais,voo_atual->voo_id);
 
-
+			//printf("A%d\n", linha_valida);
                         //Validação lógica
                         if (linha_valida) {
 				if (!valida_VOO (*voo_atual,tabela3)) linha_valida = 0;
 			}
+			//printf("D%d\n", linha_valida);
 
 
                         // if !valida escreve no ficheiro_erros

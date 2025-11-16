@@ -83,6 +83,7 @@ int main(int argc, char **argv) {
 
         switch (idQuery) {
             case 1:
+printf("Entrou na q1.\n");
                 if (param)
                     query1(param, tabelaAeroportos, out);
                 else
@@ -90,20 +91,27 @@ int main(int argc, char **argv) {
                 break;
 
             case 2:
+printf("Entrou na q2.\n");
                 if (param)
                     query2(param, tabelaAeronaves, tabelaVoos, out);
                 else
                     fprintf(out, "\n");
                 break;
 
-            case 3: {
-                char data_inicio[32], data_fim[32];
-                if (param && sscanf(param, "%31s %31s", data_inicio, data_fim) == 2)
-                    query3(data_inicio, data_fim, tabelaVoos, tabelaAeroportos, out);
+            case 3: 
+printf("Entrou na q3.\n");
+printf("%s\n", linha);
+                char d1[16], d2[16], data_inicio[32], data_fim[32];
+                if (param && sscanf(param, "%31s %31s", d1, d2) == 2) {
+		sprintf(data_inicio, "%s 00:00", d1);
+		sprintf(data_fim, "%s 23:59",d2);
+		printf ("%s \\ %s\n", data_inicio, data_fim);
+                //if (param && sscanf(param, "%16[^ ] %31[^\n]", data_inicio, data_fim) == 2) {
+	//	printf("%s\n", linha);
+                    query3(data_inicio, data_fim, tabelaVoos, tabelaAeroportos, out);}
                 else
                     fprintf(out, "\n");
                 break;
-            }
 
             default:
                 fprintf(out, "\n");

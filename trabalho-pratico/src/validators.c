@@ -33,8 +33,38 @@ int qual_mes (int mes) {
     else return 1;
 }
 
+/*
+static time_t parseDateH(char *dateStr) {
+    struct tm tm = {0};
+    if (!dateStr) return (time_t)-1;
+
+    // tenta com hora e segundos
+    if (strptime(dateStr, "%Y-%m-%d %H:%M", &tm) != NULL)
+        return mktime(&tm);
+
+    return (time_t)-1;
+}
+*/
+
+//função auxiliar (converte uma data no formato "YYYY-MM-DD" ou "YYYY-MM-DD HH:MM:SS")
+time_t parseDate_(const char *dateStr) {
+    struct tm tm = {0};
+    if (!dateStr) return (time_t)-1;
+
+    // tenta com hora e segundos
+    if (strptime(dateStr, "%Y-%m-%d %H:%M", &tm) != NULL)
+        return mktime(&tm);
+
+printf ("So data\n");
+    if (strptime(dateStr, "%Y-%m-%d", &tm) != NULL)
+        return mktime(&tm);
+
+
+    return (time_t)-1;
+}
+
 //Valida a datah (ano-mes-dia horas:mins) e passa para a estrutura previamente definida para DataH
-int valida_DataH (char *string, char **datah) { // com validação incluida
+int valida_DataH (char *string, time_t *datah) { // com validação incluida
     if (string == NULL || (strlen(string) != 16 && strlen(string) != 19)) return 0;
 	if (string[4] != '-' || string[7] != '-' || string[10] != ' ' || string[13] != ':') return 0;
         //for (int i = 0; i < 16; i++) {
@@ -50,9 +80,39 @@ int valida_DataH (char *string, char **datah) { // com validação incluida
 
                 return 0;
 
-        *datah = g_strdup(string);
+        *datah = parseDate_(string);
         return 1;
 }
+
+
+bool v_parse_date2(const char *s, time_t *out){
+    if(!s || !out) return false;
+
+    struct tm tm;
+    memset(&tm, 0, sizeof(tm));
+
+    // tenta "YYYY-MM-DD HH:MM"
+    char *end = strptime(s, "%Y-%m-%d %H:%M", &tm); //+
+    if(!end || *end != '\0') return false;
+
+    // mktime valida datas impossíveis?
+    // NÃO! Ajusta automaticamente → precisamos verificar.
+    time_t t = mktime(&tm);
+    if (t == -1) return false;
+
+    // reconstrói data e compara com a original
+    struct tm tm2 = *localtime(&t);
+    if (tm.tm_year != tm2.tm_year ||
+        tm.tm_mon  != tm2.tm_mon  ||
+        tm.tm_mday != tm2.tm_mday ||
+        tm.tm_hour != tm2.tm_hour ||
+        tm.tm_min  != tm2.tm_min)
+        return false;   // data inválida (ex: 2025-02-30)
+
+    *out = t;
+    return true;
+}
+
 
 //Valida a data (ano-mes-dia) e passa para a estrutura previamente definida para Data
 int valida_Data (char *string, Data *data) {
@@ -351,19 +411,24 @@ int valida_VOO (Voo voo, GHashTable *tabela) {
 
     //if CANCELLED, actual departure e actual arrival == "N/A"
     if (voo.status == 2) {
-        if (strcmp(voo.actual_departure, "N/A") != 0 || strcmp(voo.actual_arrival, "N/A") != 0) return 0;
-        if (!compara_dataH(voo.arrival, voo.departure)) return 0; //++
+	if (voo.actual_departure != -2 || voo.actual_arrival != -2) return 0;
+//        if (strcmp(voo.actual_departure, "N/A") != 0 || strcmp(voo.actual_arrival, "N/A") != 0) return 0;
+	if (voo.arrival <= voo.departure) return 0;
+//        if (!compara_dataH(voo.arrival, voo.departure)) return 0; //++
     }
     else {
 
         //arrival >= departure
-        if (!compara_dataH(voo.arrival, voo.departure) ||
-            !compara_dataH(voo.actual_arrival, voo.actual_departure)) return 0;
+ 	if (voo.arrival <= voo.departure || voo.actual_arrival <= voo.actual_departure) return 0;
+//       if (!compara_dataH(voo.arrival, voo.departure) ||
+  //          !compara_dataH(voo.actual_arrival, voo.actual_departure)) return 0;
 
         //if DELAYED, actual departure/arrival >= departure/arrival
         if (voo.status == 1) {
-                if (!compara_dataH(voo.actual_departure,voo.departure) ||
-                    !compara_dataH(voo.actual_arrival,voo.arrival)) return 0;
+	       if (voo.actual_departure <= voo.departure || voo.actual_arrival <= voo.arrival) return 0;
+ 
+//               if (!compara_dataH(voo.actual_departure,voo.departure) ||
+ //                   !compara_dataH(voo.actual_arrival,voo.arrival)) return 0;
         }
     }
 

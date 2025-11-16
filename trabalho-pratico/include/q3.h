@@ -11,14 +11,18 @@ typedef uint8_t Estado;
 #define ESTADO_DELAYED 1
 #define ESTADO_CANCELLED 2
 
+typedef struct contagens2 {
+    char *code;
+    int count;
+} Contagens2;
 
 //voo
 typedef struct voo {
     char *flight_id; //voo_id
-    char *departure; //partida_prevista
-    char *actual_departure; //partida_efetiva
-    char *arrival; //chegada prevista
-    char *actual_arrival; //chegada efetiva
+    time_t departure; //partida_prevista
+    time_t actual_departure; //partida_efetiva
+    time_t arrival; //chegada prevista
+    time_t actual_arrival; //chegada efetiva
     char *gate; //porta_embarque
     //char *status; --
     Estado status; //++ Estado

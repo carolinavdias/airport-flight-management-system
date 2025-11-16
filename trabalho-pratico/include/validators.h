@@ -34,10 +34,12 @@ bool v_is_status_valid(const char *s);         // Scheduled, Delayed, Cancelled
 
 
 
+bool v_parse_date2(const char *s, time_t *out);
 
 int valida_id_voo (char* string, char **voo_id);
 int qual_mes (int mes);
-int valida_DataH (char *string, char **datah); // com validação incluida
+time_t parseDate_(const char *dateStr) ;
+int valida_DataH (char *string, time_t *datah); // com validação incluida
 int valida_Data (char *string, Data *data);
 int valida_Estado (char *string, Estado *e);
 int valida_codigoIATA (char* string, char **codigo_IATA); // funcao traducao e validacao token para codigo_IATA_aeroporto
