@@ -27,10 +27,20 @@ int valida_id_voo (char* string, char **voo_id) {
 
 
 //Auxiliar de parseData/parseDatah
-int qual_mes (int mes) {
+int qual_mes2 (int mes) {
     if (mes == 2) return 3;
     if (mes == 4 || mes == 6 || mes == 9 || mes == 11) return 2;
     else return 1;
+}
+
+//dia com mes válido
+int qual_mes (int ano, int mes) {
+    if (mes == 2) {
+	if (ano % 4 == 0) return 29;
+	else return 28;
+    }
+    if (mes == 4 || mes == 6 || mes == 9 || mes == 11) return 30;
+    return 31;
 }
 
 /*
@@ -63,6 +73,59 @@ printf ("So data\n");
     return (time_t)-1;
 }
 
+time_t fast_convert(const DataH *d) {
+    struct tm tm = {0};
+    tm.tm_year = d->data.ano - 1900;
+    tm.tm_mon  = d->data.mes - 1;
+    tm.tm_mday = d->data.dia;
+    tm.tm_hour = d->horas.hora;
+    tm.tm_min  = d->horas.mins;
+    tm.tm_sec  = 0;
+
+    return mktime(&tm);
+}
+
+int valida_DataH2(const char *s, time_t *out)
+{
+    if (!s) return 0;
+
+    // formato: YYYY-MM-DD HH:MM  (16 chars)
+    if (strlen(s) != 16) return 0; //{printf("tamanho\n"); return 0;}
+
+    // valida caracteres fixos
+    if (s[4] != '-' || s[7] != '-' || s[10] != ' ' || s[13] != ':')
+        return 0; //{printf("sinais\n"); return 0;}
+
+    // extrai tudo manualmente (ULTRA-RÁPIDO)
+    DataH novo;
+
+    novo.data.ano  = (s[0]-'0')*1000 + (s[1]-'0')*100 + (s[2]-'0')*10 + (s[3]-'0');
+    novo.data.mes  = (s[5]-'0')*10   + (s[6]-'0');
+    novo.data.dia  = (s[8]-'0')*10   + (s[9]-'0');
+    novo.horas.hora= (s[11]-'0')*10  + (s[12]-'0');
+    novo.horas.mins= (s[14]-'0')*10  + (s[15]-'0');
+
+    // valida ano
+    if (novo.data.ano < 1000 || novo.data.ano > 2025) return 0; //{printf("ano\n"); return 0;}
+
+    // valida mês
+    if (novo.data.mes < 1 || novo.data.mes > 12) return 0; //{printf("mes\n"); return 0;}
+
+    // valida dias
+    int maxdias = qual_mes(novo.data.ano,novo.data.mes);
+
+    if (novo.data.dia < 1 || novo.data.dia > maxdias) {printf("Dias\n"); return 0;}
+
+    // valida hora e minuto
+    if (novo.horas.hora < 0 || novo.horas.hora > 23) return 0;
+    if (novo.horas.mins < 0 || novo.horas.mins > 59) return 0;
+
+    //printf("%d %d %d %d %d\n",novo.data.ano, novo.data.mes,novo.data.dia,novo.horas.hora,novo.horas.mins);
+   *out = fast_convert(&novo);
+    return 1;
+}
+
+
 //Valida a datah (ano-mes-dia horas:mins) e passa para a estrutura previamente definida para DataH
 int valida_DataH (char *string, time_t *datah) { // com validação incluida
     if (string == NULL || (strlen(string) != 16 && strlen(string) != 19)) return 0;
@@ -74,13 +137,13 @@ int valida_DataH (char *string, time_t *datah) { // com validação incluida
         int narg = sscanf (string, "%d-%d-%d %d:%d", &novo.data.ano, &novo.data.mes, &novo.data.dia, &novo.horas.hora, &novo.horas.mins);
         if (narg != 5 || (novo.data.ano < 0 || novo.data.ano > 2025) ||                                                                                             //validação ano
                          (novo.data.mes < 1 || novo.data.mes > 12 || (novo.data.ano == 2025 && novo.data.mes > 11)) ||                                              //validação mes
-                         (novo.data.dia < 0 || (qual_mes(novo.data.mes) == 1 && novo.data.dia > 31) || (qual_mes(novo.data.mes) == 2 && novo.data.dia > 30)) ||     //validação dia
-                         (qual_mes(novo.data.mes) == 3 && ((novo.data.ano % 4 == 0 && novo.data.dia > 29) || (novo.data.ano % 4 != 0 && novo.data.dia > 28))) ||   //validação especial (mês de Fevereiro)
+                         (novo.data.dia < 0 || (qual_mes2(novo.data.mes) == 1 && novo.data.dia > 31) || (qual_mes2(novo.data.mes) == 2 && novo.data.dia > 30)) ||     //validação dia
+                         (qual_mes2(novo.data.mes) == 3 && ((novo.data.ano % 4 == 0 && novo.data.dia > 29) || (novo.data.ano % 4 != 0 && novo.data.dia > 28))) ||   //validação especial (mês de Fevereiro)
                          (novo.horas.hora < 0 || novo.horas.hora > 23 || novo.horas.mins < 0 || novo.horas.mins > 59))
 
                 return 0;
-
-        *datah = parseDate_(string);
+	*datah = fast_convert(&novo);
+        // *datah = parseDate_(string);
         return 1;
 }
 
@@ -120,8 +183,8 @@ int valida_Data (char *string, Data *data) {
     int narg = sscanf (string, "%d-%d-%d", &novo.ano, &novo.mes, &novo.dia);
     if (narg != 3 || (novo.ano < 0 || novo.ano > 2025) ||                                                                                             //validação ano
                      (novo.mes < 1 || novo.mes > 12 || (novo.ano == 2025 && novo.mes > 11)) ||                                              //validação mes
-                     (novo.dia < 0 || (qual_mes(novo.mes) == 1 && novo.dia > 31) || (qual_mes(novo.mes) == 2 && novo.dia > 30)) ||     //validação dia
-                     (qual_mes(novo.mes) == 3 && ((novo.ano % 4 == 0 && novo.dia > 29) || (novo.ano % 4 != 0 && novo.dia > 28))))
+                     (novo.dia < 0 || (qual_mes2(novo.mes) == 1 && novo.dia > 31) || (qual_mes2(novo.mes) == 2 && novo.dia > 30)) ||     //validação dia
+                     (qual_mes2(novo.mes) == 3 && ((novo.ano % 4 == 0 && novo.dia > 29) || (novo.ano % 4 != 0 && novo.dia > 28))))
 
                 return 0;
 
@@ -164,7 +227,7 @@ int valida_codigoIATA (char* string, char **codigo_IATA) { // funcao traducao e 
 
 
 // Valida as coordenadas (latitude e longitude) e faz o atof (double)
-int valida_coordenadas (const char* string, int versao, double coordenada) {
+int valida_coordenadas (const char* string, int versao, double *coordenada) {
 //versao 1. latitude
 //versao 2. longitude
     if (string == NULL || strlen(string) == 0) {
@@ -182,11 +245,11 @@ int valida_coordenadas (const char* string, int versao, double coordenada) {
     if (contador > 1) return 0;
 
 
-    coordenada = atof(string);
+    *coordenada = atof(string);
     switch (versao) {
-        case 1: if (coordenada < -90 || coordenada > 90) return 0;
+        case 1: if (*coordenada < -90 || *coordenada > 90) return 0;
                 break;
-        case 2: if (coordenada < -180 || coordenada > 180) return 0;
+        case 2: if (*coordenada < -180 || *coordenada > 180) return 0;
                 break;
     }
 

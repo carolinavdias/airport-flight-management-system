@@ -245,7 +245,7 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
 
         if (opcao_inserida == 1) {
 
-	printf("Entrou no 1.\n");
+//	printf("Entrou no 1.\n");
 /*
                 FILE *ficheiro = fopen("dataset/flights.csv", "r");
                         if (ficheiro == NULL) {
@@ -289,14 +289,12 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                         gchar **campos = parse_csv_line(buffer); //faz o parsing da linha
 
                         //validação dos campos
-
                         if (!valida_id_voo(campos[0],&voo_atual->flight_id)) linha_valida = 0;
-			//printf("%s-%d\n", campos[0], linha_valida);
 
                         if (linha_valida) {
                                 if (!valida_DataH(campos[1],&voo_atual->departure)) linha_valida = 0;
-			//	printf("%s-%d\n", campos[1], linha_valida);
                         }
+			//printf("%d\n", linha_valida);
                         if (linha_valida) {
                                 if (strcmp(campos[2],"N/A") == 0) {
                                         e_maybe = 2;
@@ -412,9 +410,15 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                         if (linha_valida) aeroporto_atual->name = g_strdup(campos[1]);
                         if (linha_valida) aeroporto_atual->city = g_strdup(campos[2]);
                         if (linha_valida) aeroporto_atual->country = g_strdup(campos[3]);
-                        if (linha_valida) aeroporto_atual->latitude = atof(campos[4]);
-                        if (linha_valida) aeroporto_atual->longitude = atof(campos[5]);
-                        if (linha_valida) aeroporto_atual->code_ICAO = g_strdup(campos[6]);
+                        //if (linha_valida) aeroporto_atual->latitude = atof(campos[4]);
+                        //if (linha_valida) aeroporto_atual->longitude = atof(campos[5]);
+                        if (linha_valida) {
+				if (!valida_coordenadas(campos[4],1,&aeroporto_atual->latitude)) linha_valida = 0;
+			}
+			if (linha_valida) {
+				if (!valida_coordenadas(campos[5],2,&aeroporto_atual->longitude)) linha_valida = 0;
+			}
+			if (linha_valida) aeroporto_atual->code_ICAO = g_strdup(campos[6]);
                         if (linha_valida) {
                                 if (!valida_tipo_aer(campos[7],&aeroporto_atual->type)) linha_valida = 0;
                         }

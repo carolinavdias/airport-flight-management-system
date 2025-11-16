@@ -37,13 +37,16 @@ bool v_is_status_valid(const char *s);         // Scheduled, Delayed, Cancelled
 bool v_parse_date2(const char *s, time_t *out);
 
 int valida_id_voo (char* string, char **voo_id);
-int qual_mes (int mes);
+int qual_mes (int ano, int mes);
+int qual_mes2(int mes);
 time_t parseDate_(const char *dateStr) ;
+time_t fast_convert(const DataH *d);
+
 int valida_DataH (char *string, time_t *datah); // com validação incluida
 int valida_Data (char *string, Data *data);
 int valida_Estado (char *string, Estado *e);
 int valida_codigoIATA (char* string, char **codigo_IATA); // funcao traducao e validacao token para codigo_IATA_aeroporto
-int valida_coordenadas (const char* string, int versao, double coordenada);
+int valida_coordenadas (const char* string, int versao, double *coordenada);
 int valida_tipo_aer(const char *string, Tipo_aeroporto *t);
 int valida_year (char *string, int *year);
 int valida_id_passageiro(char* string, int *id_passageiro);
