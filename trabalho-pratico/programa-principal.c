@@ -9,6 +9,13 @@
 #include "errors.h"
 #include "read.h"
 
+void libertaAeronave(void *data);
+void libertaAeroporto(void *data);
+void libertaVoo(void *data);
+void libertaPassageiro(void *data);
+void libertaReserva(void *data);
+
+
 int main(int argc, char **argv) {
     if (argc != 3) {
         fprintf(stderr, "Uso: %s <dataset-fase-1> <ficheiro_comandos>\n", argv[0]);
@@ -26,11 +33,22 @@ int main(int argc, char **argv) {
 
     g_mkdir_with_parents("resultados", 0755);
 
-    GHashTable *tabelaAeronaves = g_hash_table_new(g_str_hash, g_str_equal);
-    GHashTable *tabelaVoos = g_hash_table_new(g_str_hash, g_str_equal);
-    GHashTable *tabelaAeroportos = g_hash_table_new(g_str_hash, g_str_equal);
-    GHashTable *tabelaPassageiros = g_hash_table_new(g_direct_hash, g_direct_equal);
-    GHashTable *tabelaReservas = g_hash_table_new(g_str_hash, g_str_equal);
+    // libertações automáticas das estruturas
+    GHashTable *tabelaAeronaves =
+        g_hash_table_new_full(g_str_hash, g_str_equal, g_free, libertaAeronave);
+
+    GHashTable *tabelaVoos =
+        g_hash_table_new_full(g_str_hash, g_str_equal, g_free, libertaVoo);
+
+    GHashTable *tabelaAeroportos =
+        g_hash_table_new_full(g_str_hash, g_str_equal, g_free, libertaAeroporto);
+
+    GHashTable *tabelaPassageiros =
+        g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, libertaPassageiro);
+
+    GHashTable *tabelaReservas =
+        g_hash_table_new_full(g_str_hash, g_str_equal, g_free, libertaReserva);
+
 
     le_tabela(3, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
     le_tabela(1, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);

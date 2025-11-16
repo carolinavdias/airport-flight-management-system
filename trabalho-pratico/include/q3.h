@@ -34,6 +34,8 @@ typedef struct voo {
 } Voo;
 
 
+
+
 //carrega voos de um ficheiro CSV para uma GHashTable
 GHashTable* carregarVoos(const char *caminhoFicheiro);
 

@@ -45,6 +45,7 @@ typedef struct aeroporto {
 } Aeroporto;*/
 
 
+
 //carrega aeroportos de um ficheiro CSV para uma GHashTable
 GHashTable* carregarAeroportos(const char *caminhoFicheiro);
 

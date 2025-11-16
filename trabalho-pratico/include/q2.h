@@ -14,6 +14,8 @@ typedef struct aeronave {
     float range;
 } Aeronave;
 
+
+
 //contagem
 typedef struct {
     char *identifier;

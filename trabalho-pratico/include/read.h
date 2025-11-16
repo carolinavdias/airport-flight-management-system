@@ -43,6 +43,8 @@ typedef struct passageiros {
 } Passageiros;
 
 
+
+
 typedef struct reservas {
     char *id_reserva;
     Voos_reservados reserva_lista; //lista
@@ -53,6 +55,7 @@ typedef struct reservas {
     bool prioridade; //priority boarding
     char *qr_code;
 } Reservas;
+
 
 
 //estrutura para hora (HH:MM)
