@@ -7,20 +7,6 @@
 #include "q1.h"
 #include "errors.h"
 
-//função auxiliar para libertar memória de um aeroporto
-//static -> recomendado para modularidade e encapsulamento (torna a função visível só dentro do ficheiro)
-//        -> utilizado para funções auxiliares
-void libertaAeroporto(void *data) {
-    Aeroporto *a = data;
-    if (!a) return;
-    g_free(a->code_IATA);
-    g_free(a->name);
-    g_free(a->city);
-    g_free(a->country);
-    //g_free(a->code_ICAO); //++
-    //g_free(a->type);
-    g_free(a);
-}
 
 // --------- validações auxiliares no mesmo estilo ---------
 
