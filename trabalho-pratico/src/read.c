@@ -100,6 +100,19 @@ FILE *abrir_ficheiro(Contexto *ctx, const char *nome_ficheiro, const char *modo)
     return ficheiro;
 }
 
+// Função auxiliar para libertar strings de Voo parcialmente preenchido
+static void limpar_voo_parcial(Voo *v) {
+    if (!v) return;
+    if (v->flight_id) g_free(v->flight_id);
+    if (v->gate) g_free(v->gate);
+    if (v->code_origin) g_free(v->code_origin);
+    if (v->code_destination) g_free(v->code_destination);
+    if (v->id_aircraft) g_free(v->id_aircraft);
+    if (v->airline) g_free(v->airline);
+    if (v->tracking_url) g_free(v->tracking_url);
+    free(v);
+}
+
 // =====================================================
 // FUNÇÃO PRINCIPAL DE LEITURA
 // =====================================================
@@ -125,7 +138,7 @@ int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable 
         int header_escrito = 0;
 
         while (fgets(buffer, sizeof(buffer), ficheiro) && no_header) {
-            Voo *voo_atual = malloc(sizeof(Voo));
+            Voo *voo_atual = calloc(1, sizeof(Voo));  // ← CALLOC INICIALIZA TUDO A 0/NULL!
             linhas_totais++;
             int linha_valida = 1;
             int e_maybe = -1;
@@ -177,7 +190,7 @@ int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable 
                     fputs(buffer, ficheiro_erros);
                     fputc('\n', ficheiro_erros);
                 }
-                free(voo_atual);
+                limpar_voo_parcial(voo_atual);  // ← LIBERTA STRINGS PARCIAIS!
             } else {
                 linhas_com_sucesso++;
                 g_hash_table_insert(tabela1, g_strdup(voo_atual->flight_id), voo_atual);
@@ -205,15 +218,7 @@ int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable 
         int header_escrito = 0;
 
         while (fgets(buffer, sizeof(buffer), ficheiro) && no_header) {
-            Aeroporto *aeroporto_atual = malloc(sizeof(Aeroporto));
-            aeroporto_atual->code_IATA = NULL;
-            aeroporto_atual->name = NULL;
-            aeroporto_atual->city = NULL;
-            aeroporto_atual->country = NULL;
-            aeroporto_atual->latitude = 0.0;
-            aeroporto_atual->longitude = 0.0;
-            aeroporto_atual->code_ICAO = NULL;
-            aeroporto_atual->type = TIPO_ERROR;
+            Aeroporto *aeroporto_atual = calloc(1, sizeof(Aeroporto));  // ← CALLOC!
 
             linhas_totais++;
             int linha_valida = 1;
@@ -245,7 +250,7 @@ int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable 
                     fputs(buffer, ficheiro_erros);
                     fputc('\n', ficheiro_erros);
                 }
-                free(aeroporto_atual);
+                libertaAeroporto(aeroporto_atual);  // ← USA FUNÇÃO DE LIBERTAÇÃO!
             } else {
                 linhas_com_sucesso++;
                 g_hash_table_insert(tabela2, g_strdup(aeroporto_atual->code_IATA), aeroporto_atual);
@@ -272,13 +277,7 @@ int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable 
         int header_escrito = 0;
 
         while (fgets(buffer, sizeof(buffer), ficheiro) && no_header) {
-            Aeronave *aeronave_atual = malloc(sizeof(Aeronave));
-            aeronave_atual->identifier = NULL;
-            aeronave_atual->manufacturer = NULL;
-            aeronave_atual->model = NULL;
-            aeronave_atual->year = -1;
-            aeronave_atual->capacity = -1;
-            aeronave_atual->range = -1;
+            Aeronave *aeronave_atual = calloc(1, sizeof(Aeronave));  // ← CALLOC!
 
             linhas_totais++;
             int linha_valida = 1;
@@ -308,7 +307,7 @@ int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable 
                     fputs(buffer, ficheiro_erros);
                     fputc('\n', ficheiro_erros);
                 }
-                free(aeronave_atual);
+                libertaAeronave(aeronave_atual);  // ← USA FUNÇÃO DE LIBERTAÇÃO!
             } else {
                 linhas_com_sucesso++;
                 g_hash_table_insert(tabela3, g_strdup(aeronave_atual->identifier), aeronave_atual);
@@ -336,15 +335,7 @@ int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable 
         int header_escrito = 0;
 
         while (fgets(buffer, sizeof(buffer), ficheiro) && no_header) {
-            Passageiros *passageiro_atual = malloc(sizeof(Passageiros));
-            passageiro_atual->id_passageiro = -1;
-            passageiro_atual->primeiro_nome = NULL;
-            passageiro_atual->ultimo_nome = NULL;
-            passageiro_atual->nacionalidade = NULL;
-            passageiro_atual->email_passageiro = NULL;
-            passageiro_atual->telefone_passageiro = NULL;
-            passageiro_atual->morada_passageiro = NULL;
-            passageiro_atual->fotografia_passageiro = NULL;
+            Passageiros *passageiro_atual = calloc(1, sizeof(Passageiros));  // ← CALLOC!
 
             linhas_totais++;
             int linha_valida = 1;
@@ -378,7 +369,7 @@ int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable 
                     fputs(buffer, ficheiro_erros);
                     fputc('\n', ficheiro_erros);
                 }
-                free(passageiro_atual);
+                libertaPassageiro(passageiro_atual);  // ← USA FUNÇÃO DE LIBERTAÇÃO!
             } else {
                 linhas_com_sucesso++;
                 g_hash_table_insert(tabela4, GINT_TO_POINTER(passageiro_atual->id_passageiro), passageiro_atual);
@@ -406,11 +397,7 @@ int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable 
         int header_escrito = 0;
 
         while (fgets(buffer, sizeof(buffer), ficheiro) && no_header) {
-            Reservas *reserva_atual = malloc(sizeof(Reservas));
-            reserva_atual->id_reserva = NULL;
-            reserva_atual->lugar_reservado = NULL;
-            reserva_atual->preco_reserva = -1.0;
-            reserva_atual->qr_code = NULL;
+            Reservas *reserva_atual = calloc(1, sizeof(Reservas));  // ← CALLOC!
 
             linhas_totais++;
             int linha_valida = 1;
@@ -443,7 +430,7 @@ int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable 
                     fputs(buffer, ficheiro_erros);
                     fputc('\n', ficheiro_erros);
                 }
-                free(reserva_atual);
+                libertaReserva(reserva_atual);  // ← USA FUNÇÃO DE LIBERTAÇÃO!
             } else {
                 linhas_com_sucesso++;
                 g_hash_table_insert(tabela5, g_strdup(reserva_atual->id_reserva), reserva_atual);
