@@ -34,3 +34,5 @@ __pycache__/
 #diretórios duplicados acidentalmente criados
 trabalho-pratico/trabalho-pratico/
 programa-main/
+dataset/
+*.csv
