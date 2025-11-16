@@ -1,46 +1,46 @@
-# 1. Atualizar .gitignore
 cat > .gitignore << 'EOF'
 # Binários e objetos
-bin/
 obj/
 *.o
 programa-principal
 programa-testes
 
-# Resultados gerados
+# Resultados (gerados na execução)
 resultados/
 resultados-esperados/
 
-# Datasets (TODAS as variações)
+# Datasets (NUNCA no Git!)
 dataset/
 datasets/
-dataset-*/
-data-*/
+dataset*/
+data*/
 *.csv
 !resultados/*.csv
 
-# Ficheiros temporários
+# Temporários
 *.swp
 *.log
 *.tmp
 *.zip
 *_errors.csv
+*.sh
+TESTAR_LOCAL.sh
+input_teste.txt
+teste.*
 
 # Backups
 backup*/
 *.backup
 EOF
 
-# 2. Remover dataset do Git (se já estava comitado)
-git rm -r --cached dataset/ 2>/dev/null || true
-git rm --cached *.csv 2>/dev/null || true
-
-# 3. Remover ficheiros de erro da raiz
-rm -f reservations_errors.csv flights_errors.csv
-
-# 4. Verificar que funcionou
-git status
+# 4. Verificar estrutura
+tree -L 2 -I 'obj|resultados*|dataset*'
 
 # Deve mostrar:
-# deleted: dataset/...
-# deleted: *.csv
+# .
+# ├── include/
+# ├── src/
+# ├── programa-principal.c
+# ├── programa-testes.c
+# ├── Makefile
+# └── .gitignore
