@@ -19,10 +19,10 @@ typedef struct contagens2 {
 //voo
 typedef struct voo {
     char *flight_id; //voo_id
-    time_t departure; //partida_prevista
-    time_t actual_departure; //partida_efetiva
-    time_t arrival; //chegada prevista
-    time_t actual_arrival; //chegada efetiva
+    int departure; //partida_prevista
+    int actual_departure; //partida_efetiva
+    int arrival; //chegada prevista
+    int actual_arrival; //chegada efetiva
     char *gate; //porta_embarque
     //char *status; --
     Estado status; //++ Estado

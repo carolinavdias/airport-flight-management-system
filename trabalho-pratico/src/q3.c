@@ -720,10 +720,16 @@ void query3(const char *data_inicio, const char *data_fim,
         return;
     }
 
-    time_t t_inicio = parseDate_(data_inicio);
-    time_t t_fim    = parseDate_(data_fim);
+    int t_inicio;
+    int inicio_valido = valida_DataH(data_inicio,&t_inicio);
+    int t_fim;
+    int fim_valido = valida_DataH(data_fim,&t_fim);
+//    time_t t_inicio = parseDate_(data_inicio);
+//    time_t t_fim    = parseDate_(data_fim);
 
-    if (t_inicio == (time_t)-1 || t_fim == (time_t)-1) {
+    if (!inicio_valido || !fim_valido) {
+
+//    if (t_inicio == (time_t)-1 || t_fim == (time_t)-1) {
         fprintf(out, "\n");
         return;
     }
@@ -749,8 +755,10 @@ void query3(const char *data_inicio, const char *data_fim,
         if (v->status == 2) continue;       // Cancelado não conta
         if (!v->actual_departure) continue; // Safety
 
-        time_t t_partida = v->actual_departure;
-        if (t_partida == (time_t)-1) continue;
+        int t_partida = v->actual_departure;
+
+        //time_t t_partida = v->actual_departure;
+        //if (t_partida == (time_t)-1) continue;
 
         // dentro do intervalo?
         if (t_partida < t_inicio || t_partida > t_fim)

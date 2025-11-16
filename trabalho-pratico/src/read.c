@@ -357,6 +357,7 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
                                 g_ptr_array_add(todas_as_linhas,campos);
                                 g_hash_table_insert(tabela1, g_strdup(voo_atual->flight_id), voo_atual);
                         }
+			//libertaVoo(voo_atual);
                 }
                 printf ("Foram inseridas com sucesso na tabela dos voos %d linhas de %d.\n", linhas_com_sucesso, linhas_totais);
 

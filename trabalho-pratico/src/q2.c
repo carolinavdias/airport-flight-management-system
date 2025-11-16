@@ -210,7 +210,7 @@ int comparaContagens(const Contagem *a, const Contagem *b) {
 // Top N aeronaves com mais voos (não cancelados),
 // opcionalmente filtradas por fabricante.
 // -----------------------------------------------------
-void query2(const char *linhaComando,
+void query25(const char *linhaComando,
             GHashTable *tabelaAeronaves,
             GHashTable *tabelaVoos,
             FILE *out)
@@ -334,5 +334,146 @@ void query2(const char *linhaComando,
         g_free(c);
     }
     g_list_free(resultado);
+    g_hash_table_destroy(contagens);
+}
+
+
+
+void query2(const char *linhaComando,
+            GHashTable *tabelaAeronaves,
+            GHashTable *tabelaVoos,
+            FILE *out)
+{
+    int N;
+    char fabricante_raw[200] = "";
+
+    // Lê N + fabricante opcional
+    int arg = sscanf(linhaComando, "%d %[^\n]", &N, fabricante_raw);
+    if (arg < 1 || N <= 0) {
+        fprintf(out, "\n");
+        return;
+    }
+
+    // limpar espaços (apenas se veio fabricante)
+    if (arg == 2) trim(fabricante_raw);
+    else fabricante_raw[0] = '\0';
+
+    int usar_filtro = (fabricante_raw[0] != '\0');
+
+    // converter só UMA VEZ para lowercase
+    gchar *fabricante = usar_filtro ?
+        g_ascii_strdown(fabricante_raw, -1) : NULL;
+
+    // ===============================
+    // PASSO 1 — contar voos por aeronave
+    // ===============================
+
+    GHashTable *contagens = g_hash_table_new(g_str_hash, g_str_equal);
+
+    GHashTableIter itv;
+    gpointer keyv, valv;
+
+    g_hash_table_iter_init(&itv, tabelaVoos);
+    while (g_hash_table_iter_next(&itv, &keyv, &valv)) {
+
+        Voo *v = valv;
+
+        // ignorar cancelados
+        if (v->status == 2) continue;
+
+        // ignorar voos sem aeronave
+        if (!v->id_aircraft || v->id_aircraft[0] == '\0') continue;
+
+        gpointer old = g_hash_table_lookup(contagens, v->id_aircraft);
+        if (!old) {
+            g_hash_table_insert(contagens,
+                                (char*)v->id_aircraft,  // sem strdup
+                                GINT_TO_POINTER(1));
+        } else {
+            int novo = GPOINTER_TO_INT(old) + 1;
+            g_hash_table_insert(contagens,
+                                (char*)v->id_aircraft,
+                                GINT_TO_POINTER(novo));
+        }
+    }
+
+
+    // ===============================
+    // PASSO 2 — criar lista de Contagem
+    // ===============================
+
+    GList *resultado = NULL;
+
+    GHashTableIter ita;
+    gpointer keya, vala;
+
+    g_hash_table_iter_init(&ita, tabelaAeronaves);
+    while (g_hash_table_iter_next(&ita, &keya, &vala)) {
+
+        Aeronave *a = vala;
+
+        // aplicar filtro (agora sem alocações)
+        if (usar_filtro) {
+            const char *s1 = a->manufacturer;
+            const char *s2 = fabricante;
+            int ok = 1;
+
+            for (; *s1 && *s2; s1++, s2++) {
+                if (g_ascii_tolower(*s1) != *s2) {
+                    ok = 0;
+                    break;
+                }
+            }
+            if (!(*s1 == '\0' && *s2 == '\0')) ok = 0;
+
+            if (!ok) continue;
+        }
+
+        int count = 0;
+        gpointer val = g_hash_table_lookup(contagens, a->identifier);
+        if (val) count = GPOINTER_TO_INT(val);
+
+        Contagem *c = g_new(Contagem, 1);
+        c->identifier   = g_strdup(a->identifier);
+        c->manufacturer = g_strdup(a->manufacturer);
+        c->model        = g_strdup(a->model);
+        c->count        = count;
+
+        resultado = g_list_prepend(resultado, c);
+    }
+
+    if (fabricante) g_free(fabricante);
+
+    // ===============================
+    // PASSO 3 — ordenar lista
+    // ===============================
+    resultado = g_list_sort(resultado,
+        (GCompareFunc) comparaContagens);
+
+    // ===============================
+    // PASSO 4 — imprimir top N
+    // ===============================
+    int printed = 0;
+    for (GList *l = resultado; l != NULL && printed < N; l = l->next, printed++) {
+        Contagem *c = l->data;
+        fprintf(out, "%s,%s,%s,%d\n",
+                c->identifier, c->manufacturer, c->model, c->count);
+    }
+
+    if (printed == 0)
+        fprintf(out, "\n");
+
+    // ===============================
+    // PASSO 5 — libertar memória
+    // ===============================
+    for (GList *l = resultado; l != NULL; l = l->next) {
+        Contagem *c = l->data;
+        g_free(c->identifier);
+        g_free(c->manufacturer);
+        g_free(c->model);
+        g_free(c);
+    }
+    g_list_free(resultado);
+
     g_hash_table_destroy(contagens);
 }

@@ -8,9 +8,27 @@
 
 //VOOS -> VALIDAÇÃO SINTÁTICA
 
+int valida_id_voo(char *s, char **voo_id)
+{
+    if (
+        s[0] >= 'A' && s[0] <= 'Z' &&
+        s[1] >= 'A' && s[1] <= 'Z' &&
+        s[2] >= '0' && s[2] <= '9' &&
+        s[3] >= '0' && s[3] <= '9' &&
+        s[4] >= '0' && s[4] <= '9' &&
+        s[5] >= '0' && s[5] <= '9' &&
+        s[6] >= '0' && s[6] <= '9' &&
+        (s[7] == '\0' || s[7] == '\n' || s[7] == '\r')
+    ) {
+    *voo_id = g_strdup(s);
+    return 1;
+    }
+
+    return 0;
+}
 
 //Valida o id do voo
-int valida_id_voo (char* string, char **voo_id) {
+int valida_id_voo2 (char* string, char **voo_id) {
     if (string == NULL || strlen(string) != 7) return 0;
     else {
         for (int i = 0; i < 7; i++) {
@@ -126,8 +144,119 @@ int valida_DataH2(const char *s, time_t *out)
 }
 
 
+// Retorna 1 se válido; 0 se inválido.
+// out = inteiro comparável crescente YYYYMMDDHHMM
+
+int valida_DataH(const char *s, int *out)
+{
+    if (!s) return 0;
+
+    // verificar que existem pelo menos 16 chars válidos
+    if (!(s[0] && s[1] && s[2] && s[3] &&
+          s[4] && s[5] && s[6] && s[7] &&
+          s[8] && s[9] &&
+          s[10] && s[11] && s[12] && s[13] &&
+          s[14] && s[15]))
+        return 0;
+
+    // formato fixo
+    if (s[4] != '-' || s[7] != '-' || s[10] != ' ' || s[13] != ':')
+        return 0;
+
+    // verificar que são dígitos
+    if (!(
+        s[0]>='0' && s[0]<='9' && s[1]>='0' && s[1]<='9' &&
+        s[2]>='0' && s[2]<='9' && s[3]>='0' && s[3]<='9' &&
+        s[5]>='0' && s[5]<='9' && s[6]>='0' && s[6]<='9' &&
+        s[8]>='0' && s[8]<='9' && s[9]>='0' && s[9]<='9' &&
+        s[11]>='0' && s[11]<='9' && s[12]>='0' && s[12]<='9' &&
+        s[14]>='0' && s[14]<='9' && s[15]>='0' && s[15]<='9'
+    )) return 0;
+
+    // extrair números
+    int ano  = (s[0]-'0')*1000 + (s[1]-'0')*100 + (s[2]-'0')*10 + (s[3]-'0');
+    int mes  = (s[5]-'0')*10   + (s[6]-'0');
+    int dia  = (s[8]-'0')*10   + (s[9]-'0');
+    int hora = (s[11]-'0')*10  + (s[12]-'0');
+    int min  = (s[14]-'0')*10  + (s[15]-'0');
+
+    // validar ranges
+    if (ano < 0 || ano > 2025) return 0;
+    if (mes < 1 || mes > 12) return 0;
+
+    static const int mdias[13] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
+    int maxd = mdias[mes];
+    if (mes == 2 && (ano % 4 == 0)) maxd = 29;
+
+    if (dia < 1 || dia > maxd) return 0;
+    if (hora < 0 || hora > 23) return 0;
+    if (min < 0 || min > 59) return 0;
+
+    // construir valor inteiro ordenável
+    *out = ano * 100000000 +
+           mes *   1000000 +
+           dia *     10000 +
+           hora *       100 +
+           min;
+
+    return 1;
+}
+
+//BOA FUNCIONANDO
+int valida_DataH9(const char *s, time_t *out)
+{
+    if (!s) return 0;
+
+    // Formato obrigatório: "YYYY-MM-DD HH:MM" (16 chars)
+    // Verificação SEM strlen (muito mais rápido)
+    if (!(s[0] && s[1] && s[2] && s[3] &&
+          s[4]=='-' &&
+          s[5] && s[6] &&
+          s[7]=='-' &&
+          s[8] && s[9] &&
+          s[10]==' ' &&
+          s[11] && s[12] &&
+          s[13]==':' &&
+          s[14] && s[15] &&
+          (s[16]=='\0' || s[16]=='\n' || s[16]=='\r')))
+        return 0;
+
+    // Extrair valores manualmente (SUPER RÁPIDO)
+    int ano  = (s[0]-'0')*1000 + (s[1]-'0')*100 + (s[2]-'0')*10 + (s[3]-'0');
+    int mes  = (s[5]-'0')*10   + (s[6]-'0');
+    int dia  = (s[8]-'0')*10   + (s[9]-'0');
+    int hora = (s[11]-'0')*10  + (s[12]-'0');
+    int min  = (s[14]-'0')*10  + (s[15]-'0');
+
+    // Validações rápidas
+    if (ano < 0 || ano > 2025) return 0;
+    if (mes < 1 || mes > 12) return 0;
+
+    // Dias no mês (a tua função qual_mes faz isto, mas aqui é mais rápido)
+    int dias_mes[13] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
+    int maxdia = dias_mes[mes];
+    if (mes == 2 && ano % 4 == 0) maxdia = 29; // ano bissexto
+
+    if (dia < 1 || dia > maxdia) return 0;
+    if (hora < 0 || hora > 23) return 0;
+    if (min < 0 || min > 59) return 0;
+
+    // Construir struct tm
+    struct tm tm = {0};
+    tm.tm_year = ano - 1900;
+    tm.tm_mon  = mes - 1;
+    tm.tm_mday = dia;
+    tm.tm_hour = hora;
+    tm.tm_min  = min;
+    tm.tm_sec  = 0;
+
+    // Converter p/ time_t (inevitável, mas ok)
+    *out = mktime(&tm);
+    return (*out != (time_t)-1);
+}
+
 //Valida a datah (ano-mes-dia horas:mins) e passa para a estrutura previamente definida para DataH
-int valida_DataH (char *string, time_t *datah) { // com validação incluida
+int valida_DataH3 (char *string, time_t *datah) { // com validação incluida
     if (string == NULL || (strlen(string) != 16 && strlen(string) != 19)) return 0;
 	if (string[4] != '-' || string[7] != '-' || string[10] != ' ' || string[13] != ':') return 0;
         //for (int i = 0; i < 16; i++) {
@@ -192,9 +321,27 @@ int valida_Data (char *string, Data *data) {
     return 1;
 }
 
+int valida_Estado(const char *s, Estado *e)
+{
+    if (!s) return 0;
+
+    if (s[0] == 'O' && memcmp(s, "On Time", 7) == 0 && s[7] == '\0') {
+        *e = ESTADO_ON_TIME; return 1;
+    }
+
+    if (s[0] == 'D' && memcmp(s, "Delayed", 7) == 0 && s[7] == '\0') {
+        *e = ESTADO_DELAYED; return 1;
+    }
+
+    if (s[0] == 'C' && memcmp(s, "Cancelled", 9) == 0 && s[9] == '\0') {
+        *e = ESTADO_CANCELLED; return 1;
+    }
+
+    return 0;
+}
 
 //Valida o estado (voo) e passa para a estrutura previamente definida para estado
-int valida_Estado (char *string, Estado *e) {
+int valida_Estado2 (char *string, Estado *e) {
     if (string == NULL || strlen(string) == 0) return 0;
     if (strcmp(string, "On Time") == 0) *e = ESTADO_ON_TIME;
     else if (strcmp(string, "Delayed") == 0) *e = ESTADO_DELAYED;
@@ -213,16 +360,31 @@ int valida_Estado (char *string, Estado *e) {
 //Valida o codigoIATA e faz o strdup
 int valida_codigoIATA (char* string, char **codigo_IATA) { // funcao traducao e validacao token para codigo_IATA_aeroporto
     //char* codigo_IATA; //codigo final
-    if (string == NULL || strlen(string) != 3) return 0;
-    for (int i = 0; i < 3; i++) {
-        if (string[i] < 'A' || string[i] > 'Z') return 0;
-    }
+
+    //if (string == NULL || strlen(string) != 3) return 0;
+    //for (int i = 0; i < 3; i++) {
+      //  if (string[i] < 'A' || string[i] > 'Z') return 0;
+    //}
 
     //Verificação concluida
 
-    *codigo_IATA = g_strdup(string);
+    // *codigo_IATA = g_strdup(string);
 
-    return 1; //codigo_IATA valido
+    //return 1; //codigo_IATA valido
+
+
+    if (string[0] >= 'A' && string[0] <= 'Z' &&
+	string[1] >= 'A' && string[1] <= 'Z' &&
+	string[2] >= 'A' && string[2] <= 'Z' &&
+	string[3] == '\0') {
+	*codigo_IATA = g_strdup(string);
+	return 1;
+    }
+
+    return 0;
+
+
+
 }
 
 
