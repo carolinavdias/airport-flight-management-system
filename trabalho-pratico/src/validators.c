@@ -83,7 +83,6 @@ time_t parseDate_(const char *dateStr) {
     if (strptime(dateStr, "%Y-%m-%d %H:%M", &tm) != NULL)
         return mktime(&tm);
 
-printf ("So data\n");
     if (strptime(dateStr, "%Y-%m-%d", &tm) != NULL)
         return mktime(&tm);
 
@@ -108,11 +107,11 @@ int valida_DataH2(const char *s, time_t *out)
     if (!s) return 0;
 
     // formato: YYYY-MM-DD HH:MM  (16 chars)
-    if (strlen(s) != 16) return 0; //{printf("tamanho\n"); return 0;}
+    if (strlen(s) != 16) return 0;
 
     // valida caracteres fixos
     if (s[4] != '-' || s[7] != '-' || s[10] != ' ' || s[13] != ':')
-        return 0; //{printf("sinais\n"); return 0;}
+        return 0;
 
     // extrai tudo manualmente (ULTRA-RÁPIDO)
     DataH novo;
@@ -124,21 +123,20 @@ int valida_DataH2(const char *s, time_t *out)
     novo.horas.mins= (s[14]-'0')*10  + (s[15]-'0');
 
     // valida ano
-    if (novo.data.ano < 1000 || novo.data.ano > 2025) return 0; //{printf("ano\n"); return 0;}
+    if (novo.data.ano < 1000 || novo.data.ano > 2025) return 0;
 
     // valida mês
-    if (novo.data.mes < 1 || novo.data.mes > 12) return 0; //{printf("mes\n"); return 0;}
+    if (novo.data.mes < 1 || novo.data.mes > 12) return 0;
 
     // valida dias
     int maxdias = qual_mes(novo.data.ano,novo.data.mes);
 
-    if (novo.data.dia < 1 || novo.data.dia > maxdias) {printf("Dias\n"); return 0;}
+    if (novo.data.dia < 1 || novo.data.dia > maxdias) return 0;
 
     // valida hora e minuto
     if (novo.horas.hora < 0 || novo.horas.hora > 23) return 0;
     if (novo.horas.mins < 0 || novo.horas.mins > 59) return 0;
 
-    //printf("%d %d %d %d %d\n",novo.data.ano, novo.data.mes,novo.data.dia,novo.horas.hora,novo.horas.mins);
    *out = fast_convert(&novo);
     return 1;
 }
@@ -259,8 +257,6 @@ int valida_DataH9(const char *s, time_t *out)
 int valida_DataH3 (char *string, time_t *datah) { // com validação incluida
     if (string == NULL || (strlen(string) != 16 && strlen(string) != 19)) return 0;
 	if (string[4] != '-' || string[7] != '-' || string[10] != ' ' || string[13] != ':') return 0;
-        //for (int i = 0; i < 16; i++) {
-		//if (!isdigit(string[i]) && (i != 
 
         DataH novo;
         int narg = sscanf (string, "%d-%d-%d %d:%d", &novo.data.ano, &novo.data.mes, &novo.data.dia, &novo.horas.hora, &novo.horas.mins);
@@ -272,7 +268,6 @@ int valida_DataH3 (char *string, time_t *datah) { // com validação incluida
 
                 return 0;
 	*datah = fast_convert(&novo);
-        // *datah = parseDate_(string);
         return 1;
 }
 
@@ -284,7 +279,7 @@ bool v_parse_date2(const char *s, time_t *out){
     memset(&tm, 0, sizeof(tm));
 
     // tenta "YYYY-MM-DD HH:MM"
-    char *end = strptime(s, "%Y-%m-%d %H:%M", &tm); //+
+    char *end = strptime(s, "%Y-%m-%d %H:%M", &tm);
     if(!end || *end != '\0') return false;
 
     // mktime valida datas impossíveis?
@@ -358,21 +353,7 @@ int valida_Estado2 (char *string, Estado *e) {
 
 
 //Valida o codigoIATA e faz o strdup
-int valida_codigoIATA (char* string, char **codigo_IATA) { // funcao traducao e validacao token para codigo_IATA_aeroporto
-    //char* codigo_IATA; //codigo final
-
-    //if (string == NULL || strlen(string) != 3) return 0;
-    //for (int i = 0; i < 3; i++) {
-      //  if (string[i] < 'A' || string[i] > 'Z') return 0;
-    //}
-
-    //Verificação concluida
-
-    // *codigo_IATA = g_strdup(string);
-
-    //return 1; //codigo_IATA valido
-
-
+int valida_codigoIATA (char* string, char **codigo_IATA) {
     if (string[0] >= 'A' && string[0] <= 'Z' &&
 	string[1] >= 'A' && string[1] <= 'Z' &&
 	string[2] >= 'A' && string[2] <= 'Z' &&
@@ -382,9 +363,6 @@ int valida_codigoIATA (char* string, char **codigo_IATA) { // funcao traducao e 
     }
 
     return 0;
-
-
-
 }
 
 
@@ -500,7 +478,7 @@ int valida_email(char *string, char **email) {
      int mark = i;
      //verificar username
      for (; string[i] != '@' && string[i] != '\0'; i++) {
-        if (!(islower(string[i]) || isdigit(string[i]) || string[i] == '.')) return 0; //estranho
+        if (!(islower(string[i]) || isdigit(string[i]) || string[i] == '.')) return 0;
      }
      if (string[i] == '\0') return 0; // nada a seguir ao username
      int j = i + 1;
@@ -541,11 +519,10 @@ int valida_id_reserva (char* string, char **id_reserva) {
 
 
 //Valida a lista dos voos reservados, passa para o formato de uma lista e atribui a "Reserva"
-int valida_voos_reservados(char *string, Voos_reservados *lista) { //char ***lista
+int valida_voos_reservados(char *string, Voos_reservados *lista) {
     if (string == NULL || strlen(string) < 3) return 0; //[] invalido
     int len = strlen(string);
     if (string[0] != '[' || string[len-1] != ']') return 0; //verifica se tem os parenteses retos no inicio e no final
-    //Voos_reservados novo;
 
     //Limpar a string
     char *string_voos = g_strdup(string + 1); // pula '['
@@ -569,7 +546,6 @@ int valida_voos_reservados(char *string, Voos_reservados *lista) { //char ***lis
         while (end >= token && (*end == ' ' || *end == '\'')) *end-- = '\0';
 
 	if (!valida_id_voo(token,&novo.lista_voos_reservados[i])) return 0; //flight id invalido
-//        novo.lista_voos_reservados[i] = g_strdup(token);
     }
 
     *lista = novo;
@@ -620,7 +596,6 @@ int compara_dataH (char *datah1, char *datah2) { //se 1 for não anterior a 2, e
     }
 
     return 0;
-//Usar constantes para evitar tantos acessos continuos ao mesmo valor na memoria??
 }
 
 
@@ -632,28 +607,22 @@ int valida_VOO (Voo voo, GHashTable *tabela) {
 
     //cada voo tem uma aeronave correspondente EXISTENTE
     char *aeronave_chave = voo.id_aircraft;
-    if (!g_hash_table_contains(tabela,aeronave_chave)) return 0; //tabela3
+    if (!g_hash_table_contains(tabela,aeronave_chave)) return 0;
 
     //if CANCELLED, actual departure e actual arrival == "N/A"
     if (voo.status == 2) {
-	if (voo.actual_departure != -2 || voo.actual_arrival != -2) return 0;
-//        if (strcmp(voo.actual_departure, "N/A") != 0 || strcmp(voo.actual_arrival, "N/A") != 0) return 0;
-	if (voo.arrival <= voo.departure) return 0;
-//        if (!compara_dataH(voo.arrival, voo.departure)) return 0; //++
+        // CANCELLED: actual deve ser N/A (-2)
+        if (voo.actual_departure != -2 || voo.actual_arrival != -2) return 0;
+        // arrival deve ser DEPOIS de departure (pode ser igual)
+        if (voo.arrival < voo.departure) return 0;
     }
     else {
+        // arrival DEPOIS de departure (não pode ser igual)
+        if (voo.arrival < voo.actual_departure || voo.actual_arrival < voo.actual_departure) return 0;
 
-        //arrival >= departure
- 	if (voo.arrival <= voo.departure || voo.actual_arrival <= voo.actual_departure) return 0;
-//       if (!compara_dataH(voo.arrival, voo.departure) ||
-  //          !compara_dataH(voo.actual_arrival, voo.actual_departure)) return 0;
-
-        //if DELAYED, actual departure/arrival >= departure/arrival
+        //if DELAYED, actual departure/arrival >= departure/arrival (pode ser igual!)
         if (voo.status == 1) {
-	       if (voo.actual_departure <= voo.departure || voo.actual_arrival <= voo.arrival) return 0;
- 
-//               if (!compara_dataH(voo.actual_departure,voo.departure) ||
- //                   !compara_dataH(voo.actual_arrival,voo.arrival)) return 0;
+            if (voo.actual_departure < voo.departure || voo.actual_arrival < voo.arrival) return 0;
         }
     }
 
@@ -666,14 +635,11 @@ int valida_VOO (Voo voo, GHashTable *tabela) {
 
 int valida_RESERVA (Reservas reserva, GHashTable *tabela_v, GHashTable *tabela_p) {
     //flights id -> lista de 1 ou 2 voos EXSITENTES
-//    int length_vr = sizeof (reserva.lista_voos_reservados) / sizeof (reserva.voos_reservados[0]);
     int length_vr = reserva.reserva_lista.n_voos;
     if (length_vr < 1 || length_vr > 2) return 0;
     else {
         for (int i = 0; i < length_vr; i++) {
                 char *voo_chave = reserva.reserva_lista.lista_voos_reservados[i];
-		//printf("%s\n", reserva.reserva_lista.lista_voos_reservados[i]);
-		//printf("%s\n", voo_chave);
                 if (!g_hash_table_contains(tabela_v, voo_chave)) return 0;
         }
     }
@@ -686,7 +652,6 @@ int valida_RESERVA (Reservas reserva, GHashTable *tabela_v, GHashTable *tabela_p
     if (length_vr == 2) {
         Voo *voo1 = g_hash_table_lookup(tabela_v,reserva.reserva_lista.lista_voos_reservados[0]);
         Voo *voo2 = g_hash_table_lookup(tabela_v,reserva.reserva_lista.lista_voos_reservados[1]);
-	//if g_strcmp???
         if (strcmp(voo1->code_destination, voo2->code_origin) != 0) return 0;
     }
 
@@ -749,7 +714,7 @@ bool v_is_document_number(const char *s){
 }
 
 bool v_is_email(const char *s){
-    if(!s) return false;                  // validação simples (suficiente para Fase 1)
+    if(!s) return false;
     const char *at = strchr(s,'@'); if(!at || at==s) return false;
     const char *dot = strrchr(at+1,'.'); if(!dot || dot==at+1 || dot[1]=='\0') return false;
     return true;
