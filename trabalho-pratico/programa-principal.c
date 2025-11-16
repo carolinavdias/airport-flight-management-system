@@ -28,10 +28,15 @@ int main(int argc, char **argv) {
     gchar *caminhoAeroportos = g_build_filename(ctx.dataset_dir, "airports.csv", NULL);
     gchar *caminhoAeronaves  = g_build_filename(ctx.dataset_dir, "aircrafts.csv", NULL);
     gchar *caminhoVoos       = g_build_filename(ctx.dataset_dir, "flights.csv", NULL);
+    gchar *caminhoPassageiros= g_build_filename(ctx.dataset_dir, "passengers.csv", NULL);
+    gchar *caminhoReservas   = g_build_filename(ctx.dataset_dir, "reservations.csv", NULL);
+
+    int le_1 = 0, le_2 = 0, le_3 = 0, le_4 = 0, le_5 = 0;
 
     errors_begin();
 
     g_mkdir_with_parents("resultados", 0755);
+
 
     // libertações automáticas das estruturas
     GHashTable *tabelaAeronaves =
@@ -50,17 +55,53 @@ int main(int argc, char **argv) {
         g_hash_table_new_full(g_str_hash, g_str_equal, g_free, libertaReserva);
 
 
-    le_tabela(3, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
-    le_tabela(1, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
-    le_tabela(2, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
-    le_tabela(4, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
-    le_tabela(5, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+    if (!g_file_test(caminhoAeronaves, G_FILE_TEST_EXISTS)) {
+    	fprintf(stderr, "Aviso: aircrafts.csv em falta.\n");
+    } else {
+    	    le_3 = le_tabela(3, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+    }
+
+    if (!g_file_test(caminhoAeronaves, G_FILE_TEST_EXISTS) ||
+	!g_file_test(caminhoVoos, G_FILE_TEST_EXISTS)) {
+    	fprintf(stderr, "Aviso: flights.csv ou aircrafts.csv em falta.\n");
+    } else {
+    	le_1 = le_tabela(1, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+        printf ("%d\n", le_1);
+    }
+
+    if (!g_file_test(caminhoAeroportos, G_FILE_TEST_EXISTS)) {
+    	fprintf(stderr, "Aviso: airports.csv em falta.\n");
+    } else {
+        le_2 = le_tabela(2, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+    }
+
+
+    if (!g_file_test(caminhoPassageiros, G_FILE_TEST_EXISTS)) {
+    	fprintf(stderr, "Aviso: passengers.csv em falta.\n");
+    } else {
+        le_4 = le_tabela(4, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+    }
+
+    if (!g_file_test(caminhoReservas, G_FILE_TEST_EXISTS) || !g_file_test(caminhoPassageiros,G_FILE_TEST_EXISTS) || !g_file_test(caminhoVoos,G_FILE_TEST_EXISTS)) {
+    	fprintf(stderr, "Aviso: reservations.csv em falta.\n");
+    } else {
+        le_5 = le_tabela(5, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+    }
+
+
+//    le_tabela(3, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+//    le_tabela(1, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+//    le_tabela(2, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+//    le_tabela(4, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+//    le_tabela(5, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
 
     g_free(caminhoAeroportos);
     g_free(caminhoAeronaves);
     g_free(caminhoVoos);
+    g_free(caminhoPassageiros);
+    g_free(caminhoReservas);
 
-    if (!tabelaAeroportos || !tabelaAeronaves || !tabelaVoos) {
+    if (!tabelaAeroportos || !tabelaAeronaves || !tabelaVoos || !tabelaPassageiros || !tabelaReservas) {
         errors_write_csv("resultados/errors.csv");
         errors_end();
         return EXIT_FAILURE;
@@ -102,7 +143,7 @@ int main(int argc, char **argv) {
         switch (idQuery) {
             case 1:
 //printf("Entrou na q1.\n");
-                if (param)
+                if (param && le_2)
                     query1(param, tabelaAeroportos, out);
                 else
                     fprintf(out, "\n");
@@ -110,9 +151,12 @@ int main(int argc, char **argv) {
 
             case 2:
 //printf("Entrou na q2.\n");
-                if (param)
+		int v = param && le_3 && le_1;
+//                if (param && tabelaAeronaves && tabelaVoos)
+		if (v) {
+		    printf("%d\n", v);
                     query2(param, tabelaAeronaves, tabelaVoos, out);
-                else
+                } else
                     fprintf(out, "\n");
                 break;
 
@@ -120,7 +164,7 @@ int main(int argc, char **argv) {
 //printf("Entrou na q3.\n");
 //printf("%s\n", linha);
                 char d1[16], d2[16], data_inicio[32], data_fim[32];
-                if (param && sscanf(param, "%31s %31s", d1, d2) == 2) {
+                if (param && (sscanf(param, "%31s %31s", d1, d2) == 2) && le_2 && le_1) {
 		sprintf(data_inicio, "%s 00:00", d1);
 		sprintf(data_fim, "%s 23:59",d2);
 //		printf ("%s \\ %s\n", data_inicio, data_fim);

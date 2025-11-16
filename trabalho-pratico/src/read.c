@@ -620,7 +620,7 @@ int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable
 
         } else if (opcao_inserida == 5) {
                 FILE *ficheiro = abrir_ficheiro(&ctx, "reservations.csv", "r");
-                if (ficheiro == NULL) return 0;
+                if (ficheiro == NULL) return 0; //salta
 
 /*
                 FILE *ficheiro = abrir_ficheiro (&ctx,"reservations.csv", "r");
