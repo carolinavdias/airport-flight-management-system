@@ -5,10 +5,12 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+
 typedef struct {
     char dataset_dir[256];
 } Contexto;
 
+//estrutura para data (YYYY-MM-DD)
 typedef struct data_def {
     int ano, mes, dia;
 } Data;
@@ -19,6 +21,8 @@ typedef enum {
     GENERO_O,
     GENERO_ERROR
 } Genero;
+
+
 
 typedef struct voos_reservados {
     char **lista_voos_reservados;
@@ -38,34 +42,44 @@ typedef struct passageiros {
     char *fotografia_passageiro;
 } Passageiros;
 
+
+
+
 typedef struct reservas {
     char *id_reserva;
-    Voos_reservados reserva_lista;
-    int id_pessoa_reservou;
+    Voos_reservados reserva_lista; //lista
+    int id_pessoa_reservou; //reserva em nome de
     char *lugar_reservado;
     double preco_reserva;
     bool bagagem_extra;
-    bool prioridade;
+    bool prioridade; //priority boarding
     char *qr_code;
 } Reservas;
 
+
+
+//estrutura para hora (HH:MM)
 typedef struct hora_def {
     int hora, mins;
 } Hora;
 
+//estrutura completa de data + hora
 typedef struct dataH {
     Data data;
     Hora horas;
 } DataH;
 
-// Funções de libertação de memória
+// =====================================================
+// DECLARAÇÕES DAS FUNÇÕES DE LIBERTAÇÃO
+// (Implementadas em read.c)
+// =====================================================
+void libertaReserva(void *data);
+void libertaPassageiro(void *data);
+void libertaVoo(void *data);
 void libertaAeronave(void *data);
 void libertaAeroporto(void *data);
-void libertaVoo(void *data);
-void libertaPassageiro(void *data);
-void libertaReserva(void *data);
 
-// Função de leitura
-int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable *tabela2, GHashTable *tabela3, GHashTable *tabela4, GHashTable *tabela5);
+int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable *tabela2, GHashTable *tabela3, GHashTable *tabela4, GHashTable *tabela5);
+
 
 #endif
