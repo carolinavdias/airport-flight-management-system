@@ -1,28 +1,46 @@
-# binários e objetos
+# 1. Atualizar .gitignore
+cat > .gitignore << 'EOF'
+# Binários e objetos
 bin/
 obj/
 *.o
+programa-principal
+programa-testes
 
-# resultados gerados
+# Resultados gerados
 resultados/
 resultados-esperados/
-datasets/
 
-# ficheiros temporários
+# Datasets (TODAS as variações)
+dataset/
+datasets/
+dataset-*/
+data-*/
+*.csv
+!resultados/*.csv
+
+# Ficheiros temporários
 *.swp
 *.log
 *.tmp
 *.zip
+*_errors.csv
 
-#garantir inclusão da pasta programa-main!!!:)
-!programa-main/
+# Backups
+backup*/
+*.backup
+EOF
 
-# Ignorar datasets e resultados locais
-trabalho-pratico/datasets/
-trabalho-pratico/resultados/
+# 2. Remover dataset do Git (se já estava comitado)
+git rm -r --cached dataset/ 2>/dev/null || true
+git rm --cached *.csv 2>/dev/null || true
 
+# 3. Remover ficheiros de erro da raiz
+rm -f reservations_errors.csv flights_errors.csv
 
-# Ignorar datasets e resultados locais
-trabalho-pratico/datasets/
-trabalho-pratico/resultados/
+# 4. Verificar que funcionou
+git status
 
+# Deve mostrar:
+# deleted: dataset/...
+# deleted: *.csv
