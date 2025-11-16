@@ -9,12 +9,6 @@
 #include "errors.h"
 #include "read.h"
 
-void libertaAeronave(void *data);
-void libertaAeroporto(void *data);
-void libertaVoo(void *data);
-void libertaPassageiro(void *data);
-void libertaReserva(void *data);
-
 int main(int argc, char **argv) {
     if (argc != 3) {
         fprintf(stderr, "Uso: %s <dataset-fase-1> <ficheiro_comandos>\n", argv[0]);
