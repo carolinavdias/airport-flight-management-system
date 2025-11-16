@@ -5,12 +5,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-
 typedef struct {
     char dataset_dir[256];
 } Contexto;
 
-//estrutura para data (YYYY-MM-DD)
 typedef struct data_def {
     int ano, mes, dia;
 } Data;
@@ -21,8 +19,6 @@ typedef enum {
     GENERO_O,
     GENERO_ERROR
 } Genero;
-
-
 
 typedef struct voos_reservados {
     char **lista_voos_reservados;
@@ -42,89 +38,34 @@ typedef struct passageiros {
     char *fotografia_passageiro;
 } Passageiros;
 
-
-
-
 typedef struct reservas {
     char *id_reserva;
-    Voos_reservados reserva_lista; //lista
-    int id_pessoa_reservou; //reserva em nome de
+    Voos_reservados reserva_lista;
+    int id_pessoa_reservou;
     char *lugar_reservado;
     double preco_reserva;
     bool bagagem_extra;
-    bool prioridade; //priority boarding
+    bool prioridade;
     char *qr_code;
 } Reservas;
 
-
-
-//estrutura para hora (HH:MM)
 typedef struct hora_def {
     int hora, mins;
 } Hora;
 
-//estrutura completa de data + hora
 typedef struct dataH {
     Data data;
     Hora horas;
 } DataH;
 
-/*
-//género
-typedef enum {
-    GENERO_F,
-    GENERO_M,
-    GENERO_O,
-    GENERO_ERROR
-} Genero;
-
-
-//estado do voo
-typedef enum {
-    ESTADO_ON_TIME,
-    ESTADO_DELAYED,
-    ESTADO_CANCELLED,
-    ESTADO_ERROR
-} Estado;
-*/
-
-/*
-//tipo de aeroporto
-typedef enum {
-    TIPO_SMALL_AIRPORT,
-    TIPO_MEDIUM_AIRPORT,
-    TIPO_LARGE_AIRPORT,
-    TIPO_HELIPORT,
-    TIPO_SEAPLANE_BASE,
-    TIPO_ERROR
-} Tipo_aeroporto;
-*/
-
-
-
-
-/*
-//funções de leitura e validação
-Data parse_Data(char *string);
-DataH parse_DataH(char *string);
-char* string_to_email(char *string);
-char* string_to_codigoIATA(char *string);
-char* string_to_id_voo(char *string);
-Genero string_to_genero(char *string);
-//Tipo_aeroporto valida_tipo(char *string);
-Estado string_to_Estado(char *string);
-bool string_to_bool(char *string, int versao);
-
-//funções de carga (ficheiros CSV)
-GHashTable* carregarVoos(const char *caminho);
-GHashTable* carregarAeroportos(const char *caminho);
-GHashTable* carregarAeronaves(const char *caminho);
-*/
-
-
-void libertaReserva(void *data);
+// Funções de libertação de memória
+void libertaAeronave(void *data);
+void libertaAeroporto(void *data);
+void libertaVoo(void *data);
 void libertaPassageiro(void *data);
-int le_tabela (int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable *tabela2, GHashTable *tabela3, GHashTable *tabela4, GHashTable *tabela5);
+void libertaReserva(void *data);
 
+// Função de leitura
+int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable *tabela2, GHashTable *tabela3, GHashTable *tabela4, GHashTable *tabela5);
 
 #endif
