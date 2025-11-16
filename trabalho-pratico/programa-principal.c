@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
     gchar *caminhoPassageiros= g_build_filename(ctx.dataset_dir, "passengers.csv", NULL);
     gchar *caminhoReservas   = g_build_filename(ctx.dataset_dir, "reservations.csv", NULL);
 
-    int le_1 = 0, le_2 = 0, le_3 = 0, le_4 = 0, le_5 = 0;
+    int le_1 = 0, le_2 = 0, le_3 = 0 ;
 
     errors_begin();
     g_mkdir_with_parents("resultados", 0755);
@@ -59,15 +59,6 @@ int main(int argc, char **argv) {
         le_2 = le_tabela(2, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
     }
 
-    if (g_file_test(caminhoPassageiros, G_FILE_TEST_EXISTS)) {
-        le_4 = le_tabela(4, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
-    }
-
-    if (g_file_test(caminhoReservas, G_FILE_TEST_EXISTS) &&
-        g_file_test(caminhoPassageiros, G_FILE_TEST_EXISTS) &&
-        g_file_test(caminhoVoos, G_FILE_TEST_EXISTS)) {
-        le_5 = le_tabela(5, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
-    }
 
     g_free(caminhoAeroportos);
     g_free(caminhoAeronaves);
