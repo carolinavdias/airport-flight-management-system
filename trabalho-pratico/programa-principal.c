@@ -58,6 +58,14 @@ int main(int argc, char **argv) {
     if (g_file_test(caminhoAeroportos, G_FILE_TEST_EXISTS)) {
         le_2 = le_tabela(2, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
     }
+    if (g_file_test(caminhoPassageiros, G_FILE_TEST_EXISTS)) {
+        le_tabela(4, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+    }
+    if (g_file_test(caminhoReservas, G_FILE_TEST_EXISTS) &&
+	g_file_test(caminhoVoos, G_FILE_TEST_EXISTS) &&
+	g_file_test(caminhoPassageiros, G_FILE_TEST_EXISTS)) {
+        le_tabela(5, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+    }
 
 
     g_free(caminhoAeroportos);

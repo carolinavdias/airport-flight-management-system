@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <glib.h>
 #include <ctype.h>
+#include <unistd.h>
 #include <stdint.h>
 #include "read.h"
 #include "validators.h"
@@ -112,8 +113,14 @@ int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable 
         int linhas_totais = 0;
         int linhas_com_sucesso = 0;
         int no_header = 1;
+        char header[MAX_LINHA];
 
         if (fgets(buffer, sizeof(buffer), ficheiro) == NULL) no_header = 0;
+        else {
+             buffer[strcspn(buffer,"\n")] = '\0';
+             strcpy(header,buffer); // = g_strdup(buffer);
+        }
+
         FILE *ficheiro_erros = NULL;
 
         while (fgets(buffer, sizeof(buffer), ficheiro) && no_header) {
@@ -155,10 +162,30 @@ int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable 
 
             // Validação lógica
             if (linha_valida && !valida_VOO(*voo_atual, tabela3)) linha_valida = 0;
-
+/*
             if (!linha_valida) {
                 if (!ficheiro_erros) ficheiro_erros = fopen("resultados/flights_errors.csv", "a");
                 if (ficheiro_erros) {
+                    fputs(buffer, ficheiro_erros);
+                    fprintf(ficheiro_erros, "\n");
+                }
+                free(voo_atual);
+            } else {
+                linhas_com_sucesso++;
+                g_hash_table_insert(tabela1, g_strdup(voo_atual->flight_id), voo_atual);
+            }
+            if (campos) csv_free_fields(campos, n_campos);
+        }*/
+            if (!linha_valida) {
+		const char *path = "resultados/flights_errors.csv";
+		int ja_existia = (access(path,F_OK) == 0);
+
+                if (!ficheiro_erros) ficheiro_erros = fopen("resultados/flights_errors.csv", "a");
+                if (ficheiro_erros) {
+		    if (!ja_existia) {
+			fputs(header,ficheiro_erros);
+			fputc('\n',ficheiro_erros);
+		    }
                     fputs(buffer, ficheiro_erros);
                     fprintf(ficheiro_erros, "\n");
                 }
@@ -177,9 +204,15 @@ int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable 
     } else if (opcao_inserida == 2) {
         FILE *ficheiro = abrir_ficheiro(&ctx, "airports.csv", "r");
         if (ficheiro == NULL) return 0;
+        char header[MAX_LINHA];
 
         int linhas_totais = 0, linhas_com_sucesso = 0, no_header = 1;
         if (fgets(buffer, sizeof(buffer), ficheiro) == NULL) no_header = 0;
+        else {
+             buffer[strcspn(buffer,"\n")] = '\0';
+             strcpy(header,buffer); // = g_strdup(buffer);
+        }
+
         FILE *ficheiro_erros = NULL;
 
         while (fgets(buffer, sizeof(buffer), ficheiro) && no_header) {
@@ -205,14 +238,21 @@ int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable 
             if (linha_valida) aeroporto_atual->name = g_strdup(campos[1]);
             if (linha_valida) aeroporto_atual->city = g_strdup(campos[2]);
             if (linha_valida) aeroporto_atual->country = g_strdup(campos[3]);
-            if (linha_valida) aeroporto_atual->latitude = atof(campos[4]);
-            if (linha_valida) aeroporto_atual->longitude = atof(campos[5]);
+            if (linha_valida && !valida_coordenadas(campos[4],1,&aeroporto_atual->latitude)) linha_valida = 0; // = atof(campos[4]);
+            if (linha_valida && !valida_coordenadas(campos[5],2,&aeroporto_atual->longitude)) linha_valida = 0; // = atof(campos[5]);
             if (linha_valida) aeroporto_atual->code_ICAO = g_strdup(campos[6]);
             if (linha_valida && !valida_tipo_aer(campos[7], &aeroporto_atual->type)) linha_valida = 0;
 
             if (!linha_valida) {
+                const char *path = "resultados/airports_errors.csv";
+                int ja_existia = (access(path,F_OK) == 0);
+
                 if (!ficheiro_erros) ficheiro_erros = fopen("resultados/airports_errors.csv", "a");
                 if (ficheiro_erros) {
+		    if (!ja_existia) {
+                        fputs(header,ficheiro_erros);
+                        fputc('\n',ficheiro_erros);
+                    }
                     fputs(buffer, ficheiro_erros);
                     fprintf(ficheiro_erros, "\n");
                 }
@@ -223,7 +263,6 @@ int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable 
             }
             if (campos) csv_free_fields(campos, n_campos);
         }
-
         if (ficheiro_erros) fclose(ficheiro_erros);
         fclose(ficheiro);
         return 1;
@@ -231,9 +270,15 @@ int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable 
     } else if (opcao_inserida == 3) {
         FILE *ficheiro = abrir_ficheiro(&ctx, "aircrafts.csv", "r");
         if (ficheiro == NULL) return 0;
+	char header[MAX_LINHA];
 
         int linhas_totais = 0, linhas_com_sucesso = 0, no_header = 1;
         if (fgets(buffer, sizeof(buffer), ficheiro) == NULL) no_header = 0;
+        else {
+             buffer[strcspn(buffer,"\n")] = '\0';
+             strcpy(header,buffer); // = g_strdup(buffer);
+        }
+
         FILE *ficheiro_erros = NULL;
 
         while (fgets(buffer, sizeof(buffer), ficheiro) && no_header) {
@@ -261,8 +306,15 @@ int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable 
             if (linha_valida) aeronave_atual->range = atoi(campos[5]);
 
             if (!linha_valida) {
+                const char *path = "resultados/aircrafts_errors.csv";
+                int ja_existia = (access(path,F_OK) == 0);
+
                 if (!ficheiro_erros) ficheiro_erros = fopen("resultados/aircrafts_errors.csv", "a");
                 if (ficheiro_erros) {
+                    if (!ja_existia) {
+                        fputs(header,ficheiro_erros);
+                        fputc('\n',ficheiro_erros);
+                    }
                     fputs(buffer, ficheiro_erros);
                     fprintf(ficheiro_erros, "\n");
                 }
@@ -281,9 +333,15 @@ int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable 
     } else if (opcao_inserida == 4) {
         FILE *ficheiro = abrir_ficheiro(&ctx, "passengers.csv", "r");
         if (ficheiro == NULL) return 0;
+	char header[MAX_LINHA];
 
         int linhas_totais = 0, linhas_com_sucesso = 0, no_header = 1;
         if (fgets(buffer, sizeof(buffer), ficheiro) == NULL) no_header = 0;
+        else {
+             buffer[strcspn(buffer,"\n")] = '\0';
+             strcpy(header,buffer); // = g_strdup(buffer);
+        }
+
         FILE *ficheiro_erros = NULL;
 
         while (fgets(buffer, sizeof(buffer), ficheiro) && no_header) {
@@ -317,8 +375,15 @@ int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable 
             if (linha_valida) passageiro_atual->fotografia_passageiro = g_strdup(campos[9]);
 
             if (!linha_valida) {
+                const char *path = "resultados/passengers_errors.csv";
+                int ja_existia = (access(path,F_OK) == 0);
+
                 if (!ficheiro_erros) ficheiro_erros = fopen("resultados/passengers_errors.csv", "a");
                 if (ficheiro_erros) {
+                    if (!ja_existia) {
+                        fputs(header,ficheiro_erros);
+                        fputc('\n',ficheiro_erros);
+                    }
                     fputs(buffer, ficheiro_erros);
                     fprintf(ficheiro_erros, "\n");
                 }
@@ -328,8 +393,8 @@ int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable 
                 g_hash_table_insert(tabela4, GINT_TO_POINTER(passageiro_atual->id_passageiro), passageiro_atual);
             }
             if (campos) csv_free_fields(campos, n_campos);
-        }
 
+        }
         if (ficheiro_erros) fclose(ficheiro_erros);
         fclose(ficheiro);
         return 1;
@@ -337,9 +402,15 @@ int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable 
     } else if (opcao_inserida == 5) {
         FILE *ficheiro = abrir_ficheiro(&ctx, "reservations.csv", "r");
         if (ficheiro == NULL) return 0;
+	char header[MAX_LINHA];
 
         int linhas_totais = 0, linhas_com_sucesso = 0, no_header = 1;
         if (fgets(buffer, sizeof(buffer), ficheiro) == NULL) no_header = 0;
+        else {
+             buffer[strcspn(buffer,"\n")] = '\0';
+             strcpy(header,buffer); // = g_strdup(buffer);
+        }
+
         FILE *ficheiro_erros = NULL;
 
         while (fgets(buffer, sizeof(buffer), ficheiro) && no_header) {
@@ -368,8 +439,15 @@ int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable 
             if (linha_valida && !valida_RESERVA(*reserva_atual, tabela1, tabela4)) linha_valida = 0;
 
             if (!linha_valida) {
+                const char *path = "resultados/reservations_errors.csv";
+                int ja_existia = (access(path,F_OK) == 0);
+
                 if (!ficheiro_erros) ficheiro_erros = fopen("resultados/reservations_errors.csv", "a");
                 if (ficheiro_erros) {
+                    if (!ja_existia) {
+                        fputs(header,ficheiro_erros);
+                        fputc('\n',ficheiro_erros);
+                    }
                     fputs(buffer, ficheiro_erros);
                     fprintf(ficheiro_erros, "\n");
                 }
@@ -379,8 +457,8 @@ int le_tabela(int opcao_inserida, Contexto ctx, GHashTable *tabela1, GHashTable 
                 g_hash_table_insert(tabela5, g_strdup(reserva_atual->id_reserva), reserva_atual);
             }
             if (campos) csv_free_fields(campos, n_campos);
-        }
 
+        }
         if (ficheiro_erros) fclose(ficheiro_erros);
         fclose(ficheiro);
         return 1;
