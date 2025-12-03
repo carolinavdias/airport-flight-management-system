@@ -10,4 +10,6 @@ typedef struct aeronave {
     float range;
 } Aeronave;
 
+void libertaAeronave(void *data);
+
 #endif

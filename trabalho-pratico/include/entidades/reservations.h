@@ -1,6 +1,8 @@
 #ifndef RESERVATIONS_H
 #define RESERVATIONS_H
 
+#include <stdbool.h>
+
 typedef struct voos_reservados {
     char **lista_voos_reservados;
     int n_voos;
@@ -16,5 +18,7 @@ typedef struct reservas {
     bool prioridade; //priority boarding
     char *qr_code;
 } Reservas;
+
+void libertaReserva(void *data);
 
 #endif

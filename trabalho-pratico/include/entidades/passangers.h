@@ -1,9 +1,7 @@
 #ifndef PASSANGERS_H
 #define PASSANGERS_H
 
-typedef struct data_def {
-    int ano, mes, dia;
-} Data;
+#include "flights.h" //para usar Data
 
 typedef enum {
     GENERO_F,
@@ -24,5 +22,7 @@ typedef struct passageiros {
     char *morada_passageiro;
     char *fotografia_passageiro;
 } Passageiros;
+
+void libertaPassageiro(void *data);
 
 #endif

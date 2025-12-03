@@ -1,11 +1,34 @@
 #ifndef FLIGHTS_H
 #define FLIGHTS_H
 
-typedef uint8_t Estado;
+#include <stdbool.h>
 
+//typedef uint8_t Estado;
+/*
 #define ESTADO_ON_TIME 0
 #define ESTADO_DELAYED 1
 #define ESTADO_CANCELLED 2
+*/
+
+typedef struct data_def {
+    int ano, mes, dia;
+} Data;
+
+typedef struct hora_def {
+    int hora, mins;
+} Hora;
+
+typedef struct dataH {
+    Data data;
+    Hora horas;
+} DataH;
+
+typedef enum {
+    ESTADO_SCHEDULED,
+    ESTADO_DELAYED,
+    ESTADO_CANCELLED,
+    ESTADO_ERROR
+} Estado;
 
 typedef struct voo {
     char *flight_id; //voo_id
@@ -14,7 +37,6 @@ typedef struct voo {
     int arrival; //chegada prevista
     int actual_arrival; //chegada efetiva
     char *gate; //porta_embarque
-    //char *status; --
     Estado status; //++ Estado
     char *code_origin; //codigo IATA origem
     char *code_destination; //codigo IATA destino
@@ -22,5 +44,7 @@ typedef struct voo {
     char *airline; //companhia aerea
     char *tracking_url;
 } Voo;
+
+void libertaVoo(void *data);
 
 #endif
