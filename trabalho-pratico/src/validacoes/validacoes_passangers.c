@@ -1,5 +1,5 @@
-#include "validacoes_passangers.h"
-#include "passangers.h"
+#include "validacoes_passengers.h"
+#include "passengers.h"
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>

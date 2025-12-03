@@ -1,5 +1,5 @@
-#ifndef PASSANGERS_H
-#define PASSANGERS_H
+#ifndef PASSENGERS_H
+#define PASSENGERS_H
 
 #include "flights.h" //para usar Data
 

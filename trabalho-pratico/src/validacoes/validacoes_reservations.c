@@ -1,6 +1,8 @@
 #include "validacoes_reservations.h"
 #include "reservations.h"
 #include "flights.h"
+#include "gestor_flights.h" 
+#include "gestor_passengers.h"
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
@@ -14,36 +16,43 @@ int valida_id_reserva (char* string, char **id_reserva) {
         if (string[i] < '0' || string[i] > '9') return 0;
     }
 
-    //Validaçao concluida
-
+    //validaçao concluida
     *id_reserva = g_strdup(string);
     return 1;
 }
 
 //RESERVAS -> VALIDAÇÃO LÓGICA
-int valida_RESERVA (Reservas reserva, GHashTable *tabela_v, GHashTable *tabela_p) {
-    //flights id -> lista de 1 ou 2 voos EXSITENTES
+int valida_RESERVA(Reservas reserva, 
+                   GestorFlights *gestor_voos,  
+                   GestorPassengers *gestor_passageiros) 
+{
     int length_vr = reserva.reserva_lista.n_voos;
     if (length_vr < 1 || length_vr > 2) return 0;
-    else {
-        for (int i = 0; i < length_vr; i++) {
-                char *voo_chave = reserva.reserva_lista.lista_voos_reservados[i];
-                if (!g_hash_table_contains(tabela_v, voo_chave)) return 0;
-        }
+    
+    // Verifica se voos existem (USA O GESTOR!)
+    for (int i = 0; i < length_vr; i++) {
+        char *voo_id = reserva.reserva_lista.lista_voos_reservados[i];
+        if (!gestor_flights_existe(gestor_voos, voo_id))
+            return 0;
     }
-
-    //document number -> passageiro EXISTENTE
-    int passageiro_chave = reserva.id_pessoa_reservou;
-    if (!g_hash_table_contains(tabela_p,GINT_TO_POINTER(passageiro_chave))) return 0;
-
-    //if (flights ids == 2) -> destination1 == departure2, i.e., simulando uma escala
+    
+    // Verifica se passageiro existe (USA O GESTOR!)
+    if (!gestor_passengers_existe(gestor_passageiros, reserva.id_pessoa_reservou))
+        return 0;
+    
+    // Validar escala (se 2 voos)
     if (length_vr == 2) {
-        Voo *voo1 = g_hash_table_lookup(tabela_v,reserva.reserva_lista.lista_voos_reservados[0]);
-        Voo *voo2 = g_hash_table_lookup(tabela_v,reserva.reserva_lista.lista_voos_reservados[1]);
-        if (strcmp(voo1->code_destination, voo2->code_origin) != 0) return 0;
+        const char *dest1 = gestor_flights_obter_destino(
+            gestor_voos, reserva.reserva_lista.lista_voos_reservados[0]);
+        
+        const char *orig2 = gestor_flights_obter_origem(
+            gestor_voos, reserva.reserva_lista.lista_voos_reservados[1]);
+        
+        if (!dest1 || !orig2 || strcmp(dest1, orig2) != 0)
+            return 0;
     }
-
-    return 1; //Reserva válida!
+    
+    return 1;
 }
 
 //Valida a lista dos voos reservados, passa para o formato de uma lista e atribui a "Reserva"

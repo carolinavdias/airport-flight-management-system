@@ -11,7 +11,7 @@ int valida_year (char *string, int *year) {
 	if (!isdigit(string[i])) return 0;
     }
 
-//Validação concluida
+    //Validação concluida
 
     *year = atoi(string);
     return 1;

@@ -20,6 +20,8 @@ typedef struct aeroporto {
     double longitude; //longitude ++
     char *code_ICAO; //codigo_ICAO_aeroporto ++
     Tipo_aeroporto type; // ++
+    int arrival_count;
+    int departure_count; 
 } Aeroporto;
 
 void libertaAeroporto(void *data);

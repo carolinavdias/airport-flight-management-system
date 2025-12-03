@@ -1,4 +1,5 @@
 #include "validacoes_flights.h"
+#include "gestor_aircrafts.h"
 #include "flights.h"
 #include <string.h>
 #include <stdlib.h>
@@ -6,37 +7,25 @@
 #include <glib.h>
 
 //VOOS -> VALIDAÇÃO SINTÁTICA
-int valida_id_voo(char *s, char **voo_id)
-{
-    if (
-        s[0] >= 'A' && s[0] <= 'Z' &&
-        s[1] >= 'A' && s[1] <= 'Z' &&
-        s[2] >= '0' && s[2] <= '9' &&
-        s[3] >= '0' && s[3] <= '9' &&
-        s[4] >= '0' && s[4] <= '9' &&
-        s[5] >= '0' && s[5] <= '9' &&
-        s[6] >= '0' && s[6] <= '9' &&
-        (s[7] == '\0' || s[7] == '\n' || s[7] == '\r')
-    ) {
-    *voo_id = g_strdup(s);
-    return 1;
+int valida_id_voo(const char *string, char **flight_id) {
+    if (string == NULL) return 0;
+    
+    int len = strlen(string);
+    // Verifica o formato: 2 letras seguidas de 5 dígitos
+    if (len != 7) return 0;
+    
+    // Primeiros 2 caracteres devem ser letras maiúsculas
+    for (int i = 0; i < 2; i++) {
+        if (!isupper(string[i])) return 0;
     }
-
-    return 0;
-}
-
-//Valida o id do voo
-int valida_id_voo2 (char* string, char **voo_id) {
-    if (string == NULL || strlen(string) != 7) return 0;
-    else {
-        for (int i = 0; i < 7; i++) {
-            if ((i < 2 && (string[i] < 'A' || string[i] > 'Z')) ||
-               (i >= 2 && (string[i] < '0' || string[i] > '9'))) return 0;
-        }
+    
+    // Últimos 5 caracteres devem ser dígitos
+    for (int i = 2; i < 7; i++) {
+        if (!isdigit(string[i])) return 0;
     }
-//Validação conluida
-
-    *voo_id = g_strdup(string);
+    
+    // Validação concluída
+    *flight_id = g_strdup(string);
     return 1;
 }
 
@@ -66,31 +55,28 @@ int compara_dataH (char *datah1, char *datah2) { //se 1 for não anterior a 2, e
 }
 
 //VOOS -> VALIDAÇÃO LÓGICA
-int valida_VOO (Voo voo, GHashTable *tabela) {
-    //destino != origem
-    if (strcmp (voo.code_origin, voo.code_destination) == 0) return 0;
+int valida_VOO(Voo voo, GestorAircrafts *gestor_aeronaves) {
+    // destino != origem
+    if (strcmp(voo.code_origin, voo.code_destination) == 0) return 0;
 
-    //cada voo tem uma aeronave correspondente EXISTENTE
-    char *aeronave_chave = voo.id_aircraft;
-    if (!g_hash_table_contains(tabela,aeronave_chave)) return 0;
-
-    //if CANCELLED, actual departure e actual arrival == "N/A"
-    if (voo.status == 2) {
-        // CANCELLED: actual deve ser N/A (-2)
+    //verifica se aeronave existe 
+    if (!gestor_aircrafts_existe(gestor_aeronaves, voo.id_aircraft))
+        return 0;
+    
+    if (voo.status == ESTADO_CANCELLED) {
         if (voo.actual_departure != -2 || voo.actual_arrival != -2) return 0;
-        // arrival deve ser DEPOIS de departure (pode ser igual)
         if (voo.arrival < voo.departure) return 0;
-    }
-    else {
-        // arrival DEPOIS de departure (não pode ser igual)
-        if (voo.arrival < voo.actual_departure || voo.actual_arrival < voo.actual_departure) return 0;
-
-        //if DELAYED, actual departure/arrival >= departure/arrival (pode ser igual!)
-        if (voo.status == 1) {
-            if (voo.actual_departure < voo.departure || voo.actual_arrival < voo.arrival) return 0;
+    } else {
+        if (voo.arrival < voo.actual_departure || 
+            voo.actual_arrival < voo.actual_departure) return 0;
+        
+        if (voo.status == ESTADO_DELAYED) {
+            if (voo.actual_departure < voo.departure || 
+                voo.actual_arrival < voo.arrival) return 0;
         }
     }
-    return 1; //Válido!
+    
+    return 1;
 }
 
 int valida_Estado(const char *s, Estado *e)
@@ -110,17 +96,6 @@ int valida_Estado(const char *s, Estado *e)
     }
 
     return 0;
-}
-
-//Valida o estado (voo) e passa para a estrutura previamente definida para estado
-int valida_Estado2 (char *string, Estado *e) {
-    if (string == NULL || strlen(string) == 0) return 0;
-    if (strcmp(string, "On Time") == 0) *e = ESTADO_SCHEDULED;
-    else if (strcmp(string, "Delayed") == 0) *e = ESTADO_DELAYED;
-    else if (strcmp(string, "Cancelled") == 0) *e = ESTADO_CANCELLED;
-    else return 0;
-
-    return 1; //Estado válido
 }
 
 bool v_is_flight_id(const char *s){
