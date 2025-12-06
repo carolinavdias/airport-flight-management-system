@@ -62,4 +62,3 @@ void errors_end(void) {
     g_list_free(ERROS);
     ERROS = NULL;
 }
-

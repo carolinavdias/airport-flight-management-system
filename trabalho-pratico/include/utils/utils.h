@@ -3,6 +3,11 @@
 
 #include <ctype.h>
 #include <stdlib.h>
+#include <stdio.h>
+
+typedef struct {
+    char dataset_dir[256];
+} Contexto;
 
 //funcoes auxiliares usadas em varias partes do projeto
 static inline int is_digits(const char *s) {
@@ -12,5 +17,7 @@ static inline int is_digits(const char *s) {
     }
     return 1;
 }
+
+FILE* abrir_ficheiro(Contexto *ctx, const char *nome_ficheiro, const char *modo);
 
 #endif

@@ -8,7 +8,6 @@
 #include <unistd.h>
 #include <stdint.h>
 #include "read.h"
-#include "validators.h"
 #include "csv.h"
 #include "q1.h"
 #include "q2.h"
@@ -20,17 +19,6 @@ gchar buffer[MAX_LINHA];
 // =====================================================
 // FUNÇÕES AUXILIARES
 // =====================================================
-
-FILE *abrir_ficheiro(Contexto *ctx, const char *nome_ficheiro, const char *modo) {
-    char path[1024];
-    snprintf(path, sizeof(path), "%s/%s", ctx->dataset_dir, nome_ficheiro);
-    FILE *ficheiro = fopen(path, modo);
-    if (ficheiro == NULL) {
-        perror("Erro ao abrir o ficheiro.\n");
-        return NULL;
-    }
-    return ficheiro;
-}
 
 // Função auxiliar para libertar strings de Voo parcialmente preenchido
 static void limpar_voo_parcial(Voo *v) {
