@@ -1,26 +1,25 @@
 #define _POSIX_C_SOURCE 200809L
+#include "parsers/parser_aircrafts.h"
+#include "validacoes/validacoes_aircrafts.h"
+#include "csv.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 #include <glib.h>
 #include <ctype.h>
-#include <unistd.h>
-#include <stdint.h>
-#include "parser_aircrafts.h"
-#include "aircrafts.h"
-#include "gestor_aircrafts.h"
-#include "validacoes/validacoes_aircrafts.h"
-#include "csv.h"
 
+#define MAX_LINHA 20000
+static char buffer[MAX_LINHA];
 
-int le_tabela_Aeronaves(int opcao_inserida, Contexto ctx, GestorAircrafts *AC) {
+int le_tabela_Aeronaves(Contexto ctx, GestorAircrafts *AC) {
 
     FILE *ficheiro = abrir_ficheiro(&ctx, "aircrafts.csv", "r");
     if (ficheiro == NULL) return 0;
+    
+    int no_header = 1;
     char header[MAX_LINHA];
 
-    no_header = 1;
     if (fgets(buffer, sizeof(buffer), ficheiro) == NULL) no_header = 0;
     else {
         buffer[strcspn(buffer,"\n")] = '\0';
@@ -31,12 +30,14 @@ int le_tabela_Aeronaves(int opcao_inserida, Contexto ctx, GestorAircrafts *AC) {
     int header_escrito = 0;
 
     while (fgets(buffer, sizeof(buffer), ficheiro) && no_header) {
-    	Aeronave *aeronave_atual = calloc(1, sizeof(Aeronave));  // ← CALLOC!
+    	Aeronave *aeronave_atual = calloc(1, sizeof(Aeronave));
 
        	int linha_valida = 1;
         buffer[strcspn(buffer, "\n")] = '\0';
 
-        char **campos = parse_csv_line(buffer);
+        char **campos = NULL;
+        size_t n_campos = 0;
+        if (csv_split(buffer, &campos, &n_campos) != 0) linha_valida = 0;
 
         if (linha_valida) aeronave_atual->identifier = g_strdup(campos[0]);
         if (linha_valida) aeronave_atual->manufacturer = g_strdup(campos[1]);
@@ -44,6 +45,7 @@ int le_tabela_Aeronaves(int opcao_inserida, Contexto ctx, GestorAircrafts *AC) {
         if (linha_valida && !valida_year(campos[3], &aeronave_atual->year)) linha_valida = 0;
         if (linha_valida) aeronave_atual->capacity = atoi(campos[4]);
         if (linha_valida) aeronave_atual->range = atoi(campos[5]);
+        
         if (!linha_valida) {
             if (!ficheiro_erros) {
                  ficheiro_erros = fopen("resultados/aircrafts_errors.csv", "w");
@@ -57,12 +59,11 @@ int le_tabela_Aeronaves(int opcao_inserida, Contexto ctx, GestorAircrafts *AC) {
                  fputs(buffer, ficheiro_erros);
                  fputc('\n', ficheiro_erros);
             }
-            libertaAeronave(aeronave_atual);  // ← USA FUNÇÃO DE LIBERTAÇÃO!
+            libertaAeronave(aeronave_atual);
         } else {
             gestor_aircrafts_insere(AC, aeronave_atual);
-	    //g_hash_table_insert(tabela3, g_strdup(aeronave_atual->identifier), aeronave_atual);
         }
-        liberta_ifcampos(campos); //if (campos) csv_free_fields(campos, n_campos);
+        if (campos) csv_free_fields(campos, n_campos);
     }
 
     if (ficheiro_erros) fclose(ficheiro_erros);

@@ -1,29 +1,27 @@
 #define _POSIX_C_SOURCE 200809L
+#include "parsers/parser_reservations.h"
+#include "validacoes/validacoes_reservations.h"
+#include "validacoes/validacoes_passengers.h"
+#include "validacoes/validacoes_flights.h"
+#include "csv.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 #include <glib.h>
 #include <ctype.h>
-#include <unistd.h>
-#include <stdint.h>
-#include "parser_reservations.h"
-#include "reseravtions.h"
-#include "gestor_reservations."
-#include "gestor_passangers.h"
-#include "gestor_flights.h"
-#include "validacoes/validacoes_passangers.h"
-#include "csv.h"
 
+#define MAX_LINHA 20000
+static char buffer[MAX_LINHA];
 
-int le_tabela_Reservas(Contexto ctx, GestorVoos *V, GestorPassengers *P, GestorReservas *R) {
-
+int le_tabela_Reservas(Contexto ctx, GestorFlights *V, GestorPassengers *P, GestorReservations *R) {
 
     FILE *ficheiro = abrir_ficheiro(&ctx, "reservations.csv", "r");
     if (ficheiro == NULL) return 0;
+    
+    int no_header = 1;
     char header[MAX_LINHA];
 
-    no_header = 1;
     if (fgets(buffer, sizeof(buffer), ficheiro) == NULL) no_header = 0;
     else {
         buffer[strcspn(buffer,"\n")] = '\0';
@@ -34,12 +32,14 @@ int le_tabela_Reservas(Contexto ctx, GestorVoos *V, GestorPassengers *P, GestorR
     int header_escrito = 0;
 
     while (fgets(buffer, sizeof(buffer), ficheiro) && no_header) {
-        Reservas *reserva_atual = calloc(1, sizeof(Reservas));  // ← CALLOC!
+        Reservas *reserva_atual = calloc(1, sizeof(Reservas));
 
         int linha_valida = 1;
         buffer[strcspn(buffer, "\n")] = '\0';
 
-        char **campos = parse_csv_line(buffer);
+        char **campos = NULL;
+        size_t n_campos = 0;
+        if (csv_split(buffer, &campos, &n_campos) != 0) linha_valida = 0;
 
         if (linha_valida && !valida_id_reserva(campos[0], &reserva_atual->id_reserva)) linha_valida = 0;
         if (linha_valida && !valida_voos_reservados(campos[1], &reserva_atual->reserva_lista)) linha_valida = 0;
@@ -50,7 +50,8 @@ int le_tabela_Reservas(Contexto ctx, GestorVoos *V, GestorPassengers *P, GestorR
         if (linha_valida && !valida_bool(campos[6], &reserva_atual->prioridade)) linha_valida = 0;
         if (linha_valida) reserva_atual->qr_code = g_strdup(campos[7]);
 
-        if (linha_valida && !valida_RESERVA(*reserva_atual, tabela1, tabela4)) linha_valida = 0;
+        //validação lógica (usa gestores V e P)
+        if (linha_valida && !valida_RESERVA(*reserva_atual, V, P)) linha_valida = 0;
 
         if (!linha_valida) {
              if (!ficheiro_erros) {
@@ -65,14 +66,14 @@ int le_tabela_Reservas(Contexto ctx, GestorVoos *V, GestorPassengers *P, GestorR
              fputs(buffer, ficheiro_erros);
              fputc('\n', ficheiro_erros);
         }
-        libertaReserva(reserva_atual);  // ← USA FUNÇÃO DE LIBERTAÇÃO!
+        libertaReserva(reserva_atual);
         } else {
-            //g_hash_table_insert(tabela5, g_strdup(reserva_atual->id_reserva), reserva_atual);
+            gestor_reservations_insere(R, reserva_atual);
         }
-        liberta_ifcampos(campos); //if (campos) csv_free_fields(campos, n_campos);
+        if (campos) csv_free_fields(campos, n_campos);
     }
+    
     if (ficheiro_erros) fclose(ficheiro_erros);
     fclose(ficheiro);
     return 1;
 }
-
