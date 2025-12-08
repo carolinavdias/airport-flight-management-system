@@ -4,6 +4,7 @@
 
 GestorFlights *gestor_flights_novo() {
     GestorFlights *g = malloc(sizeof(GestorFlights));
+    if (g == NULL) return NULL;
     g->tabela_voos = g_hash_table_new_full(g_str_hash, g_str_equal, free, NULL);
     return g;
 }

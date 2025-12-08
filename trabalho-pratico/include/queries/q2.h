@@ -1,20 +1,10 @@
 #ifndef Q2_H
 #define Q2_H
 
+
 #include <stdio.h> //tipo FILE*
 #include <glib.h>
-
-//aeronave
-typedef struct aeronave {
-    char *identifier;
-    char *manufacturer;
-    char *model;
-    int year;
-    int capacity;
-    float range;
-} Aeronave;
-
-
+#include "entidades/aircrafts.h"
 
 //contagem
 typedef struct {

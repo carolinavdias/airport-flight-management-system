@@ -4,36 +4,12 @@
 #include <stdio.h>
 #include <glib.h>
 #include <stdint.h>
-
-typedef uint8_t Estado;
-
-#define ESTADO_ON_TIME 0
-#define ESTADO_DELAYED 1
-#define ESTADO_CANCELLED 2
+#include "entidades/flights.h"
 
 typedef struct contagens2 {
     char *code;
     int count;
 } Contagens2;
-
-//voo
-typedef struct voo {
-    char *flight_id; //voo_id
-    int departure; //partida_prevista
-    int actual_departure; //partida_efetiva
-    int arrival; //chegada prevista
-    int actual_arrival; //chegada efetiva
-    char *gate; //porta_embarque
-    //char *status; --
-    Estado status; //++ Estado
-    char *code_origin; //codigo IATA origem
-    char *code_destination; //codigo IATA destino
-    char *id_aircraft; //id_aeronave
-    char *airline; //companhia aerea
-    char *tracking_url;
-} Voo;
-
-
 
 
 //carrega voos de um ficheiro CSV para uma GHashTable

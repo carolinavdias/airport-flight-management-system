@@ -2,6 +2,8 @@
 #define READ_H
 
 #include <glib.h>
+#include "entidades/passengers.h"
+#include "entidades/reservations.h"
 
 typedef struct {
     char dataset_dir[256];

@@ -10,20 +10,24 @@ GestorAirports *gestor_airports_cria(void) {
 }
 
 void gestor_airports_insere(GestorAirports *g, Aeroporto *a) {
-    if (g == NULL || a == NULL || a->identifier == NULL) return;
-    g_hash_table_insert(g->tabela, strdup(a->identifier), a);
+    if (g == NULL || a == NULL || a->code_IATA == NULL) return;
+    g_hash_table_insert(g->tabela, strdup(a->code_IATA), a);
 }
 
-Aeroporto *gestor_airports_procura(GestorAirports *g, const char *identifier) {
-    if (g == NULL || identifier == NULL) return NULL;
-    return g_hash_table_lookup(g->tabela, identifier);
+Aeroporto *gestor_airports_procura(GestorAirports *g, const char *code_IATA) {
+    if (g == NULL || code_IATA == NULL) return NULL;
+    return g_hash_table_lookup(g->tabela, code_IATA);
+}
+
+int gestor_airports_existe(GestorFlights *g, const char *codigo_IATA) {
+    return g && codigo_IATA && g_hash_table_contains(g->tabela, codigo_IATA);
 }
 
 GHashTable *gestor_airports_table(GestorAirports *g) {
     return (g != NULL) ? g->tabela : NULL;
 }
 
-void gestor_airports_liberta(GestorAircrafts *g) {
+void gestor_airports_liberta(GestorAirports *g) {
     if (g == NULL) return;
     if (g->tabela != NULL) {
         g_hash_table_destroy(g->tabela);

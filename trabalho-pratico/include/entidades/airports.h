@@ -8,7 +8,6 @@ typedef uint8_t Tipo_aeroporto;
 #define TIPO_LARGE_AIRPORT 2
 #define TIPO_HELIPORT 3
 #define TIPO_SEAPLANE_BASE 4
-#define TIPO_CLOSED_AIRPORT 5
 
 
 typedef struct aeroporto {

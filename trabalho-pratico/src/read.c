@@ -9,9 +9,9 @@
 #include <stdint.h>
 #include "read.h"
 #include "csv.h"
-#include "q1.h"
-#include "q2.h"
-#include "q3.h"
+//#include "q1.h"
+//#include "q2.h"
+//#include "q3.h"
 
 #define MAX_LINHA 20000
 gchar buffer[MAX_LINHA];

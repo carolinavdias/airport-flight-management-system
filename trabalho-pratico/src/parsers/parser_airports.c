@@ -62,7 +62,9 @@ int le_tabela_Aeroportos(int opcao_inserida, Contexto ctx, GHashTable *tabela2) 
             }
             libertaAeroporto(aeroporto_atual);  // ← USA FUNÇÃO DE LIBERTAÇÃO!
         } else {
-            g_hash_table_insert(tabela2, g_strdup(aeroporto_atual->code_IATA), aeroporto_atual);
+           gestor_airports_insere(AP, aeroporto_atual);
+	   //g_hash_table_insert(tabela2, g_strdup(aeroporto_atual->code_IATA), aeroporto_atual);
+
         }
         liberta_ifcampos(campos); //if (campos) csv_free_fields(campos, n_campos);
     }

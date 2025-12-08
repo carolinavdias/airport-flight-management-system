@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <glib.h>
-//#include "include/entidades/aircrafts"
+//#include "entidades/aircrafts.h"
 #include "queries/q1.h"
 #include "queries/q2.h"
 #include "queries/q3.h"

@@ -4,47 +4,7 @@
 #include <stdio.h> //tipo FILE*
 #include <glib.h>
 #include <stdint.h> //++
-
-//Tipo aeroporto - definição
-//typedef uint8_t Tipo_aeroporto;
-
-typedef enum {
-    TIPO_SMALL_AIRPORT,
-    TIPO_MEDIUM_AIRPORT,
-    TIPO_LARGE_AIRPORT,
-    TIPO_HELIPORT,
-    TIPO_SEAPLANE_BASE,
-    TIPO_CLOSED_AIRPORT,
-    TIPO_ERROR
-} Tipo_aeroporto;
-
-
-
-//aeroporto 
-typedef struct aeroporto {
-    char *code_IATA; //codigo_IATA_aer
-    char *name; //name_aeroporto
-    char *city; //cidade_aeroporto
-    char *country; //pais_aeroporto
-    double latitude; //latitude ++
-    double longitude; //longitude ++
-    char *code_ICAO; //codigo_ICAO_aeroporto ++
-    // char *type; 
-    Tipo_aeroporto type; // ++
-} Aeroporto;
-
-/*typedef struct aeroporto {
-    char *codigo_IATA_aer;
-    char *nome_aer;
-    char *cidade_aer;
-    char *pais_aer;
-    double latitude;
-    double longitude;
-    char *codigo_ICAO_aer;
-    Tipo_aeroporto tipo;
-} Aeroporto;*/
-
-
+#include "entidades/airports.h"
 
 //carrega aeroportos de um ficheiro CSV para uma GHashTable
 GHashTable* carregarAeroportos(const char *caminhoFicheiro);
