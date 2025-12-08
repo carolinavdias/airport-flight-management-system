@@ -2,22 +2,26 @@
 #define GESTOR_FLIGHTS_H
 
 #include <glib.h>
-#include "flights.h"
+#include <stdbool.h>
+#include "../entidades/flights.h"
 
 typedef struct {
-    GHashTable *tabela_voos;   // chave: id do voo (char*), valor: Voo*
+    GHashTable *tabela_voos;   //chave: id do voo (char*), valor: Voo*
 } GestorFlights;
 
-// Criação / destruição
+//criação / destruição
 GestorFlights *gestor_flights_novo();
 void gestor_flights_destroy(GestorFlights *g);
 
-// Inserção
+//inserção
 void gestor_flights_inserir(GestorFlights *g, Voo *voo);
 
-// Consultas
+//consultas
 bool gestor_flights_existe(GestorFlights *g, const char *id_voo);
 const char *gestor_flights_obter_origem(GestorFlights *g, const char *id_voo);
 const char *gestor_flights_obter_destino(GestorFlights *g, const char *id_voo);
+
+//para queries que precisam iterar
+GHashTable *gestor_flights_table(GestorFlights *g);  
 
 #endif

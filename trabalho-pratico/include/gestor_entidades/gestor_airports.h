@@ -2,29 +2,29 @@
 #define GESTOR_AIRPORTS_H
 
 #include <glib.h>
-#include "airports.h"
+#include "../entidades/airports.h"
 
-// tabela guarda todas as aeronaves
+//tabela guarda todos os aeroportos
 typedef struct gestor_airports {
     GHashTable *tabela;
 } GestorAirports;
 
-/* Cria o gestor (inicia a hash table) */
+//cria o gestor (inicia a hash table)
 GestorAirports *gestor_airports_cria(void);
 
-/* Insere uma aeronave no gestor */
+//insere um aeroporto no gestor
 void gestor_airports_insere(GestorAirports *g, Aeroporto *a);
 
-/* Obtém uma aeronave pelo identifier */
+//obtém um aeroporto pelo code_IATA
 Aeroporto *gestor_airports_procura(GestorAirports *g, const char *code_IATA);
 
-/* Verifica se uma aeronave existe */
+//verifica se um aeroporto existe
 int gestor_airports_existe(GestorAirports *g, const char *code_IATA);
 
-/* Devolve a hash table (para queries que a precisam) */
+//devolve a hash table (para queries que a precisam)
 GHashTable *gestor_airports_table(GestorAirports *g);
 
-/* Liberta toda a memória (aeronaves + gestor) */
+//liberta toda a memória (aeroportos + gestor)
 void gestor_airports_liberta(GestorAirports *g);
 
 #endif

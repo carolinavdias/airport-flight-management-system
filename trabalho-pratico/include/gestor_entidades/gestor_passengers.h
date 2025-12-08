@@ -3,20 +3,20 @@
 
 #include <glib.h>
 #include <stdbool.h>
-#include "passengers.h"
+#include "../entidades/passengers.h"
 
 typedef struct {
-    GHashTable *tabela_passageiros;   // chave = int*, valor = Passageiro*
+    GHashTable *tabela_passageiros;   //chave = int*, valor = Passageiro*
 } GestorPassengers;
 
-// Criação / destruição
+//criação / destruição
 GestorPassengers *gestor_passengers_novo();
 void gestor_passengers_destroy(GestorPassengers *g);
 
-// Inserção
+//inserção
 void gestor_passengers_inserir(GestorPassengers *g, Passageiros *p);
 
-// Consultas
+//consultas
 bool gestor_passengers_existe(GestorPassengers *g, int id_passageiro);
 
 #endif
