@@ -1,5 +1,5 @@
 # ===================================================
-# Makefile — Fase 1 (CORRIGIDO FINAL)
+# Makefile — Fase 1 (alteração para suportar a estrutura modular )
 # ===================================================
 
 CC       = gcc
@@ -10,10 +10,10 @@ SRC_DIR  = src
 OBJ_DIR  = obj
 
 # ---------------------------------------------------
-# Ficheiros fonte em src/
+# Ficheiros fonte em src/ (TODOS os subdiretorios!)
 # ---------------------------------------------------
-SRCS_LIB := $(wildcard $(SRC_DIR)/*.c)
-OBJS_LIB := $(SRCS_LIB:$(SRC_DIR)/%.c=$(OBJ_DIR)/src/%.o)
+SRCS_LIB := $(shell find $(SRC_DIR) -name '*.c')
+OBJS_LIB := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/src/%.o,$(SRCS_LIB))
 
 # Programa principal
 OBJS_MAIN := $(OBJ_DIR)/programas/programa-principal.o $(OBJS_LIB)
@@ -31,36 +31,42 @@ TESTS_BIN = programa-testes
 .PHONY: all testes clean
 
 all: $(MAIN_BIN)
-	@echo "✔ Programa principal compilado com sucesso!"
+	echo "✔ Programa principal compilado com sucesso!"
 
 testes: $(TESTS_BIN)
-	@echo "✔ Programa de testes compilado com sucesso!"
+	echo "✔ Programa de testes compilado com sucesso!"
 
 # ===================================================
 # Ligação
 # ===================================================
 $(MAIN_BIN): $(OBJS_MAIN)
-	@$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS)
 
 $(TESTS_BIN): $(OBJS_TEST)
-	@$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS)
 
 # ===================================================
 # Compilação
 # ===================================================
-# Ficheiros na raiz
-$(OBJ_DIR)/%.o: %.c
-	@mkdir -p $(dir $@)
-	@$(CC) $(CFLAGS) -c $< -o $@
+# Ficheiros em programas/
+$(OBJ_DIR)/programas/%.o: programas/%.c
+	mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-# Ficheiros em src/
+# Ficheiros em src/ (incluindo subdiretorios!)
 $(OBJ_DIR)/src/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(dir $@)
-	@$(CC) $(CFLAGS) -c $< -o $@
+	mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 # ===================================================
 # Limpeza
 # ===================================================
 clean:
-	@rm -rf $(OBJ_DIR) $(MAIN_BIN) $(TESTS_BIN) resultados
-	@echo "✔ Limpeza concluída!"
+	rm -rf $(OBJ_DIR) $(MAIN_BIN) $(TESTS_BIN) resultados
+	echo "✔ Limpeza concluída!"
+
+
+# ===================================================
+# Nota técnica:
+# SRCS_LIB usa 'find' recursivo para suportar
+# a estrutura modular (parsers/, gestores/, etc.)

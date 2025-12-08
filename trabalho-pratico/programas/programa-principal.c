@@ -3,12 +3,22 @@
 #include <stdlib.h>
 #include <string.h>
 #include <glib.h>
-//#include "entidades/aircrafts.h"
+
 #include "queries/q1.h"
 #include "queries/q2.h"
 #include "queries/q3.h"
+#include "parsers/parser_flights.h"
+#include "parsers/parser_airports.h"
+#include "parsers/parser_aircrafts.h"
+#include "parsers/parser_passengers.h"
+#include "parsers/parser_reservations.h"
+#include "gestor_entidades/gestor_flights.h"
+#include "gestor_entidades/gestor_airports.h"
+#include "gestor_entidades/gestor_aircrafts.h"
+#include "gestor_entidades/gestor_passengers.h"
+#include "gestor_entidades/gestor_reservations.h"
+#include "utils/utils.h"
 #include "errors.h"
-#include "read.h"
 
 int main(int argc, char **argv) {
     if (argc != 3) {
@@ -25,49 +35,41 @@ int main(int argc, char **argv) {
     gchar *caminhoPassageiros= g_build_filename(ctx.dataset_dir, "passengers.csv", NULL);
     gchar *caminhoReservas   = g_build_filename(ctx.dataset_dir, "reservations.csv", NULL);
 
-    int le_1 = 0, le_2 = 0, le_3 = 0 ;
+    int le_1 = 0, le_2 = 0, le_3 = 0;
 
     errors_begin();
     g_mkdir_with_parents("resultados", 0755);
 
-    // Criar tabelas com libertação automática
-    GHashTable *tabelaAeronaves =
-        g_hash_table_new_full(g_str_hash, g_str_equal, g_free, libertaAeronave);
+    //criar GESTORES (não hash tables!)
+    GestorAircrafts *gestorAeronaves = gestor_aircrafts_cria();
+    GestorFlights *gestorVoos = gestor_flights_novo();
+    GestorAirports *gestorAeroportos = gestor_airports_cria();
+    GestorPassengers *gestorPassageiros = gestor_passengers_novo();
+    GestorReservations *gestorReservas = gestor_reservations_cria();
 
-    GHashTable *tabelaVoos =
-        g_hash_table_new_full(g_str_hash, g_str_equal, g_free, libertaVoo);
-
-    GHashTable *tabelaAeroportos =
-        g_hash_table_new_full(g_str_hash, g_str_equal, g_free, libertaAeroporto);
-
-    GHashTable *tabelaPassageiros =
-        g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, libertaPassageiro);
-
-    GHashTable *tabelaReservas =
-        g_hash_table_new_full(g_str_hash, g_str_equal, g_free, libertaReserva);
-
-    // Carregar dados (SEM PRINTS DE DEBUG)
+    //carregar dados usando parsers
     if (g_file_test(caminhoAeronaves, G_FILE_TEST_EXISTS)) {
-        le_3 = le_tabela(3, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+        le_3 = le_tabela_Aeronaves(ctx, gestorAeronaves);
     }
 
     if (g_file_test(caminhoAeronaves, G_FILE_TEST_EXISTS) &&
         g_file_test(caminhoVoos, G_FILE_TEST_EXISTS)) {
-        le_1 = le_tabela(1, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+        le_1 = le_tabela_Voos(ctx, gestorVoos, gestorAeronaves);
     }
 
     if (g_file_test(caminhoAeroportos, G_FILE_TEST_EXISTS)) {
-        le_2 = le_tabela(2, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+        le_2 = le_tabela_Aeroportos(ctx, gestorAeroportos);
     }
+    
     if (g_file_test(caminhoPassageiros, G_FILE_TEST_EXISTS)) {
-        le_tabela(4, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+        le_tabela_Passageiros(ctx, gestorPassageiros);
     }
+    
     if (g_file_test(caminhoReservas, G_FILE_TEST_EXISTS) &&
-	g_file_test(caminhoVoos, G_FILE_TEST_EXISTS) &&
-	g_file_test(caminhoPassageiros, G_FILE_TEST_EXISTS)) {
-        le_tabela(5, ctx, tabelaVoos, tabelaAeroportos, tabelaAeronaves, tabelaPassageiros, tabelaReservas);
+        g_file_test(caminhoVoos, G_FILE_TEST_EXISTS) &&
+        g_file_test(caminhoPassageiros, G_FILE_TEST_EXISTS)) {
+        le_tabela_Reservas(ctx, gestorVoos, gestorPassageiros, gestorReservas);
     }
-
 
     g_free(caminhoAeroportos);
     g_free(caminhoAeronaves);
@@ -75,27 +77,34 @@ int main(int argc, char **argv) {
     g_free(caminhoPassageiros);
     g_free(caminhoReservas);
 
-    if (!tabelaAeroportos || !tabelaAeronaves || !tabelaVoos || !tabelaPassageiros || !tabelaReservas) {
+    if (!gestorAeroportos || !gestorAeronaves || !gestorVoos || !gestorPassageiros || !gestorReservas) {
         errors_write_csv("resultados/errors.csv");
         errors_end();
-        g_hash_table_destroy(tabelaAeronaves);
-        g_hash_table_destroy(tabelaVoos);
-        g_hash_table_destroy(tabelaAeroportos);
-        g_hash_table_destroy(tabelaPassageiros);
-        g_hash_table_destroy(tabelaReservas);
+        if (gestorAeronaves) gestor_aircrafts_liberta(gestorAeronaves);
+        if (gestorVoos) gestor_flights_destroy(gestorVoos);
+        if (gestorAeroportos) gestor_airports_liberta(gestorAeroportos);
+        if (gestorPassageiros) gestor_passengers_destroy(gestorPassageiros);
+        if (gestorReservas) gestor_reservations_liberta(gestorReservas);
         return EXIT_FAILURE;
     }
 
+    //obter hash tables dos gestores para as queries
+    GHashTable *tabelaAeronaves = gestor_aircrafts_table(gestorAeronaves);
+    GHashTable *tabelaVoos = gestor_flights_table(gestorVoos);
+    GHashTable *tabelaAeroportos = gestor_airports_table(gestorAeroportos);
+    //GHashTable *tabelaPassageiros = gestorPassageiros->tabela_passageiros;
+    //GHashTable *tabelaReservas = gestor_reservations_table(gestorReservas);
+//(tabelas ainda nao utilizadas nesta fase)
     FILE *ficheiroComandos = fopen(argv[2], "r");
     if (!ficheiroComandos) {
         perror("Erro ao abrir o ficheiro de comandos");
         errors_write_csv("resultados/errors.csv");
         errors_end();
-        g_hash_table_destroy(tabelaAeronaves);
-        g_hash_table_destroy(tabelaVoos);
-        g_hash_table_destroy(tabelaAeroportos);
-        g_hash_table_destroy(tabelaPassageiros);
-        g_hash_table_destroy(tabelaReservas);
+        gestor_aircrafts_liberta(gestorAeronaves);
+        gestor_flights_destroy(gestorVoos);
+        gestor_airports_liberta(gestorAeroportos);
+        gestor_passengers_destroy(gestorPassageiros);
+        gestor_reservations_liberta(gestorReservas);
         return EXIT_FAILURE;
     }
 
@@ -167,12 +176,12 @@ int main(int argc, char **argv) {
     errors_write_csv("resultados/errors.csv");
     errors_end();
 
-    // LIBERTAR MEMÓRIA (importante!)
-    g_hash_table_destroy(tabelaAeronaves);
-    g_hash_table_destroy(tabelaVoos);
-    g_hash_table_destroy(tabelaAeroportos);
-    g_hash_table_destroy(tabelaPassageiros);
-    g_hash_table_destroy(tabelaReservas);
+    //libertar memória
+    gestor_aircrafts_liberta(gestorAeronaves);
+    gestor_flights_destroy(gestorVoos);
+    gestor_airports_liberta(gestorAeroportos);
+    gestor_passengers_destroy(gestorPassageiros);
+    gestor_reservations_liberta(gestorReservas);
 
     return EXIT_SUCCESS;
 }
