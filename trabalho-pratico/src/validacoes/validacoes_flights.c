@@ -1,8 +1,8 @@
 #define _GNU_SOURCE
 #define _XOPEN_SOURCE 700
-#include "validacoes_flights.h"
-#include "gestor_aircrafts.h"
-#include "flights.h"
+#include "validacoes/validacoes_flights.h"
+#include "gestor_entidades/gestor_aircrafts.h"
+#include "entidades/flights.h"
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>

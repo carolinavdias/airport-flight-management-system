@@ -4,7 +4,7 @@
 
 #include <stdio.h> //tipo FILE*
 #include <glib.h>
-#include "entidades/aircrafts.h"
+#include "../entidades/aircrafts.h"
 
 //contagem
 typedef struct {

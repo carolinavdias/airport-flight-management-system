@@ -1,8 +1,8 @@
 #ifndef VALIDACOES_FLIGHTS_H
 #define VALIDACOES_FLIGHTS_H
 
-#include "flights.h"
-#include "gestor_aircrafts.h"
+#include "../entidades/flights.h"
+#include "../gestor_entidades/gestor_aircrafts.h"
 #include <stdbool.h>
 #include <glib.h>
 
@@ -14,5 +14,6 @@ int valida_Estado(const char *s, Estado *e);
 
 //validação lógica
 int valida_VOO(Voo voo, GestorAircrafts *gestor_aeronaves);
+
 
 #endif

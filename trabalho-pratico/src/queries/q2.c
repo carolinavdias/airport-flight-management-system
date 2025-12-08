@@ -4,9 +4,11 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <glib.h>
-#include "q2.h"
-#include "q3.h"
-#include "read.h"
+#include "queries/q2.h"
+#include "entidades/flights.h"     
+#include "entidades/aircrafts.h" 
+// q3 removido
+// read removido
 #include "errors.h"
 
 // =====================================================

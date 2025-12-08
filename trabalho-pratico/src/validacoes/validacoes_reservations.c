@@ -1,8 +1,8 @@
-#include "validacoes_reservations.h"
-#include "reservations.h"
-#include "flights.h"
-#include "gestor_flights.h"
-#include "gestor_passengers.h"
+#include "validacoes/validacoes_reservations.h"
+#include "entidades/reservations.h"
+#include "entidades/flights.h"
+#include "gestor_entidades/gestor_flights.h"
+#include "gestor_entidades/gestor_passengers.h"
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>

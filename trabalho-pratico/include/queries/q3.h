@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <glib.h>
 #include <stdint.h>
-#include "entidades/flights.h"
+#include "../entidades/flights.h"
 
 typedef struct contagens2 {
     char *code;

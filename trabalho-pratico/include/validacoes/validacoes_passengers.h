@@ -1,7 +1,7 @@
 #ifndef VALIDACOES_PASSENGERS_H
 #define VALIDACOES_PASSENGERS_H
 
-#include "passengers.h"
+#include "../entidades/passengers.h"
 #include <stdbool.h>
 #include <glib.h>
 

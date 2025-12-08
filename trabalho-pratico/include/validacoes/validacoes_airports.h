@@ -1,7 +1,7 @@
 #ifndef VALIDACOES_AIRPORTS_H
 #define VALIDACOES_AIRPORTS_H
 
-#include "airports.h"
+#include "../entidades/airports.h"
 #include <stdbool.h>
 #include <glib.h>
 

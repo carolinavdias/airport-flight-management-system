@@ -4,9 +4,12 @@
 #include <string.h>
 #include <ctype.h>
 #include <glib.h>
-#include "q3.h"
-#include "q1.h"
-#include "validators.h"
+#include "queries/q3.h"
+#include "validacoes/validacoes_flights.h"
+#include "entidades/flights.h"     
+#include "entidades/airports.h" 
+// q1 removido
+// validators removido
 
 // =====================================================
 // VALIDAÇÕES (já declarada no header)
@@ -43,7 +46,7 @@ void query3(const char *data_inicio, const char *data_fim,
     // =====================================================
     // OTIMIZAÇÃO 1: Converter datas UMA ÚNICA VEZ
     // =====================================================
-    int t_inicio, t_fim;
+    long long t_inicio, t_fim;
     
     // Usar a função valida_DataH do validators.h
     if (!valida_DataH(data_inicio, &t_inicio) || 

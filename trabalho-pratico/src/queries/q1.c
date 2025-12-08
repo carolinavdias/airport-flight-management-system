@@ -4,7 +4,8 @@
 #include <ctype.h> //para funcoes isupper e isalpha
 #include <stdlib.h>
 #include <glib.h>
-#include "q1.h"
+#include "queries/q1.h"
+#include "entidades/airports.h"
 #include "errors.h"
 
 

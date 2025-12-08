@@ -4,7 +4,7 @@
 #include <stdio.h> //tipo FILE*
 #include <glib.h>
 #include <stdint.h> //++
-#include "entidades/airports.h"
+#include "../entidades/airports.h"
 
 //carrega aeroportos de um ficheiro CSV para uma GHashTable
 GHashTable* carregarAeroportos(const char *caminhoFicheiro);
