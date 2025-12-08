@@ -3,18 +3,17 @@
 
 #include "flights.h" //para usar Data
 
-typedef enum {
-    GENERO_F,
-    GENERO_M,
-    GENERO_O,
-    GENERO_ERROR
-} Genero;
+typedef uint8_t Genero;
+
+#define GENERO_F 0
+#define GENERO_M 1
+#define GENERO_O 2
 
 typedef struct passageiros {
     int id_passageiro;
     char *primeiro_nome;
     char *ultimo_nome;
-    Data data_nascimento;
+    int data_nascimento;
     char *nacionalidade;
     Genero genero_passageiro;
     char *email_passageiro;

@@ -1,15 +1,15 @@
 #ifndef AIRPORTS_H
 #define AIRPORTS_H
 
-typedef enum {
-    TIPO_SMALL_AIRPORT,
-    TIPO_MEDIUM_AIRPORT,
-    TIPO_LARGE_AIRPORT,
-    TIPO_HELIPORT,
-    TIPO_SEAPLANE_BASE,
-    TIPO_CLOSED_AIRPORT,
-    TIPO_ERROR
-} Tipo_aeroporto;
+typedef uint8_t Tipo_aeroporto;
+
+#define TIPO_SMALL_AIRPORT 0
+#define TIPO_MEDIUM_AIRPORT 1
+#define TIPO_LARGE_AIRPORT 2
+#define TIPO_HELIPORT 3
+#define TIPO_SEAPLANE_BASE 4
+#define TIPO_CLOSED_AIRPORT 5
+
 
 typedef struct aeroporto {
     char *code_IATA; //codigo_IATA_aer
@@ -21,7 +21,7 @@ typedef struct aeroporto {
     char *code_ICAO; //codigo_ICAO_aeroporto ++
     Tipo_aeroporto type; // ++
     int arrival_count;
-    int departure_count; 
+    int departure_count;
 } Aeroporto;
 
 void libertaAeroporto(void *data);

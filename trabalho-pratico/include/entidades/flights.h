@@ -3,32 +3,12 @@
 
 #include <stdbool.h>
 
-//typedef uint8_t Estado;
-/*
+typedef uint8_t Estado;
+
 #define ESTADO_ON_TIME 0
 #define ESTADO_DELAYED 1
 #define ESTADO_CANCELLED 2
-*/
 
-typedef struct data_def {
-    int ano, mes, dia;
-} Data;
-
-typedef struct hora_def {
-    int hora, mins;
-} Hora;
-
-typedef struct dataH {
-    Data data;
-    Hora horas;
-} DataH;
-
-typedef enum {
-    ESTADO_SCHEDULED,
-    ESTADO_DELAYED,
-    ESTADO_CANCELLED,
-    ESTADO_ERROR
-} Estado;
 
 typedef struct voo {
     char *flight_id; //voo_id

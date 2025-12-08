@@ -5,13 +5,8 @@
 #include <stdbool.h>
 #include <glib.h>
 
-int valida_codigoIATA(char* string, char **codigo_IATA);
-int valida_coordenadas(const char* string, int versao, double *coordenada);
+int valida_codigoIATA (const char* s, char **codigo_IATA);
+int valida_coordenadas (const char* s, int versao, double *coordenada);
 int valida_tipo_aer(const char *string, Tipo_aeroporto *t);
-
-bool v_is_iata3(const char *s);
-bool v_is_airport_type(const char *s);
-bool v_is_lat(const char *s);
-bool v_is_lng(const char *s);
 
 #endif

@@ -16,10 +16,10 @@ SRCS_LIB := $(wildcard $(SRC_DIR)/*.c)
 OBJS_LIB := $(SRCS_LIB:$(SRC_DIR)/%.c=$(OBJ_DIR)/src/%.o)
 
 # Programa principal
-OBJS_MAIN := $(OBJ_DIR)/programa-principal.o $(OBJS_LIB)
+OBJS_MAIN := $(OBJ_DIR)/programas/programa-principal.o $(OBJS_LIB)
 
 # Programa de testes
-OBJS_TEST := $(OBJ_DIR)/programa-testes.o $(OBJS_LIB)
+OBJS_TEST := $(OBJ_DIR)/programas/programa-testes.o $(OBJS_LIB)
 
 # Executáveis
 MAIN_BIN  = programa-principal

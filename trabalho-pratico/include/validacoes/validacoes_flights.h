@@ -2,19 +2,17 @@
 #define VALIDACOES_FLIGHTS_H
 
 #include "flights.h"
-#include "gestor_aircrafts.h" 
+#include "gestor_aircrafts.h"
 #include <stdbool.h>
 #include <glib.h>
 
-//validações sintáticas 
-int valida_id_voo(const char *string, char **flight_id);
+//validações sintáticas
+int valida_id_voo (const char* s, char **voo_id);
+int qual_mes (int ano, int mes); //auxiliar -> para mudar de lugar
+int valida_DataH(const char *s, long long *out);
 int valida_Estado(const char *s, Estado *e);
-int compara_dataH(char *datah1, char *datah2);
-
-bool v_is_flight_id(const char *s);
-bool v_is_status_valid(const char *s);
 
 //validação lógica
-int valida_VOO(Voo voo, GestorAircrafts *gestor_aeronaves); 
+int valida_VOO(Voo voo, GestorAircrafts *gestor_aeronaves);
 
 #endif

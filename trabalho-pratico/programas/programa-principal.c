@@ -3,9 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <glib.h>
-#include "q1.h"
-#include "q2.h"
-#include "q3.h"
+//#include "include/entidades/aircrafts"
+#include "queries/q1.h"
+#include "queries/q2.h"
+#include "queries/q3.h"
 #include "errors.h"
 #include "read.h"
 

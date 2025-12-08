@@ -3,6 +3,6 @@
 
 #include <glib.h>
 
-int valida_year (char *string, int *year);
+int valida_year (const char *s, int *year);
 
 #endif

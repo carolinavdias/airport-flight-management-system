@@ -6,15 +6,16 @@
 #include <glib.h>
 
 //validacao documento
-int valida_id_passageiro(char* string, int *id_passageiro);
-bool v_is_document_number(const char *s);
-
-//validacao e-mail
-int valida_email(char *string, char **email);
-bool v_is_email(const char *s);
+int valida_id_passageiro(const char* s, int *id_passageiro);
 
 //validacao genero
-int valida_genero(const char *string, Genero *g);
-bool v_is_gender(const char *s);
+int valida_genero(const char *s, Genero *g);
+
+//validacao e-mail
+int valida_email(const char *s, char **email);
+
+//validacao data de nascimento
+int valida_Data (const char *s, int *data);
+
 
 #endif
