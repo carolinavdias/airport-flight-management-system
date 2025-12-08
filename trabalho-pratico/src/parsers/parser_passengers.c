@@ -1,26 +1,25 @@
 #define _POSIX_C_SOURCE 200809L
+#include "parsers/parser_passengers.h"
+#include "validacoes/validacoes_passengers.h"
+#include "csv.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 #include <glib.h>
 #include <ctype.h>
-#include <unistd.h>
-#include <stdint.h>
-#include "parser_passangers.h"
-#include "passangers.h"
-#include "gestor_passangers.h"
-#include "validacoes/validacoes_passangers.h"
-#include "csv.h"
 
+#define MAX_LINHA 20000
+static char buffer[MAX_LINHA];
 
 int le_tabela_Passageiros(Contexto ctx, GestorPassengers *P) {
 
     FILE *ficheiro = abrir_ficheiro(&ctx, "passengers.csv", "r");
     if (ficheiro == NULL) return 0;
+    
+    int no_header = 1;
     char header[MAX_LINHA];
 
-    no_header = 1;
     if (fgets(buffer, sizeof(buffer), ficheiro) == NULL) no_header = 0;
     else {
         buffer[strcspn(buffer,"\n")] = '\0';
@@ -31,12 +30,14 @@ int le_tabela_Passageiros(Contexto ctx, GestorPassengers *P) {
     int header_escrito = 0;
 
     while (fgets(buffer, sizeof(buffer), ficheiro) && no_header) {
-        Passageiros *passageiro_atual = calloc(1, sizeof(Passageiros));  // ← CALLOC!
+        Passageiros *passageiro_atual = calloc(1, sizeof(Passageiros));
 
         int linha_valida = 1;
         buffer[strcspn(buffer, "\n")] = '\0';
 
-        char **campos = parse_csv_line(buffer);
+        char **campos = NULL;
+        size_t n_campos = 0;
+        if (csv_split(buffer, &campos, &n_campos) != 0) linha_valida = 0;
 
         if (linha_valida && !valida_id_passageiro(campos[0], &passageiro_atual->id_passageiro)) linha_valida = 0;
         if (linha_valida) passageiro_atual->primeiro_nome = g_strdup(campos[1]);
@@ -62,14 +63,14 @@ int le_tabela_Passageiros(Contexto ctx, GestorPassengers *P) {
                 fputs(buffer, ficheiro_erros);
                 fputc('\n', ficheiro_erros);
             }
-            libertaPassageiro(passageiro_atual);  // ← USA FUNÇÃO DE LIBERTAÇÃO!
+            libertaPassageiro(passageiro_atual);
         } else {
-                //g_hash_table_insert(tabela4, GINT_TO_POINTER(passageiro_atual->id_passageiro), passageiro_atual);
-		gestor_passengers_inserir(P, passageiro_atual);
+	    gestor_passengers_inserir(P, passageiro_atual);
         }
-        liberta_ifcampos(campos); //if (campos) csv_free_fields(campos, n_campos);
+        if (campos) csv_free_fields(campos, n_campos);
     }
+    
     if (ficheiro_erros) fclose(ficheiro_erros);
     fclose(ficheiro);
     return 1;
-
+}
