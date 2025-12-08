@@ -1,13 +1,14 @@
 #ifndef PASSENGERS_H
 #define PASSENGERS_H
 
-#include "flights.h" //para usar Data
+#include <stdint.h>
 
 typedef uint8_t Genero;
 
 #define GENERO_F 0
 #define GENERO_M 1
 #define GENERO_O 2
+#define GENERO_ERROR 3
 
 typedef struct passageiros {
     int id_passageiro;

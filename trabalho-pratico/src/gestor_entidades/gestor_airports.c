@@ -1,4 +1,4 @@
-#include "gestor_airports.h"
+#include "gestor_entidades/gestor_airports.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -19,8 +19,9 @@ Aeroporto *gestor_airports_procura(GestorAirports *g, const char *code_IATA) {
     return g_hash_table_lookup(g->tabela, code_IATA);
 }
 
-int gestor_airports_existe(GestorFlights *g, const char *codigo_IATA) {
-    return g && codigo_IATA && g_hash_table_contains(g->tabela, codigo_IATA);
+int gestor_airports_existe(GestorAirports *g, const char *code_IATA) {
+    if (g == NULL || code_IATA == NULL) return 0;
+    return g_hash_table_contains(g->tabela, code_IATA);
 }
 
 GHashTable *gestor_airports_table(GestorAirports *g) {

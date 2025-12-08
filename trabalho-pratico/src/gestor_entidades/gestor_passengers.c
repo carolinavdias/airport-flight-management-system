@@ -1,4 +1,4 @@
-#include "gestor_passengers.h"
+#include "gestor_entidades/gestor_passengers.h"
 #include <stdlib.h>
 
 static gpointer key_int_new(int x) {

@@ -2,6 +2,7 @@
 #define FLIGHTS_H
 
 #include <stdbool.h>
+#include <stdint.h>
 
 typedef uint8_t Estado;
 
@@ -9,13 +10,12 @@ typedef uint8_t Estado;
 #define ESTADO_DELAYED 1
 #define ESTADO_CANCELLED 2
 
-
 typedef struct voo {
     char *flight_id; //voo_id
-    int departure; //partida_prevista
-    int actual_departure; //partida_efetiva
-    int arrival; //chegada prevista
-    int actual_arrival; //chegada efetiva
+    long long departure; //partida_prevista
+    long long actual_departure; //partida_efetiva
+    long long arrival; //chegada prevista
+    long long actual_arrival; //chegada efetiva
     char *gate; //porta_embarque
     Estado status; //++ Estado
     char *code_origin; //codigo IATA origem

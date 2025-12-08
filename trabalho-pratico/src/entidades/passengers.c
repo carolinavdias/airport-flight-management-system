@@ -1,4 +1,4 @@
-#include "passengers.h"
+#include "entidades/passengers.h"
 #include <glib.h>
 
 void libertaPassageiro(void *data) {

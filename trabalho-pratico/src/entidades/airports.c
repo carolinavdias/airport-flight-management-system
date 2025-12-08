@@ -1,4 +1,4 @@
-#include "airports.h"
+#include "entidades/airports.h"
 #include <glib.h>
 
 void libertaAeroporto(void *data) {

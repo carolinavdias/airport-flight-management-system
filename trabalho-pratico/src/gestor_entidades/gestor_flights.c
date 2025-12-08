@@ -1,4 +1,4 @@
-#include "gestor_flights.h"
+#include "gestor_entidades/gestor_flights.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -17,11 +17,12 @@ void gestor_flights_destroy(GestorFlights *g) {
 
 void gestor_flights_inserir(GestorFlights *g, Voo *voo) {
     if (!g || !voo) return;
-    g_hash_table_insert(g->tabela_voos, strdup(voo->id_voo), voo);
+    g_hash_table_insert(g->tabela_voos, strdup(voo->flight_id), voo);
 }
 
 bool gestor_flights_existe(GestorFlights *g, const char *id_voo) {
-    return g && id_voo && g_hash_table_contains(g->tabela_voos, id_voo);
+    if (!g || !id_voo) return false;
+    return g_hash_table_contains(g->tabela_voos, id_voo);
 }
 
 const char *gestor_flights_obter_origem(GestorFlights *g, const char *id_voo) {
@@ -34,4 +35,8 @@ const char *gestor_flights_obter_destino(GestorFlights *g, const char *id_voo) {
     if (!g) return NULL;
     Voo *v = g_hash_table_lookup(g->tabela_voos, id_voo);
     return v ? v->code_destination : NULL;
+}
+
+GHashTable *gestor_flights_table(GestorFlights *g) {
+    return (g != NULL) ? g->tabela_voos : NULL;
 }

@@ -1,4 +1,4 @@
-#include "flights.h"
+#include "entidades/flights.h"
 #include <glib.h>
 
 void libertaVoo(void *data) {

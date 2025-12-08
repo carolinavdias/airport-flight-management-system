@@ -1,4 +1,4 @@
-#include "gestor_aircrafts.h"
+#include "gestor_entidades/gestor_aircrafts.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -17,6 +17,11 @@ void gestor_aircrafts_insere(GestorAircrafts *g, Aeronave *a) {
 Aeronave *gestor_aircrafts_procura(GestorAircrafts *g, const char *identifier) {
     if (g == NULL || identifier == NULL) return NULL;
     return g_hash_table_lookup(g->tabela, identifier);
+}
+
+int gestor_aircrafts_existe(GestorAircrafts *g, const char *identifier) {
+    if (g == NULL || identifier == NULL) return 0;
+    return g_hash_table_contains(g->tabela, identifier);
 }
 
 GHashTable *gestor_aircrafts_table(GestorAircrafts *g) {

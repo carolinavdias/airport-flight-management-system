@@ -1,6 +1,8 @@
 #ifndef AIRPORTS_H
 #define AIRPORTS_H
 
+#include <stdint.h>
+
 typedef uint8_t Tipo_aeroporto;
 
 #define TIPO_SMALL_AIRPORT 0
@@ -8,7 +10,8 @@ typedef uint8_t Tipo_aeroporto;
 #define TIPO_LARGE_AIRPORT 2
 #define TIPO_HELIPORT 3
 #define TIPO_SEAPLANE_BASE 4
-
+#define TIPO_CLOSED_AIRPORT 5
+#define TIPO_ERROR 6
 
 typedef struct aeroporto {
     char *code_IATA; //codigo_IATA_aer
