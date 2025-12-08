@@ -4,7 +4,10 @@
 #include <stddef.h>
 #include <glib.h>
 
-gchar **parse_csv_line(const gchar *line);
-void liberta_ifcampos (char **campos);
+// função para dividir linha CSV em campos
+int csv_split(const char *line, char ***fields, size_t *count);
+
+// função para libertar campos
+void csv_free_fields(char **fields, size_t count);
 
 #endif

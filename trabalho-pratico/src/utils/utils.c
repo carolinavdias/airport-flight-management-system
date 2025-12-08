@@ -1,4 +1,4 @@
-#include "utils.h"
+#include "utils/utils.h"
 #include <string.h>
 
 //abre um ficheiro no diretório do dataset
