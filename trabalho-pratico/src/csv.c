@@ -4,13 +4,15 @@
 #include <string.h>
 #include <ctype.h>
 
-// Função para dividir linha CSV (suporta aspas e vírgulas dentro de campos)
+// divide uma linha CSV em campos individuais
+// suporta campos com aspas e vírgulas dentro dos campos
 int csv_split(const char *line, char ***fields, size_t *count) {
     if (!line || !fields || !count) return -1;
     
     *fields = NULL;
     *count = 0;
     
+    // começa com capacidade para 16 campos
     size_t capacity = 16;
     char **result = malloc(capacity * sizeof(char*));
     if (!result) return -1;
@@ -18,20 +20,20 @@ int csv_split(const char *line, char ***fields, size_t *count) {
     const char *p = line;
     
     while (*p) {
-        // pular espaços iniciais
+        // pular espaços no inicio
         while (*p && isspace((unsigned char)*p)) p++;
         if (!*p) break;
         
         const char *start;
         const char *end;
         
+        // verificar se o campo tem aspas
         if (*p == '"') {
-            // campo com aspas
-            p++; // pular aspa inicial
+            p++; // passar a aspa inicial
             start = p;
             while (*p && *p != '"') p++;
             end = p;
-            if (*p == '"') p++; // pular aspa final
+            if (*p == '"') p++; // passar a aspa final
         } else {
             // campo sem aspas
             start = p;
@@ -39,7 +41,7 @@ int csv_split(const char *line, char ***fields, size_t *count) {
             end = p;
         }
         
-        // alocar e copiar campo
+        // alocar espaço e copiar o campo
         size_t len = end - start;
         char *field = malloc(len + 1);
         if (!field) {
@@ -64,7 +66,7 @@ int csv_split(const char *line, char ***fields, size_t *count) {
         result[*count] = field;
         (*count)++;
         
-        // pular vírgula
+        // passar a vírgula se houver
         if (*p == ',') p++;
     }
     
@@ -72,7 +74,7 @@ int csv_split(const char *line, char ***fields, size_t *count) {
     return 0;
 }
 
-// Função para libertar campos alocados
+// liberta a memória dos campos
 void csv_free_fields(char **fields, size_t count) {
     if (!fields) return;
     for (size_t i = 0; i < count; i++) {
