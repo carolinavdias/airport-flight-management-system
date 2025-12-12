@@ -1,8 +1,8 @@
 #ifndef VALIDACOES_AIRCRAFTS_H
 #define VALIDACOES_AIRCRAFTS_H
 
-#include <glib.h>
+#include "entidades/aircrafts.h"
 
-int valida_year (const char *s, int *year);
+int valida_year (const char *s);
 
 #endif

@@ -4,28 +4,14 @@
 
 #include <stdio.h> //tipo FILE*
 #include <glib.h>
-#include "../entidades/aircrafts.h"
 
 //contagem
-typedef struct {
-    char *identifier;
-    char *manufacturer;
-    char *model;
-    int count;
-} Contagem;
+typedef struct contagem Contagem;
 
-//carrega aeronaves de um ficheiro CSV para uma GHashTable
-GHashTable* carregarAeronaves(const char *caminhoFicheiro);
-
-//verifica se o identificador é válido (formato tipo PT-AB12)
-int identificadorValido(const char *id);
+//static void trim(char *s);
 
 //query 2 (top N aeronaves com mais voos realizados, filtradas por fabricante opcional)
-void query2(const char *linhaComando,
-            GHashTable *tabelaAeronaves,
-            GHashTable *tabelaVoos,
-            FILE *out);
-
+void query2(const char *linhaComando, GHashTable *tabelaAeronaves, GHashTable *tabelaVoos, FILE *out);
 
 //função auxiliar (ordenação por número de voos e depois por identificador)
 int comparaContagens(const Contagem *a, const Contagem *b);

@@ -1,39 +1,48 @@
 #define _POSIX_C_SOURCE 200809L
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h> //para funcoes isupper e isalpha
-#include <stdlib.h>
-#include <glib.h>
 #include "queries/q1.h"
+
+#include <string.h>
+
 #include "entidades/airports.h"
-#include "errors.h"
+#include "validacoes/validacoes_airports.h"
 
-
-// --------- validações auxiliares no mesmo estilo ---------
-
-//verifica se o tipo do aeroporto é válido
-//(small_airport, medium_airport, large_airport, heliport, seaplane_base, closed_airport)
-static int tipoValido(const char *type) {
-    if (!type) return 0;
-    return (strcmp(type, "small_airport")  == 0) ||
-           (strcmp(type, "medium_airport") == 0) ||
-           (strcmp(type, "large_airport")  == 0) ||
-           (strcmp(type, "heliport")       == 0) ||
-           (strcmp(type, "seaplane_base")  == 0) ||
-           (strcmp(type, "closed_airport") == 0);
+const char* tipoToString(Tipo_aeroporto t) {
+    switch (t) {
+        case TIPO_SMALL_AIRPORT: return "small_airport";
+        case TIPO_MEDIUM_AIRPORT: return "medium_airport";
+        case TIPO_LARGE_AIRPORT: return "large_airport";
+        case TIPO_HELIPORT: return "heliport";
+        case TIPO_SEAPLANE_BASE: return "seaplane_base";
+        default: return "error";
+    }
 }
 
-//verifica se uma string é vazia ou só tem espaços
-static int stringVaziaOuEspacos(const char *s) {
-    if (!s) return 1;
-    while (*s) {
-        if (!isspace((unsigned char)*s)) return 0;
-        s++;
+//query 1 (dado um código de aeroporto, procura-o na tabela e imprime as suas informações)
+void query1(const char *code, GHashTable *tabelaAeroportos, FILE *out) {
+    if (!valida_codigoIATA(code)) {
+        fprintf(out, "\n");
+        return;
+    }
+
+    Aeroporto *a = g_hash_table_lookup(tabelaAeroportos, code);
+    if (a != NULL) {
+        fprintf(out, "%s,%s,%s,%s,%s\n",
+                airport_get_code_IATA(a), airport_get_name(a), airport_get_city(a), airport_get_country(a), tipoToString(airport_get_type(a)));
+    } else {
+        fprintf(out, "\n");
+    }
+}
+
+
+/*
+//verifica se o código do aeroporto é válido (3 letras maiúsculas)
+int codigoValido(const char *codigo) {
+    if (!codigo || strlen(codigo) != 3) return 0;
+    for (int i = 0; i < 3; i++) {
+        if (!isupper((unsigned char)codigo[i]) || !isalpha((unsigned char)codigo[i])) return 0;
     }
     return 1;
 }
-
-// --------------------------------------------------------------------
 
 //carrega aeroportos de um ficheiro CSV para uma GHashTable
 GHashTable* carregarAeroportos(const char *caminhoFicheiro) {
@@ -133,39 +142,14 @@ GHashTable* carregarAeroportos(const char *caminhoFicheiro) {
     return tabela;
 }
 
-//verifica se o código do aeroporto é válido (3 letras maiúsculas)
-int codigoValido(const char *codigo) {
-    if (!codigo || strlen(codigo) != 3) return 0;
-    for (int i = 0; i < 3; i++) {
-        if (!isupper((unsigned char)codigo[i]) || !isalpha((unsigned char)codigo[i])) return 0;
+
+static int stringVaziaOuEspacos(const char *s) {
+    if (!s) return 1;
+    while (*s) {
+        if (!isspace((unsigned char)*s)) return 0;
+        s++;
     }
     return 1;
 }
+*/
 
-const char* tipoToString(Tipo_aeroporto t) {
-    switch (t) {
-        case TIPO_SMALL_AIRPORT: return "small_airport";
-        case TIPO_MEDIUM_AIRPORT: return "medium_airport";
-        case TIPO_LARGE_AIRPORT: return "large_airport";
-        case TIPO_HELIPORT: return "heliport";
-        case TIPO_SEAPLANE_BASE: return "seaplane_base";
-        case TIPO_CLOSED_AIRPORT: return "closed_airport";
-        default: return "error";
-    }
-}
-
-//query 1 (dado um código de aeroporto, procura-o na tabela e imprime as suas informações)
-void query1(const char *code, GHashTable *tabelaAeroportos, FILE *out) {
-    if (!codigoValido(code)) {
-        fprintf(out, "\n");
-        return;
-    }
-
-    Aeroporto *a = g_hash_table_lookup(tabelaAeroportos, code);
-    if (a != NULL) {
-        fprintf(out, "%s,%s,%s,%s,%s\n",
-                a->code_IATA, a->name, a->city, a->country, tipoToString(a->type));
-    } else {
-        fprintf(out, "\n");
-    }
-}

@@ -1,7 +1,6 @@
 #ifndef FLIGHTS_H
 #define FLIGHTS_H
 
-#include <stdbool.h>
 #include <stdint.h>
 
 typedef uint8_t Estado;
@@ -10,21 +9,30 @@ typedef uint8_t Estado;
 #define ESTADO_DELAYED 1
 #define ESTADO_CANCELLED 2
 
-typedef struct voo {
-    char *flight_id; //voo_id
-    long long departure; //partida_prevista
-    long long actual_departure; //partida_efetiva
-    long long arrival; //chegada prevista
-    long long actual_arrival; //chegada efetiva
-    char *gate; //porta_embarque
-    Estado status; //++ Estado
-    char *code_origin; //codigo IATA origem
-    char *code_destination; //codigo IATA destino
-    char *id_aircraft; //id_aeronave
-    char *airline; //companhia aerea
-    char *tracking_url;
-} Voo;
+typedef struct voo Voo;
 
+char *voo_get_flight_id (const Voo *v);
+const char *voo_get_code_origin (const Voo *v);
+const char *voo_get_code_destination (const Voo *v);
+long long voo_get_departure (const Voo *v);
+long long voo_get_actual_departure (const Voo *v);
+long long voo_get_arrival (const Voo *v);
+long long voo_get_actual_arrival (const Voo *v);
+const char *voo_get_id_aircraft (const Voo *v);
+Estado voo_get_status (const Voo *v);
+
+
+void voo_set_status (Voo *v, char *status);
+void voo_set_code (Voo *v, char *code, char versao);
+long long converte_dataH (const char *s);
+void voo_set_dataH (Voo *v, const char *s, int campo);
+void voo_set_flight_id (Voo *v, char *id);
+void voo_set_gate (Voo *v, char *campo_gate);
+void voo_set_airline (Voo *v, char *airl);
+void voo_set_tracking_url (Voo *v, char *url);
+void voo_set_id_aircraft (Voo *v, char *id_airc);
+
+Voo *criaVoo ();
 void libertaVoo(void *data);
 
 #endif

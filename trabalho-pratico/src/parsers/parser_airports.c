@@ -1,23 +1,21 @@
 #define _POSIX_C_SOURCE 200809L
+
 #include "parsers/parser_airports.h"
 #include "validacoes/validacoes_airports.h"
+#include "entidades/airports.h"
 #include "csv.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
+
 #include <glib.h>
-#include <ctype.h>
 
-#define MAX_LINHA 20000
-static char buffer[MAX_LINHA];
+int le_tabela_Aeroportos(Contexto *ctx, GestorAirports *AP) {
 
-int le_tabela_Aeroportos(Contexto ctx, GestorAirports *AP) {
+    int MAX_LINHA = 2000;
+    gchar buffer[MAX_LINHA];
 
-    FILE *ficheiro = abrir_ficheiro(&ctx, "airports.csv", "r");
+    FILE *ficheiro = abrir_ficheiro(ctx, "airports.csv", "r");
     if (ficheiro == NULL) return 0;
-    
-    int no_header = 1;
+
+    int  no_header = 1;
     char header[MAX_LINHA];
 
     if (fgets(buffer, sizeof(buffer), ficheiro) == NULL) no_header = 0;
@@ -30,7 +28,7 @@ int le_tabela_Aeroportos(Contexto ctx, GestorAirports *AP) {
     int header_escrito = 0;
 
     while (fgets(buffer, sizeof(buffer), ficheiro) && no_header) {
-        Aeroporto *aeroporto_atual = calloc(1, sizeof(Aeroporto));
+        Aeroporto *aeroporto_atual = criaAeroporto();
 
         int linha_valida = 1;
         buffer[strcspn(buffer, "\n")] = '\0';
@@ -39,14 +37,35 @@ int le_tabela_Aeroportos(Contexto ctx, GestorAirports *AP) {
         size_t n_campos = 0;
         if (csv_split(buffer, &campos, &n_campos) != 0) linha_valida = 0;
 
-        if (linha_valida && !valida_codigoIATA(campos[0], &aeroporto_atual->code_IATA)) linha_valida = 0;
-        if (linha_valida) aeroporto_atual->name = g_strdup(campos[1]);
-        if (linha_valida) aeroporto_atual->city = g_strdup(campos[2]);
-        if (linha_valida) aeroporto_atual->country = g_strdup(campos[3]);
-        if (linha_valida && !valida_coordenadas(campos[4],1,&aeroporto_atual->latitude)) linha_valida = 0;
-        if (linha_valida && !valida_coordenadas(campos[5],2,&aeroporto_atual->longitude)) linha_valida = 0;
-        if (linha_valida) aeroporto_atual->code_ICAO = g_strdup(campos[6]);
-        if (linha_valida && !valida_tipo_aer(campos[7], &aeroporto_atual->type)) linha_valida = 0;
+	//CODE_IATA
+        if (linha_valida && valida_codigoIATA(campos[0])) airport_set_code_IATA(aeroporto_atual,campos[0]);
+	else linha_valida = 0;
+
+	//NAME
+        if (linha_valida) airport_set_name(aeroporto_atual,campos[1]);
+
+	//CITY
+        if (linha_valida) airport_set_city(aeroporto_atual,campos[2]);
+
+	//COUNTRY
+        if (linha_valida) airport_set_country(aeroporto_atual,campos[3]);
+
+	//LATITUDE
+        if (linha_valida && valida_coordenadas(campos[4],1))
+	    airport_set_coordenada(aeroporto_atual,campos[4],1);
+	else linha_valida = 0;
+
+	//LONGITUDE
+	if (linha_valida && valida_coordenadas(campos[5],2))
+	    airport_set_coordenada(aeroporto_atual,campos[5],2);
+	else linha_valida = 0;
+
+	//CODE_ICAO
+        if (linha_valida) airport_set_code_ICAO(aeroporto_atual,campos[6]);
+
+	//TIPO_AEROPORTO
+        if (linha_valida && valida_tipo_aer(campos[7])) airport_set_type(aeroporto_atual,campos[7]);
+	else linha_valida = 0;
 
         if (!linha_valida) {
             if (!ficheiro_erros) {
@@ -67,7 +86,7 @@ int le_tabela_Aeroportos(Contexto ctx, GestorAirports *AP) {
         }
         if (campos) csv_free_fields(campos, n_campos);
     }
-    
+
     if (ficheiro_erros) fclose(ficheiro_erros);
     fclose(ficheiro);
     return 1;

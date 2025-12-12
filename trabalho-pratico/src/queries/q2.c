@@ -1,15 +1,18 @@
 #define _POSIX_C_SOURCE 200809L
-#include <stdio.h>
-#include <string.h>
 #include <ctype.h>
-#include <stdlib.h>
-#include <glib.h>
+
 #include "queries/q2.h"
-#include "entidades/flights.h"     
-#include "entidades/aircrafts.h" 
-// q3 removido
-// read removido
-#include "errors.h"
+
+#include "entidades/flights.h"
+#include "entidades/aircrafts.h"
+
+//contagem
+typedef struct contagem {
+    char *identifier;
+    char *manufacturer;
+    char *model;
+    int count;
+} Contagem;
 
 // =====================================================
 // FUNÇÕES AUXILIARES
@@ -20,21 +23,12 @@ static void trim(char *s) {
     char *p = s;
     while (*p && isspace((unsigned char)*p)) p++;
     if (p != s) memmove(s, p, strlen(p) + 1);
-    
+
     size_t len = strlen(s);
     while (len > 0 && isspace((unsigned char)s[len - 1])) {
         s[len - 1] = '\0';
         len--;
     }
-}
-
-int identificadorValido(const char *id) {
-    if (!id || strlen(id) != 7) return 0;
-    if (!isupper((unsigned char)id[0]) || !isupper((unsigned char)id[1])) return 0;
-    if (id[2] != '-') return 0;
-    for (int i = 3; i < 7; i++)
-        if (!isdigit((unsigned char)id[i])) return 0;
-    return 1;
 }
 
 int comparaContagens(const Contagem *a, const Contagem *b) {
@@ -47,11 +41,7 @@ int comparaContagens(const Contagem *a, const Contagem *b) {
 // QUERY 2 OTIMIZADA
 // =====================================================
 
-void query2(const char *linhaComando,
-            GHashTable *tabelaAeronaves,
-            GHashTable *tabelaVoos,
-            FILE *out)
-{
+void query2(const char *linhaComando, GHashTable *tabelaAeronaves, GHashTable *tabelaVoos, FILE *out) {
     int N;
     char fabricante_raw[200] = "";
 
@@ -75,23 +65,23 @@ void query2(const char *linhaComando,
     // OTIMIZAÇÃO 2: Iterar com iterator (mais rápido que get_values)
     GHashTableIter iter;
     gpointer key, value;
-    
+
     g_hash_table_iter_init(&iter, tabelaVoos);
     while (g_hash_table_iter_next(&iter, &key, &value)) {
         Voo *v = value;
 
         // Ignorar cancelados (usar constante do header q3.h)
-        if (v->status == ESTADO_CANCELLED) continue;
-        
+        if (voo_get_status(v) == ESTADO_CANCELLED) continue;
+
         // Ignorar voos sem aeronave
-        if (!v->id_aircraft || v->id_aircraft[0] == '\0') continue;
+        if (!voo_get_id_aircraft(v) || (voo_get_id_aircraft(v))[0] == '\0') continue;
 
         // OTIMIZAÇÃO 3: Incrementar DIRETO sem malloc
-        gpointer old_count = g_hash_table_lookup(contagens, v->id_aircraft);
+        gpointer old_count = g_hash_table_lookup(contagens, voo_get_id_aircraft(v));
         int new_count = old_count ? GPOINTER_TO_INT(old_count) + 1 : 1;
-        
+
         // Reutilizar a chave original (não duplicar)
-        g_hash_table_insert(contagens, v->id_aircraft, GINT_TO_POINTER(new_count));
+        g_hash_table_insert(contagens, (gpointer)voo_get_id_aircraft(v), GINT_TO_POINTER(new_count));
     }
 
     // =====================================================
@@ -100,15 +90,16 @@ void query2(const char *linhaComando,
     GList *resultado = NULL;
 
     g_hash_table_iter_init(&iter, tabelaAeronaves);
+
     while (g_hash_table_iter_next(&iter, &key, &value)) {
         Aeronave *a = value;
 
         // Aplicar filtro de fabricante (case-insensitive inline)
         if (usar_filtro) {
-            const char *s1 = a->manufacturer;
+            const char *s1 = aircraft_get_manuf(a);
             const char *s2 = fabricante_lower;
             int match = 1;
-            
+
             for (; *s1 && *s2; s1++, s2++) {
                 if (g_ascii_tolower(*s1) != *s2) {
                     match = 0;
@@ -116,19 +107,19 @@ void query2(const char *linhaComando,
                 }
             }
             if (!(*s1 == '\0' && *s2 == '\0')) match = 0;
-            
+
             if (!match) continue;
         }
 
         // Obter contagem
-        gpointer count_ptr = g_hash_table_lookup(contagens, a->identifier);
+        gpointer count_ptr = g_hash_table_lookup(contagens, aircraft_get_identifier(a));
         int count = count_ptr ? GPOINTER_TO_INT(count_ptr) : 0;
 
         // Criar estrutura Contagem
         Contagem *c = g_new(Contagem, 1);
-        c->identifier   = g_strdup(a->identifier);
-        c->manufacturer = g_strdup(a->manufacturer);
-        c->model        = g_strdup(a->model);
+        c->identifier   = aircraft_get_identifier(a);
+        c->manufacturer = aircraft_get_manuf(a);
+        c->model        = aircraft_get_model(a);
         c->count        = count;
 
         resultado = g_list_prepend(resultado, c);
@@ -152,14 +143,18 @@ void query2(const char *linhaComando,
         fprintf(out, "\n");
     }
 
-    // Libertar memória
-    for (GList *l = resultado; l != NULL; l = l->next) {
-        Contagem *c = l->data;
-        g_free(c->identifier);
-        g_free(c->manufacturer);
-        g_free(c->model);
-        g_free(c);
-    }
     g_list_free(resultado);
     g_hash_table_destroy(contagens);
 }
+
+
+/*
+int identificadorValido(const char *id) {
+    if (!id || strlen(id) != 7) return 0;
+    if (!isupper((unsigned char)id[0]) || !isupper((unsigned char)id[1])) return 0;
+    if (id[2] != '-') return 0;
+    for (int i = 3; i < 7; i++)
+        if (!isdigit((unsigned char)id[i])) return 0;
+    return 1;
+}
+*/

@@ -3,11 +3,9 @@
 
 #include <glib.h>
 #include <stdbool.h>
-#include "../entidades/flights.h"
+#include "entidades/flights.h"
 
-typedef struct {
-    GHashTable *tabela_voos;   //chave: id do voo (char*), valor: Voo*
-} GestorFlights;
+typedef struct gestor_flights GestorFlights;
 
 //criação / destruição
 GestorFlights *gestor_flights_novo();
@@ -17,11 +15,11 @@ void gestor_flights_destroy(GestorFlights *g);
 void gestor_flights_inserir(GestorFlights *g, Voo *voo);
 
 //consultas
-bool gestor_flights_existe(GestorFlights *g, const char *id_voo);
-const char *gestor_flights_obter_origem(GestorFlights *g, const char *id_voo);
-const char *gestor_flights_obter_destino(GestorFlights *g, const char *id_voo);
+bool gestor_flights_existe(GestorFlights *g, const char *flight_id);
+const char *gestor_flights_obter_origem(GestorFlights *g, const char *flight_id);
+const char *gestor_flights_obter_destino(GestorFlights *g, const char *flight_id);
 
 //para queries que precisam iterar
-GHashTable *gestor_flights_table(GestorFlights *g);  
+GHashTable *gestor_flights_table(GestorFlights *g);
 
 #endif

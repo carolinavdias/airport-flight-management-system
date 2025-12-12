@@ -1,18 +1,13 @@
 #define _GNU_SOURCE
 #define _XOPEN_SOURCE 700
 #include "validacoes/validacoes_flights.h"
-#include "gestor_entidades/gestor_aircrafts.h"
-#include "entidades/flights.h"
-#include <ctype.h>
-#include <string.h>
-#include <stdlib.h>
-#include <glib.h>
-
+#include "utils/utils.h"
 
 //VOOS -> VALIDAÇÃO SINTÁTICA
 
+
 //Valida o id do voo
-int valida_id_voo (const char* s, char **voo_id) {
+int valida_id_voo (const char *s) {
     if (!s) return 0; //tirar ou nao o strlen?
     for (int i = 0; i < 7; i++) {
         if (s[i] == '\0') return 0; //string demasiado curta
@@ -23,28 +18,14 @@ int valida_id_voo (const char* s, char **voo_id) {
             if (s[i] < '0' || s[i] > '9') return 0; //caracter invalido
         }
     }
-    if (s[7] != '\0') return 0; //string demasiado grande
-//Validação conluida
-
-    *voo_id = g_strdup(s);
-    return 1;
+    return s[7] == '\0';
 }
 
-
-//dia com mes e ano válidos ->auxiliar
-int qual_mes (int ano, int mes) {
-    if (mes == 2) {
-        if (ano % 4 == 0) return 29;
-        else return 28;
-    }
-    if (mes == 4 || mes == 6 || mes == 9 || mes == 11) return 30;
-    return 31;
-}
 
 // Retorna 1 se válido; 0 se inválido.
 // out = inteiro comparável crescente YYYYMMDDHHMM
 
-int valida_DataH(const char *s, long long *out) {
+int valida_DataH(const char *s) { //, long long *out) {
     if (!s) return 0;
 
     int tamanho = 0;
@@ -67,82 +48,44 @@ int valida_DataH(const char *s, long long *out) {
     int hora = (s[11]-'0')*10  + (s[12]-'0');
     int min  = (s[14]-'0')*10  + (s[15]-'0');
 
-    // validar ranges
-    if (ano < 0 || ano > 2025) return 0;
-    if (mes < 1 || mes > 12) return 0;
-    if (dia < 1 || dia > qual_mes(ano,mes)) return 0;
-    if (hora < 0 || hora > 23) return 0;
-    if (min < 0 || min > 59) return 0;
-
-    // construir valor inteiro ordenável
-    *out = ano * 100000000 +
-           mes *   1000000 +
-           dia *     10000 +
-           hora *      100 +
-           min;
-
-    return 1;
+    return !(ano < 0 || ano > 2025 ||
+	     mes < 1 || mes > 12    ||
+	     dia < 1 || dia > qual_mes(ano,mes) ||
+	     hora < 0 || hora > 23  ||
+	     min < 0 || min > 59);
 }
 
 
 //Função valida_estado de um voo
-int valida_Estado(const char *s, Estado *e) {
+int valida_Estado(const char *s) {
     if (!s || strlen(s) == 0) return 0;
-
-    if (strcmp(s, "On Time") == 0) {
-        *e = ESTADO_ON_TIME;
-        return 1;
-    }
-    if (strcmp(s, "Delayed") == 0) {
-        *e = ESTADO_DELAYED;
-        return 1;
-    }
-    if (strcmp(s, "Cancelled") == 0) {
-        *e = ESTADO_CANCELLED;
-        return 1;
-    }
-
-    return 0;
+    return (strcmp(s, "On Time") == 0 || strcmp(s, "Delayed") == 0 || strcmp(s, "Cancelled") == 0);
 }
-
-
-
-
-bool v_is_flight_id(const char *s){
-    if(!s || strlen(s)!=7) return false;
-    return isalpha((unsigned char)s[0]) && isalpha((unsigned char)s[1]) &&
-           isdigit((unsigned char)s[2]) && isdigit((unsigned char)s[3]) &&
-           isdigit((unsigned char)s[4]) && isdigit((unsigned char)s[5]) &&
-           isdigit((unsigned char)s[6]);
-}
-
-
-
 
 
 //VOOS -> VALIDAÇÃO LÓGICA
 
-int valida_VOO (Voo voo, GestorAircrafts *gestor_aeronaves) {
+int valida_VOO (Voo *voo, GestorAircrafts *gestor_aeronaves) {
     //destino != origem
-    if (strcmp (voo.code_origin, voo.code_destination) == 0) return 0;
+    if (strcmp (voo_get_code_origin(voo), voo_get_code_destination(voo)) == 0) return 0;
 
     //verifica se aeronave correspondente existe
-    if (!gestor_aircrafts_existe(gestor_aeronaves, voo.id_aircraft)) return 0;
+    if (!gestor_aircrafts_existe(gestor_aeronaves, voo_get_id_aircraft(voo))) return 0;
 
     //if CANCELLED, actual departure e actual arrival == "N/A"
-    if (voo.status == 2) {
+    if (voo_get_status(voo) == 2) {
         // CANCELLED: actual deve ser N/A (-2)
-        if (voo.actual_departure != -2 || voo.actual_arrival != -2) return 0;
+        if (voo_get_actual_departure(voo) != -2 || voo_get_actual_arrival(voo) != -2) return 0;
         // arrival deve ser DEPOIS de departure (pode ser igual)
-        if (voo.arrival < voo.departure) return 0;
+        if (voo_get_arrival(voo) < voo_get_departure(voo)) return 0;
     }
     else {
         // arrival DEPOIS de departure (não pode ser igual)
-        if (voo.arrival < voo.actual_departure || voo.actual_arrival < voo.actual_departure) return 0;
+        if (voo_get_arrival(voo) < voo_get_actual_departure(voo) || voo_get_actual_arrival(voo) < voo_get_actual_departure(voo)) return 0;
 
         //if DELAYED, actual departure/arrival >= departure/arrival (pode ser igual!)
-        if (voo.status == 1) {
-            if (voo.actual_departure < voo.departure || voo.actual_arrival < voo.arrival) return 0;
+        if (voo_get_status(voo) == 1) {
+            if (voo_get_actual_departure(voo) < voo_get_departure(voo) || voo_get_actual_arrival(voo) < voo_get_arrival(voo)) return 0;
         }
     }
 

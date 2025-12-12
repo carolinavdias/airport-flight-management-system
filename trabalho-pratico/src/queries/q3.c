@@ -1,42 +1,21 @@
 #define _XOPEN_SOURCE 700
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <glib.h>
+
 #include "queries/q3.h"
 #include "validacoes/validacoes_flights.h"
-#include "entidades/flights.h"     
-#include "entidades/airports.h" 
-// q1 removido
-// validators removido
+#include "entidades/flights.h"
+#include "entidades/airports.h"
+
+
+typedef struct contagens2 {
+    char *code;
+    int count;
+} Contagens2;
 
 // =====================================================
-// VALIDAÇÕES (já declarada no header)
+// QUERY 3
 // =====================================================
 
-int idVooValido(const char *id) {
-    if (!id) return 0;
-    int len = strlen(id);
-    if (len < 5 || len > 8) return 0;
-
-    int i = 0;
-    if (!isupper((unsigned char)id[i++]) || !isupper((unsigned char)id[i++])) return 0;
-    if (id[i] == '-') i++;
-    for (; i < len; i++) {
-        if (!isdigit((unsigned char)id[i])) return 0;
-    }
-    return 1;
-}
-
-// =====================================================
-// QUERY 3 OTIMIZADA
-// =====================================================
-
-void query3(const char *data_inicio, const char *data_fim,
-            GHashTable *tabelaVoos,
-            GHashTable *tabelaAeroportos,
-            FILE *out)
+void query3(const char *data_inicio, const char *data_fim,GHashTable *tabelaVoos,GHashTable *tabelaAeroportos,FILE *out)
 {
     if (!data_inicio || !data_fim || !tabelaVoos || !tabelaAeroportos) {
         fprintf(out, "\n");
@@ -46,14 +25,16 @@ void query3(const char *data_inicio, const char *data_fim,
     // =====================================================
     // OTIMIZAÇÃO 1: Converter datas UMA ÚNICA VEZ
     // =====================================================
-    long long t_inicio, t_fim;
     
     // Usar a função valida_DataH do validators.h
-    if (!valida_DataH(data_inicio, &t_inicio) || 
-        !valida_DataH(data_fim, &t_fim)) {
+    if (!valida_DataH(data_inicio) ||
+        !valida_DataH(data_fim)) {
         fprintf(out, "\n");
         return;
     }
+
+    long long t_inicio = converte_dataH(data_inicio);
+    long long t_fim = converte_dataH(data_fim);
 
     // =====================================================
     // OTIMIZAÇÃO 2: Hash table SEM alocações desnecessárias
@@ -76,10 +57,10 @@ void query3(const char *data_inicio, const char *data_fim,
         Voo *v = value;
 
         // Filtros rápidos
-        if (v->status == ESTADO_CANCELLED) continue;  // Cancelado (constante do q3.h)
-        if (!v->code_origin) continue;                 // Sem origem
+        if (voo_get_status(v) == ESTADO_CANCELLED) continue;  // Cancelado (constante do q3.h)
+        if (!voo_get_code_origin(v)) continue;                 // Sem origem
 
-        int t_partida = v->actual_departure;
+        long long t_partida = voo_get_actual_departure(v);
 
         // Verificar intervalo (comparação de inteiros é MUITO rápida)
         if (t_partida < t_inicio || t_partida > t_fim)
@@ -88,12 +69,12 @@ void query3(const char *data_inicio, const char *data_fim,
         // =====================================================
         // OTIMIZAÇÃO 4: Incrementar DIRETO na hash table
         // =====================================================
-        int *ptr = g_hash_table_lookup(contagens, v->code_origin);
+        int *ptr = g_hash_table_lookup(contagens, (gpointer)voo_get_code_origin(v));
 
         if (!ptr) {
             int *novo = g_new(int, 1);
             *novo = 1;
-            g_hash_table_insert(contagens, v->code_origin, novo);
+            g_hash_table_insert(contagens, (gpointer)voo_get_code_origin(v), novo);
         } else {
             (*ptr)++;
         }
@@ -127,7 +108,7 @@ void query3(const char *data_inicio, const char *data_fim,
         Aeroporto *a = g_hash_table_lookup(tabelaAeroportos, melhor);
         if (a) {
             fprintf(out, "%s,%s,%s,%s,%d\n",
-                a->code_IATA, a->name, a->city, a->country, max);
+                airport_get_code_IATA(a), airport_get_name(a), airport_get_city(a), airport_get_country(a), max);
         } else {
             fprintf(out, "\n");
         }
@@ -135,3 +116,25 @@ void query3(const char *data_inicio, const char *data_fim,
 
     g_hash_table_destroy(contagens);
 }
+
+
+
+// =====================================================
+// VALIDAÇÕES (já declarada no header)
+// =====================================================
+
+/*
+int idVooValido(const char *id) {
+    if (!id) return 0;
+    int len = strlen(id);
+    if (len < 5 || len > 8) return 0;
+
+    int i = 0;
+    if (!isupper((unsigned char)id[i++]) || !isupper((unsigned char)id[i++])) return 0;
+    if (id[i] == '-') i++;
+    for (; i < len; i++) {
+        if (!isdigit((unsigned char)id[i])) return 0;
+    }
+    return 1;
+}
+*/

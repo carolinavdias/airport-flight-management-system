@@ -1,11 +1,17 @@
 #include "gestor_entidades/gestor_flights.h"
-#include <stdlib.h>
-#include <string.h>
+//#include "entidades/flights.h"
+//#include <stdlib.h>
+//#include <string.h>
+
+typedef struct gestor_flights {
+    GHashTable *tabela_voos;   //chave: id do voo (char*), valor: Voo*
+} GestorFlights;
+
 
 GestorFlights *gestor_flights_novo() {
     GestorFlights *g = malloc(sizeof(GestorFlights));
     if (g == NULL) return NULL;
-    g->tabela_voos = g_hash_table_new_full(g_str_hash, g_str_equal, free, NULL);
+    g->tabela_voos = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, libertaVoo);
     return g;
 }
 
@@ -16,25 +22,24 @@ void gestor_flights_destroy(GestorFlights *g) {
 }
 
 void gestor_flights_inserir(GestorFlights *g, Voo *voo) {
-    if (!g || !voo) return;
-    g_hash_table_insert(g->tabela_voos, strdup(voo->flight_id), voo);
+    if (!g || !voo || !voo_get_flight_id(voo)) return;
+    g_hash_table_insert(g->tabela_voos, strdup(voo_get_flight_id(voo)), voo);
 }
 
-bool gestor_flights_existe(GestorFlights *g, const char *id_voo) {
-    if (!g || !id_voo) return false;
-    return g_hash_table_contains(g->tabela_voos, id_voo);
+bool gestor_flights_existe(GestorFlights *g, const char *flight_id) {
+    return g && flight_id && g_hash_table_contains(g->tabela_voos, flight_id);
 }
 
-const char *gestor_flights_obter_origem(GestorFlights *g, const char *id_voo) {
+const char *gestor_flights_obter_origem(GestorFlights *g, const char *flight_id) {
     if (!g) return NULL;
-    Voo *v = g_hash_table_lookup(g->tabela_voos, id_voo);
-    return v ? v->code_origin : NULL;
+    Voo *v = g_hash_table_lookup(g->tabela_voos, flight_id);
+    return v ? voo_get_code_origin(v) : NULL;
 }
 
-const char *gestor_flights_obter_destino(GestorFlights *g, const char *id_voo) {
+const char *gestor_flights_obter_destino(GestorFlights *g, const char *flight_id) {
     if (!g) return NULL;
-    Voo *v = g_hash_table_lookup(g->tabela_voos, id_voo);
-    return v ? v->code_destination : NULL;
+    Voo *v = g_hash_table_lookup(g->tabela_voos, flight_id);
+    return v ? voo_get_code_destination(v) : NULL;
 }
 
 GHashTable *gestor_flights_table(GestorFlights *g) {

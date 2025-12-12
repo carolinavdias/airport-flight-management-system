@@ -2,11 +2,9 @@
 #define GESTOR_RESERVATIONS_H
 
 #include <glib.h>
-#include "../entidades/reservations.h"
+#include "entidades/reservations.h"
 
-typedef struct {
-    GHashTable *tabela;  //chave: id_reserva, valor: Reservas*
-} GestorReservations;
+typedef struct gestor_reservations GestorReservations;
 
 //cria o gestor
 GestorReservations *gestor_reservations_cria(void);

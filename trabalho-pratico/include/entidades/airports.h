@@ -10,22 +10,26 @@ typedef uint8_t Tipo_aeroporto;
 #define TIPO_LARGE_AIRPORT 2
 #define TIPO_HELIPORT 3
 #define TIPO_SEAPLANE_BASE 4
-#define TIPO_CLOSED_AIRPORT 5
-#define TIPO_ERROR 6
 
-typedef struct aeroporto {
-    char *code_IATA; //codigo_IATA_aer
-    char *name; //name_aeroporto
-    char *city; //cidade_aeroporto
-    char *country; //pais_aeroporto
-    double latitude; //latitude ++
-    double longitude; //longitude ++
-    char *code_ICAO; //codigo_ICAO_aeroporto ++
-    Tipo_aeroporto type; // ++
-    int arrival_count;
-    int departure_count;
-} Aeroporto;
 
+typedef struct aeroporto Aeroporto;
+
+char *airport_get_code_IATA (Aeroporto *a);
+char *airport_get_name (Aeroporto *a);
+char *airport_get_city (Aeroporto *a);
+char *airport_get_country (Aeroporto *a);
+Tipo_aeroporto airport_get_type (Aeroporto *a);
+
+
+void airport_set_code_IATA (Aeroporto *a, char *code_);
+void airport_set_name (Aeroporto *a, char *name_);
+void airport_set_city (Aeroporto *a, char *city_);
+void airport_set_country (Aeroporto *a, char *country_);
+void airport_set_coordenada (Aeroporto *a, char *coordenada, int versao);
+void airport_set_code_ICAO (Aeroporto *a, char *code_i);
+void airport_set_type (Aeroporto *a, char *tipo);
+
+Aeroporto *criaAeroporto ();
 void libertaAeroporto(void *data);
 
 #endif

@@ -2,12 +2,10 @@
 #define GESTOR_AIRCRAFTS_H
 
 #include <glib.h>
-#include "../entidades/aircrafts.h"
+#include "entidades/aircrafts.h"
 
 //tabela guarda todas as aeronaves
-typedef struct gestor_aircrafts {
-    GHashTable *tabela;
-} GestorAircrafts;
+typedef struct gestor_aircrafts GestorAircrafts;
 
 //cria o gestor (inicia a hash table)
 GestorAircrafts *gestor_aircrafts_cria(void);

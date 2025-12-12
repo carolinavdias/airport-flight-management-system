@@ -1,13 +1,11 @@
 #ifndef GESTOR_PASSENGERS_H
 #define GESTOR_PASSENGERS_H
 
-#include <glib.h>
+//#include <glib.h>
 #include <stdbool.h>
-#include "../entidades/passengers.h"
+#include "entidades/passengers.h"
 
-typedef struct {
-    GHashTable *tabela_passageiros;   //chave = int*, valor = Passageiro*
-} GestorPassengers;
+typedef struct gestor_passengers GestorPassengers;
 
 //criação / destruição
 GestorPassengers *gestor_passengers_novo();
