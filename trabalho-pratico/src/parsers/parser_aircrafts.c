@@ -1,10 +1,9 @@
 #define _POSIX_C_SOURCE 200809L
-#include "parsers/parser_aircrafts.h"
 
+#include "parsers/parser_aircrafts.h"
 #include "entidades/aircrafts.h"
 #include "validacoes/validacoes_aircrafts.h"
 #include "utils/utils.h"
-
 #include <string.h>
 #include <glib.h>
 

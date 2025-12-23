@@ -5,7 +5,7 @@
 //tabela guarda todas as aeronaves
 typedef struct gestor_aircrafts {
     GHashTable *tabela;
-} GestorAircrafts;
+} GestorAircrafts; 
 
 GestorAircrafts *gestor_aircrafts_cria(void) {
     GestorAircrafts *g = malloc(sizeof(GestorAircrafts));

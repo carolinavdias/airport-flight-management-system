@@ -5,9 +5,6 @@ typedef struct aeronave {
     char *identifier;
     char *manufacturer;
     char *model;
-    int year;
-    int capacity;
-    float range;
 } Aeronave;
 
 //GETTERS
@@ -24,10 +21,6 @@ char *aircraft_get_model (Aeronave *a) {
 }
 
 //SETTERS
-void aircraft_set_year (Aeronave *a, char *ano) {
-    a->year = atoi(ano);
-}
-
 void aircraft_set_id (Aeronave *a, char *id) {
     g_free(a->identifier);
     a->identifier = g_strdup(id);
@@ -36,14 +29,6 @@ void aircraft_set_id (Aeronave *a, char *id) {
 void aircraft_set_model_ (Aeronave *a, char *model_) {
     g_free(a->model);
     a->model = g_strdup(model_);
-}
-
-void aircraft_set_cap (Aeronave *a, char *cap) {
-    a->capacity = atoi(cap);
-}
-
-void aircraft_set_range_ (Aeronave *a, char *range_) {
-    a->range = atof(range_);
 }
 
 void aircraft_set_manuf (Aeronave *a, char *manuf) {

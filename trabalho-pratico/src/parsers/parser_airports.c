@@ -37,10 +37,6 @@ int le_tabela_Aeroportos(Contexto *ctx, GestorAirports *AP) {
         size_t n_campos = 0;
         if (csv_split(buffer, &campos, &n_campos) != 0) linha_valida = 0;
 
-	//CODE_IATA
-        if (linha_valida && valida_codigoIATA(campos[0])) airport_set_code_IATA(aeroporto_atual,campos[0]);
-	else linha_valida = 0;
-
 	//NAME
         if (linha_valida) airport_set_name(aeroporto_atual,campos[1]);
 
@@ -50,18 +46,8 @@ int le_tabela_Aeroportos(Contexto *ctx, GestorAirports *AP) {
 	//COUNTRY
         if (linha_valida) airport_set_country(aeroporto_atual,campos[3]);
 
-	//LATITUDE
-        if (linha_valida && valida_coordenadas(campos[4],1))
-	    airport_set_coordenada(aeroporto_atual,campos[4],1);
-	else linha_valida = 0;
-
-	//LONGITUDE
-	if (linha_valida && valida_coordenadas(campos[5],2))
-	    airport_set_coordenada(aeroporto_atual,campos[5],2);
-	else linha_valida = 0;
-
-	//CODE_ICAO
-        if (linha_valida) airport_set_code_ICAO(aeroporto_atual,campos[6]);
+	//CODE_IATA
+        if (linha_valida) airport_set_code_IATA(aeroporto_atual,campos[6]); //CONFIRMAR CAMPO
 
 	//TIPO_AEROPORTO
         if (linha_valida && valida_tipo_aer(campos[7])) airport_set_type(aeroporto_atual,campos[7]);

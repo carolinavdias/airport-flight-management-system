@@ -1,8 +1,7 @@
 #define _POSIX_C_SOURCE 200809L
+
 #include <ctype.h>
-
 #include "queries/q2.h"
-
 #include "entidades/flights.h"
 #include "entidades/aircrafts.h"
 
@@ -146,14 +145,3 @@ void query2(const char *linhaComando, GHashTable *tabelaAeronaves, GHashTable *t
     g_list_free(resultado);
     g_hash_table_destroy(contagens);
 }
-
-/*
-int identificadorValido(const char *id) {
-    if (!id || strlen(id) != 7) return 0;
-    if (!isupper((unsigned char)id[0]) || !isupper((unsigned char)id[1])) return 0;
-    if (id[2] != '-') return 0;
-    for (int i = 3; i < 7; i++)
-        if (!isdigit((unsigned char)id[i])) return 0;
-    return 1;
-}
-*/

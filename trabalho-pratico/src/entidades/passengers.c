@@ -7,16 +7,27 @@ typedef struct passageiros {
     char *ultimo_nome;
     int data_nascimento;
     char *nacionalidade;
-    Genero genero_passageiro;
-    char *email_passageiro;
-    char *telefone_passageiro;
-    char *morada_passageiro;
-    char *fotografia_passageiro;
 } Passageiros;
 
 //GETTERS
 int passenger_get_id (Passageiros *p) {
     return p->id_passageiro;
+}
+
+char *passenger_get_primeiro (Passageiros *p) {
+    return p->primeiro_nome;
+}
+
+char *passenger_get_ultimo (Passageiros *p) {
+    return p->ultimo_nome;
+}
+
+int passenger_get_data (Passageiros *p) {
+    return p->data_nascimento;
+}
+
+char *passenger_get_nacionalidade (Passageiros *p) {
+    return p->nacionalidade;
 }
 
 //SETTERS
@@ -54,37 +65,6 @@ void passenger_set_nc (Passageiros *p, char *nc) {
     p->nacionalidade = g_strdup(nc);
 }
 
-void passanger_set_ge (Passageiros *p, char *ge) {
-    switch (ge[0]) {
-        case 'M' : p->genero_passageiro = GENERO_M;
-		   break;
-        case 'F' : p->genero_passageiro = GENERO_F;
-		   break;
-        case 'O' : p->genero_passageiro = GENERO_O;
-		   break;
-    }
-}
-
-void passenger_set_em (Passageiros *p, char *em) {
-    g_free(p->email_passageiro);
-    p->email_passageiro = strdup(em);
-}
-
-void passenger_set_tl (Passageiros *p, char *tl) {
-    g_free(p->telefone_passageiro);
-    p->telefone_passageiro = g_strdup(tl);
-}
-
-void passenger_set_md (Passageiros *p, char *md) {
-    g_free(p->morada_passageiro);
-    p->morada_passageiro = g_strdup(md);
-}
-
-void passenger_set_ft (Passageiros *p, char *ft) {
-    g_free(p->fotografia_passageiro);
-    p->fotografia_passageiro = g_strdup(ft);
-}
-
 //CRIA E DESTROI
 Passageiros *criaPassageiro() {
     Passageiros *p = calloc (1, sizeof *p);
@@ -94,12 +74,10 @@ Passageiros *criaPassageiro() {
 void libertaPassageiro(void *data) {
     Passageiros *a = data;
     if (!a) return;
+    g_free(a->id_passageiro);
     g_free(a->primeiro_nome);
     g_free(a->ultimo_nome);
+    g_free(a->data_nascimento);
     g_free(a->nacionalidade);
-    g_free(a->email_passageiro);
-    g_free(a->telefone_passageiro);
-    g_free(a->morada_passageiro);
-    g_free(a->fotografia_passageiro);
     g_free(a);
 }

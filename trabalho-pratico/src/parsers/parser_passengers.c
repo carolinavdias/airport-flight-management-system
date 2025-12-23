@@ -4,7 +4,6 @@
 #include "parsers/parser_passengers.h"
 #include "validacoes/validacoes_passengers.h"
 #include "utils/utils.h"
-
 #include <string.h>
 #include <glib.h>
 
@@ -54,23 +53,6 @@ int le_tabela_Passageiros(Contexto *ctx, GestorPassengers *P) {
 
 	//NACIONALIDADE
         if (linha_valida) passenger_set_nc(passageiro_atual,campos[4]);
-
-	//GENERO
-        if (linha_valida && valida_genero(campos[5])) passanger_set_ge(passageiro_atual,campos[5]);
-	else linha_valida = 0;
-
-	//EMAIL
-        if (linha_valida && valida_email(campos[6])) passenger_set_em(passageiro_atual,campos[6]);
-	else linha_valida = 0;
-
-	//TELEFONE
-        if (linha_valida) passenger_set_tl(passageiro_atual,campos[7]);
-
-	//MORADA
-        if (linha_valida) passenger_set_md(passageiro_atual,campos[8]);
-
-	//FOTOGRAFIA
-        if (linha_valida) passenger_set_ft(passageiro_atual,campos[9]);
 
         if (!linha_valida) {
             if (!ficheiro_erros) {

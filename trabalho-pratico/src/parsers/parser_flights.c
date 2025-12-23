@@ -37,11 +37,11 @@ int le_tabela_Voos(Contexto *ctx, GestorFlights *V, GestorAircrafts *AC) {
         size_t n_campos = 0;
 
         if (csv_split(buffer, &campos, &n_campos) != 0) linha_valida = 0;
-
+/*
 	//FLIGHT_ID
 	if (linha_valida && valida_id_voo(campos[0])) voo_set_flight_id (voo_atual,campos[0]);
 	else linha_valida = 0;
-
+*/
 	//DEPARTURE
 	if (linha_valida && valida_DataH(campos[1])) voo_set_dataH(voo_atual,campos[1],1);
 	else linha_valida = 0;
@@ -56,7 +56,7 @@ int le_tabela_Voos(Contexto *ctx, GestorFlights *V, GestorAircrafts *AC) {
 		else linha_valida = 0;
 	    }
         }
-
+/*
 	//ARRIVAL
         if (linha_valida && valida_DataH(campos[3])) voo_set_dataH(voo_atual,campos[3],3);
 	else linha_valida = 0;
@@ -92,13 +92,15 @@ int le_tabela_Voos(Contexto *ctx, GestorFlights *V, GestorAircrafts *AC) {
 
 	//ID_AIRCRAFT
         if (linha_valida) voo_set_id_aircraft(voo_atual,campos[9]);
+*/
 
 	//AIRLINE
         if (linha_valida) voo_set_airline(voo_atual,campos[10]);
-
+        
+/*
 	//TRACKING_URL
         if (linha_valida) voo_set_tracking_url(voo_atual,campos[11]);
-
+*/
         //VALIDAÇÃO LÓGICA
         if (linha_valida && !valida_VOO(voo_atual, AC)) linha_valida = 0;
 

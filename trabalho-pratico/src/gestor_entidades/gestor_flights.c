@@ -1,7 +1,7 @@
 #include "gestor_entidades/gestor_flights.h"
 
 typedef struct gestor_flights {
-    GHashTable *tabela_voos;   //chave: id do voo (char*), valor: Voo*
+    GHashTable *tabela_voos;
 } GestorFlights;
 
 GestorFlights *gestor_flights_novo() {

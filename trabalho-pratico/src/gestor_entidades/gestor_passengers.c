@@ -3,7 +3,7 @@
 #include <glib.h>
 
 typedef struct gestor_passengers {
-    GHashTable *tabela_passageiros;   //chave = int*, valor = Passageiro*
+    GHashTable *tabela_passageiros;
 } GestorPassengers;
 
 static gpointer key_int_new(int x) {
