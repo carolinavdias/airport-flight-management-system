@@ -49,6 +49,3 @@ int valida_tipo_aer(const char *s) {
 	    	 strcmp(s, "heliport") == 0	  ||
 	         strcmp(s, "seaplane_base") == 0   );
 }
-
-
-

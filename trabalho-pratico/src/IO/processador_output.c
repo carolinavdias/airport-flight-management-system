@@ -7,7 +7,6 @@ struct ErrorWriter {
     int header_escrito;
 };
 
-
 ErrorWriter* processador_output_create_error_file(const char *entity_name, 
                                                   const char *header) {
     if (!entity_name) return NULL;

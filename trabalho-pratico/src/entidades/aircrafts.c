@@ -1,7 +1,6 @@
 #include "entidades/aircrafts.h"
 #include <glib.h>
 
-
 typedef struct aeronave {
     char *identifier;
     char *manufacturer;
@@ -23,7 +22,6 @@ char *aircraft_get_manuf (Aeronave *a) {
 char *aircraft_get_model (Aeronave *a) {
     return a->model;
 }
-
 
 //SETTERS
 void aircraft_set_year (Aeronave *a, char *ano) {
@@ -58,7 +56,6 @@ Aeronave *criaAeronave () {
     Aeronave *a = calloc (1, sizeof *a);
     return a;
 }
-
 
 void libertaAeronave(void *data) {
     Aeronave *a = data;

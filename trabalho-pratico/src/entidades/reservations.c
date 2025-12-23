@@ -43,7 +43,6 @@ char **r_get_lista_voos_reserv (Reservas *r) {
 
 //SETTERS
 
-
 Voos_reservados *cria0_lista_reserva (int n) {
     Voos_reservados *vr = calloc (1, sizeof *vr);
     vr->n_voos = n;
@@ -87,7 +86,6 @@ void r_set_bools (Reservas *r, char *s, int versao) {
 	    	   break;
      }
 }
-
 
 void r_set_qr_code (Reservas *r, char *s) {
      g_free(r->qr_code);

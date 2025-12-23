@@ -147,7 +147,6 @@ void query2(const char *linhaComando, GHashTable *tabelaAeronaves, GHashTable *t
     g_hash_table_destroy(contagens);
 }
 
-
 /*
 int identificadorValido(const char *id) {
     if (!id || strlen(id) != 7) return 0;

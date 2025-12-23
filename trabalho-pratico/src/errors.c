@@ -5,18 +5,18 @@
 #include <glib.h>
 #include "errors.h"
 
-// estrutura interna de um erro
+//estrutura interna de um erro
 typedef struct {
     char *ficheiro;
     int   linha;
     char *mensagem;
 } Erro;
 
-// lista global interna
+//lista global interna
 static GList *ERROS = NULL;
 
 void errors_begin(void) {
-    // limpa caso já exista algo
+    //limpa caso já exista algo
     if (ERROS) {
         for (GList *l = ERROS; l; l = l->next) {
             Erro *e = l->data;

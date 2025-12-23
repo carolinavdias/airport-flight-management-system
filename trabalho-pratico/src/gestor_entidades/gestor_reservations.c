@@ -8,7 +8,6 @@ typedef struct gestor_reservations {
     GHashTable *tabela;  //chave: id_reserva, valor: Reservas*
 } GestorReservations;
 
-
 GestorReservations *gestor_reservations_cria(void) {
     GestorReservations *g = malloc(sizeof(GestorReservations));
     if (g == NULL) return NULL;

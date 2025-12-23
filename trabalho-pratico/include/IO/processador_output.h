@@ -5,12 +5,11 @@
 
 typedef struct ErrorWriter ErrorWriter;
 
-// Struct para gerir erros
+//struct para gerir erros
 struct ErrorWriter;
 
-// Funções para gerir ficheiros de erro CSV
-ErrorWriter* processador_output_create_error_file(const char *entity_name, 
-                                                  const char *header);
+//funções para gerir ficheiros de erro CSV
+ErrorWriter* processador_output_create_error_file(const char *entity_name, const char *header);
 
 void processador_output_write_error(ErrorWriter *writer, const char *line);
 

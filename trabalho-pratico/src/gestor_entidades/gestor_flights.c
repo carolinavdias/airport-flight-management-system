@@ -7,7 +7,6 @@ typedef struct gestor_flights {
     GHashTable *tabela_voos;   //chave: id do voo (char*), valor: Voo*
 } GestorFlights;
 
-
 GestorFlights *gestor_flights_novo() {
     GestorFlights *g = malloc(sizeof(GestorFlights));
     if (g == NULL) return NULL;

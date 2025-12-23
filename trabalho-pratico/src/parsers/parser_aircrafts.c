@@ -83,11 +83,6 @@ int le_tabela_Aeronaves(Contexto *ctx, GestorAircrafts *AC) {
     return 1;
 }
 
-
-
-
-
-
 /*
 static void processar_linha_aircraft(char **campos, size_t n_campos, void *user_data) {
     ParseContext *ctx = (ParseContext*)user_data;

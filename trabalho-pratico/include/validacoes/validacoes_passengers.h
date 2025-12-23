@@ -13,5 +13,4 @@ int valida_email(const char *s);
 //validacao data de nascimento
 int valida_Data (const char *s);
 
-
 #endif

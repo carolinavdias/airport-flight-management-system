@@ -6,8 +6,7 @@
 
 //RESERVAS -> VALIDAÇÃO SINTÁTICA
 
-
-//Valida o id da reserva e faz o strdup
+//valida o id da reserva e faz o strdup
 int valida_id_reserva (const char *s) {
     if (!s || strlen(s) != 10 || s[0] != 'R') return 0;
     for (int i = 1; i < 10; i++) {
@@ -16,18 +15,17 @@ int valida_id_reserva (const char *s) {
     return 1;
 }
 
-
-//Valida a lista dos voos reservados, passa para o formato de uma lista e atribui a "Reserva"
+//valida a lista dos voos reservados, passa para o formato de uma lista e atribui a "Reserva"
 int valida_set_voos_reservados(const char *s, Reservas *r) {
     if (!s || strlen(s) < 3) return 0; //[] invalido
     int len = strlen(s);
     if (s[0] != '[' || s[len-1] != ']') return 0; //verifica se tem os parenteses retos no inicio e no final
 
-    //Limpar a string
+    //limpa a string
     char *string_voos = g_strdup(s + 1); // pula '['
     string_voos[strlen(string_voos)-1] = '\0';      // remove ']'
 
-    // contar voos
+    //conta voos
     int n = 1;
     for (int i = 0; string_voos[i]; i++) {
         if (string_voos[i] == ',') n++;
@@ -47,7 +45,7 @@ int valida_set_voos_reservados(const char *s, Reservas *r) {
 	}
 	else {
 	   g_free(string_voos);
-	   return 0; //libertar string_voos e novo?
+	   return 0; //liberta string_voos e novo?
 	}
     }
 
@@ -56,12 +54,10 @@ int valida_set_voos_reservados(const char *s, Reservas *r) {
     return 1;
 }
 
-
-//Valida BAGAGEM/PRIORIDADE das Reservas e passa a string para um bool nos respetivos campos em Reserva
+//valida BAGAGEM/PRIORIDADE das Reservas e passa a string para um bool nos respetivos campos em Reserva
 int valida_bool (const char *s) {
     return s && (strcmp (s, "true") == 0 || strcmp (s, "false") == 0);
 }
-
 
 //RESERVAS -> VALIDAÇÃO LÓGICA
 
@@ -69,18 +65,18 @@ int valida_RESERVA(Reservas *reserva, GestorFlights *gestor_voos, GestorPassenge
     int length_vr = r_get_lista_n_voos(reserva); //reserva->reserva_lista.n_voos;
     if (length_vr < 1 || length_vr > 2) return 0;
 
-    // Verifica se voos existem (USA O GESTOR!)
+    //verifica se voos existem (USA O GESTOR!)
     for (int i = 0; i < length_vr; i++) {
         char *voo_id = (r_get_lista_voos_reserv(reserva))[i]; //   reserva->reserva_lista.lista_voos_reservados[i];
         if (!gestor_flights_existe(gestor_voos, voo_id))
             return 0;
     }
 
-    // Verifica se passageiro existe (USA O GESTOR!)
+    //verifica se passageiro existe (USA O GESTOR!)
     if (!gestor_passengers_existe(gestor_passageiros, r_get_id_pessoa_reservou(reserva))) //->id_pessoa_reservou))
         return 0;
 
-    // Validar escala (se 2 voos)
+    //valida escala (se 2 voos)
     if (length_vr == 2) {
         const char *dest1 = gestor_flights_obter_destino(gestor_voos, (r_get_lista_voos_reserv(reserva))[0]); //reserva->reserva_lista.lista_voos_reservados[0]);
         const char *orig2 = gestor_flights_obter_origem(gestor_voos, (r_get_lista_voos_reserv(reserva))[1]); //reserva->reserva_lista.lista_voos_reservados[1]);

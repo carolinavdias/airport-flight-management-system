@@ -85,7 +85,6 @@ void airport_set_type (Aeroporto *a, char *tipo) {
    }
 }
 
-
 //CRIA E DESTROI
 
 Aeroporto *criaAeroporto () {

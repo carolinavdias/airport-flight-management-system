@@ -33,7 +33,6 @@ void query1(const char *code, GHashTable *tabelaAeroportos, FILE *out) {
     }
 }
 
-
 /*
 //verifica se o código do aeroporto é válido (3 letras maiúsculas)
 int codigoValido(const char *codigo) {
@@ -152,4 +151,3 @@ static int stringVaziaOuEspacos(const char *s) {
     return 1;
 }
 */
-

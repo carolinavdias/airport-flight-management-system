@@ -19,7 +19,7 @@ int* read (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircrafts 
 
     int le_1 = 0, le_2 = 0, le_3 = 0, le_4 = 0, le_5 = 0 ;
 
-    // Carregar dados
+    //carrega dados
     if (g_file_test(caminhoAeronaves, G_FILE_TEST_EXISTS)) {
         le_3 = le_tabela_Aeronaves(ctx,AC);
     }
@@ -38,7 +38,6 @@ int* read (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircrafts 
         le_5 = le_tabela_Reservas(ctx,V,P,R);
     }
 
-
     g_free(caminhoAeroportos);
     g_free(caminhoAeronaves);
     g_free(caminhoVoos);
@@ -54,4 +53,3 @@ int* read (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircrafts 
 
     return resultados_read;
 }
-

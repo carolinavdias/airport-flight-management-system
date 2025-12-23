@@ -85,7 +85,6 @@ void passenger_set_ft (Passageiros *p, char *ft) {
     p->fotografia_passageiro = g_strdup(ft);
 }
 
-
 //CRIA E DESTROI
 Passageiros *criaPassageiro() {
     Passageiros *p = calloc (1, sizeof *p);

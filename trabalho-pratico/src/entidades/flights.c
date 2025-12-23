@@ -61,7 +61,6 @@ void voo_set_flight_id (Voo *v, char *id) {
    v->flight_id = g_strdup(id);
 }
 
-
 long long converte_dataH (const char *s) {
 
     // extrair números

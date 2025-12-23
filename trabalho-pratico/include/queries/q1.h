@@ -5,7 +5,7 @@
 #include <glib.h>
 #include "entidades/airports.h"
 
-//Passa para o formato de string o Tipo_aeroporto
+//passa para o formato de string o Tipo_aeroporto
 const char* tipoToString(Tipo_aeroporto t);
 
 //query 1 (dado um código, imprime as informações do aeroporto)

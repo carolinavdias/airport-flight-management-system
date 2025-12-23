@@ -5,7 +5,6 @@
 #include "entidades/flights.h"
 #include "entidades/airports.h"
 
-
 typedef struct contagens2 {
     char *code;
     int count;
@@ -116,8 +115,6 @@ void query3(const char *data_inicio, const char *data_fim,GHashTable *tabelaVoos
 
     g_hash_table_destroy(contagens);
 }
-
-
 
 // =====================================================
 // VALIDAÇÕES (já declarada no header)

@@ -8,7 +8,6 @@
 #include <string.h>
 #include <glib.h>
 
-
 int le_tabela_Passageiros(Contexto *ctx, GestorPassengers *P) {
 
     int MAX_LINHA = 2000;

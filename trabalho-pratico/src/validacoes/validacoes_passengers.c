@@ -7,7 +7,7 @@
 
 //PASSAGEIROS -> VALIDAÇÃO SINTÁTICA
 
-//Valida o id do passageiro e faz o atoi (int)
+//valida o id do passageiro e faz o atoi (int)
 int valida_id_passageiro(const char *s) {
 
     if (!s) return 0;
@@ -17,14 +17,12 @@ int valida_id_passageiro(const char *s) {
     return s[9] == '\0'; //string muito grande
 }
 
-
-//Valida o Genero(passageiro) e passa para a estrutura previamente definida para o genero
+//valida o Genero(passageiro) e passa para a estrutura previamente definida para o genero
 int valida_genero(const char *s) {
     return s && strlen(s) == 1 && (s[0] == 'M' || s[0] == 'F' || s[0] == 'O');
 }
 
-
-//Valida o email e faz o strdup (passageiros)
+//valida o email e faz o strdup (passageiros)
 int valida_email(const char *s) {
      if (!s || strlen(s) == 0) return 0;
      int i = 0;
@@ -81,8 +79,6 @@ int valida_Data (const char *s) {
 
     return 1;
 }
-
-
 
 /*
 

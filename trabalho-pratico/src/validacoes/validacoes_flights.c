@@ -6,7 +6,7 @@
 //VOOS -> VALIDAÇÃO SINTÁTICA
 
 
-//Valida o id do voo
+//valida o id do voo
 int valida_id_voo (const char *s) {
     if (!s) return 0; //tirar ou nao o strlen?
     for (int i = 0; i < 7; i++) {
@@ -22,8 +22,8 @@ int valida_id_voo (const char *s) {
 }
 
 
-// Retorna 1 se válido; 0 se inválido.
-// out = inteiro comparável crescente YYYYMMDDHHMM
+//retorna 1 se válido; 0 se inválido.
+//out = inteiro comparável crescente YYYYMMDDHHMM
 
 int valida_DataH(const char *s) { //, long long *out) {
     if (!s) return 0;
@@ -32,16 +32,16 @@ int valida_DataH(const char *s) { //, long long *out) {
     for (; s[tamanho] != '\0'; tamanho++);
     if (tamanho != 16) return 0; // tamanho errado
 
-    // formato fixo
+    //formato fixo
     if (s[4] != '-' || s[7] != '-' || s[10] != ' ' || s[13] != ':') return 0;
 
-    //verificar que são dígitos
+    //verifica que são dígitos
     const int indices[] = {0,1,2,3,5,6,8,9,11,12,14,15};
     for (int i = 0; i < 12; i++) {
         if (s[indices[i]] < '0' || s[indices[i]] >'9') return 0;
     }
 
-    // extrair números
+    //extrai números
     int ano  = (s[0]-'0')*1000 + (s[1]-'0')*100 + (s[2]-'0')*10 + (s[3]-'0');
     int mes  = (s[5]-'0')*10   + (s[6]-'0');
     int dia  = (s[8]-'0')*10   + (s[9]-'0');
@@ -55,13 +55,11 @@ int valida_DataH(const char *s) { //, long long *out) {
 	     min < 0 || min > 59);
 }
 
-
-//Função valida_estado de um voo
+//função valida_estado de um voo
 int valida_Estado(const char *s) {
     if (!s || strlen(s) == 0) return 0;
     return (strcmp(s, "On Time") == 0 || strcmp(s, "Delayed") == 0 || strcmp(s, "Cancelled") == 0);
 }
-
 
 //VOOS -> VALIDAÇÃO LÓGICA
 
