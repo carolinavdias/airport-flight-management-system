@@ -8,7 +8,7 @@ typedef struct voo {
     //long long arrival; //chegada prevista
     //long long actual_arrival; //chegada efetiva
     //char *gate; //porta_embarque
-    //Estado status; //++ Estado
+    Estado status; //++ Estado
     //char *code_origin; //codigo IATA origem
     //char *code_destination; //codigo IATA destino
     //char *id_aircraft; //id_aeronave
@@ -62,17 +62,6 @@ long long voo_get_actual_departure (const Voo *v) {
 void voo_set_flight_id (Voo *v, char *id) {
    g_free(v->flight_id);
    v->flight_id = g_strdup(id);
-}
-
-void voo_set_status (Voo *v, char *status) {
-   switch (status[0]) {
-	case 'O' : v->status = ESTADO_ON_TIME;
-	      break;
-	case 'D' : v->status = ESTADO_DELAYED;
-	      break;
-	case 'C' : v->status = ESTADO_CANCELLED;
-	      break;
-   }
 }
 
 void voo_set_code (Voo *v, char *code, char versao) {
@@ -143,6 +132,17 @@ void voo_set_dataH (Voo *v, const char *s, int campo) {
 void voo_set_airline (Voo *v, char *airl) {
    g_free(v->airline);
    v->airline = g_strdup(airl);
+}
+
+void voo_set_status (Voo *v, char *status) {
+   switch (status[0]) {
+	case 'O' : v->status = ESTADO_ON_TIME;
+	      break;
+	case 'D' : v->status = ESTADO_DELAYED;
+	      break;
+	case 'C' : v->status = ESTADO_CANCELLED;
+	      break;
+   }
 }
 
 //CRIA/LIBERTA

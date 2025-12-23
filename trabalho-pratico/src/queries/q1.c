@@ -19,7 +19,7 @@ const char* tipoToString(Tipo_aeroporto t) {
 }
 
 //query 1 (dado um código de aeroporto, procura-o na tabela e imprime as suas informações)
-char* query1(const char *code, GHashTable *tabelaAeroportos) {
+char *query1(const char *code, GHashTable *tabelaAeroportos) {
     if (!valida_codigoIATA(code)) {
         return strdup("\n");
     }

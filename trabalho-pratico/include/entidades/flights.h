@@ -3,13 +3,11 @@
 
 #include <stdint.h>
 
-/*
 typedef uint8_t Estado;
 
 #define ESTADO_ON_TIME 0
 #define ESTADO_DELAYED 1
 #define ESTADO_CANCELLED 2
-*/
 
 typedef struct voo Voo;
 

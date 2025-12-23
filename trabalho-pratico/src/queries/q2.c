@@ -14,6 +14,11 @@ typedef struct contagem {
 } Contagem;
 
 // =====================================================
+// HASH TABLE GLOBAL 
+// =====================================================
+static GHashTable *contagem_global = NULL;
+
+// =====================================================
 // FUNÇÕES AUXILIARES
 // =====================================================
 
@@ -37,17 +42,74 @@ int comparaContagens(const Contagem *a, const Contagem *b) {
 }
 
 // =====================================================
-// QUERY 2 OTIMIZADA
+// INICIALIZAÇÃO (chamar uma vez no início do programa)
 // =====================================================
 
-void query2(const char *linhaComando, GHashTable *tabelaAeronaves, GHashTable *tabelaVoos, FILE *out) {
+void query2_init(GHashTable *tabelaVoos) {
+    if (contagem_global != NULL) return; // Já inicializada
+    
+    //cria hash table com destrutor para libertar chaves duplicadas
+    contagem_global = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+    
+    GHashTableIter iter;
+    gpointer key, value;
+    
+    g_hash_table_iter_init(&iter, tabelaVoos);
+    while (g_hash_table_iter_next(&iter, &key, &value)) {
+        Voo *v = value;
+        
+        //ignora cancelados
+        if (voo_get_status(v) == ESTADO_CANCELLED) continue;
+        
+        //ignora voos sem aeronave
+        const char *aircraft_id = voo_get_id_aircraft(v);
+        if (!aircraft_id || aircraft_id[0] == '\0') continue;
+        
+        //verifica se já existe na hash table
+        gpointer old_count = g_hash_table_lookup(contagem_global, aircraft_id);
+        
+        if (old_count) {
+            //já existe - incrementa contagem
+            int new_count = GPOINTER_TO_INT(old_count) + 1;
+            //não precisa duplicar chave, pois ela já existe
+            g_hash_table_replace(contagem_global, 
+                                 g_hash_table_lookup_extended(contagem_global, aircraft_id, (gpointer*)&key, NULL) ? key : NULL,
+                                 GINT_TO_POINTER(new_count));
+        } else {
+            //nova entrada - duplica chave
+            g_hash_table_insert(contagem_global, 
+                               g_strdup(aircraft_id), 
+                               GINT_TO_POINTER(1));
+        }
+    }
+}
+
+// =====================================================
+// LIMPEZA (chamar no final do programa)
+// =====================================================
+void query2_cleanup(void) {
+    if (contagem_global != NULL) {
+        g_hash_table_destroy(contagem_global);
+        contagem_global = NULL;
+    }
+}
+
+// =====================================================
+// QUERY 2 OTIMIZADA (só consulta)
+// =====================================================
+
+char *query2(const char *linhaComando, GHashTable *tabelaAeronaves, GHashTable *tabelaVoos) {
+    //garante que a hash table está inicializada
+    if (contagem_global == NULL) {
+        query2_init(tabelaVoos);
+    }
+    
     int N;
     char fabricante_raw[200] = "";
 
     int arg = sscanf(linhaComando, "%d %[^\n]", &N, fabricante_raw);
     if (arg < 1 || N <= 0) {
-        fprintf(out, "\n");
-        return;
+        return strdup("\n");
     }
 
     if (arg == 2) trim(fabricante_raw);
@@ -56,44 +118,17 @@ void query2(const char *linhaComando, GHashTable *tabelaAeronaves, GHashTable *t
     int usar_filtro = (fabricante_raw[0] != '\0');
     gchar *fabricante_lower = usar_filtro ? g_ascii_strdown(fabricante_raw, -1) : NULL;
 
-    // =====================================================
-    // OTIMIZAÇÃO 1: Usar hash table SIMPLES sem alocações
-    // =====================================================
-    GHashTable *contagens = g_hash_table_new(g_str_hash, g_str_equal);
-
-    // OTIMIZAÇÃO 2: Iterar com iterator (mais rápido que get_values)
+    //constrói lista apenas com aeronaves relevantes
+    GList *resultado = NULL;
     GHashTableIter iter;
     gpointer key, value;
-
-    g_hash_table_iter_init(&iter, tabelaVoos);
-    while (g_hash_table_iter_next(&iter, &key, &value)) {
-        Voo *v = value;
-
-        // Ignorar cancelados (usar constante do header q3.h)
-        if (voo_get_status(v) == ESTADO_CANCELLED) continue;
-
-        // Ignorar voos sem aeronave
-        if (!voo_get_id_aircraft(v) || (voo_get_id_aircraft(v))[0] == '\0') continue;
-
-        // OTIMIZAÇÃO 3: Incrementar DIRETO sem malloc
-        gpointer old_count = g_hash_table_lookup(contagens, voo_get_id_aircraft(v));
-        int new_count = old_count ? GPOINTER_TO_INT(old_count) + 1 : 1;
-
-        // Reutilizar a chave original (não duplicar)
-        g_hash_table_insert(contagens, (gpointer)voo_get_id_aircraft(v), GINT_TO_POINTER(new_count));
-    }
-
-    // =====================================================
-    // OTIMIZAÇÃO 4: Construir lista só com aeronaves relevantes
-    // =====================================================
-    GList *resultado = NULL;
 
     g_hash_table_iter_init(&iter, tabelaAeronaves);
 
     while (g_hash_table_iter_next(&iter, &key, &value)) {
         Aeronave *a = value;
 
-        // Aplicar filtro de fabricante (case-insensitive inline)
+        //aplica filtro de fabricante (case-insensitive inline)
         if (usar_filtro) {
             const char *s1 = aircraft_get_manuf(a);
             const char *s2 = fabricante_lower;
@@ -110,11 +145,11 @@ void query2(const char *linhaComando, GHashTable *tabelaAeronaves, GHashTable *t
             if (!match) continue;
         }
 
-        // Obter contagem
-        gpointer count_ptr = g_hash_table_lookup(contagens, aircraft_get_identifier(a));
+        //obtém contagem da hash table global (já calculada)
+        gpointer count_ptr = g_hash_table_lookup(contagem_global, aircraft_get_identifier(a));
         int count = count_ptr ? GPOINTER_TO_INT(count_ptr) : 0;
 
-        // Criar estrutura Contagem
+        //cria estrutura Contagem
         Contagem *c = g_new(Contagem, 1);
         c->identifier   = aircraft_get_identifier(a);
         c->manufacturer = aircraft_get_manuf(a);
@@ -126,22 +161,60 @@ void query2(const char *linhaComando, GHashTable *tabelaAeronaves, GHashTable *t
 
     if (fabricante_lower) g_free(fabricante_lower);
 
-    // =====================================================
-    // Ordenar e imprimir
-    // =====================================================
+    //ordena
     resultado = g_list_sort(resultado, (GCompareFunc) comparaContagens);
+
+    //constrói string de resultado
+    if (resultado == NULL) {
+        return strdup("\n");
+    }
+
+    //calcula tamanho necessário
+    size_t buffer_size = 4096;
+    char *output = malloc(buffer_size);
+    if (!output) {
+        g_list_free_full(resultado, g_free);
+        return strdup("\n");
+    }
+    
+    output[0] = '\0';
+    size_t current_pos = 0;
 
     int printed = 0;
     for (GList *l = resultado; l != NULL && printed < N; l = l->next, printed++) {
         Contagem *c = l->data;
-        fprintf(out, "%s,%s,%s,%d\n",
-                c->identifier, c->manufacturer, c->model, c->count);
+        
+        //constrói linha 
+        char linha[512];
+        int len = snprintf(linha, sizeof(linha), "%s, %s, %s, %d\n",
+                          c->identifier, c->manufacturer, c->model, c->count);
+        
+        //verifica se precisa expandir buffer
+        if (current_pos + len + 1 > buffer_size) {
+            buffer_size *= 2;
+            char *new_output = realloc(output, buffer_size);
+            if (!new_output) {
+                free(output);
+                g_list_free_full(resultado, g_free);
+                return strdup("\n");
+            }
+            output = new_output;
+        }
+        
+        //concatena linha
+        strcpy(output + current_pos, linha);
+        current_pos += len;
     }
 
+    //se não imprimiu nada, retorna linha vazia
     if (printed == 0) {
-        fprintf(out, "\n");
+        free(output);
+        g_list_free_full(resultado, g_free);
+        return strdup("\n");
     }
 
-    g_list_free(resultado);
-    g_hash_table_destroy(contagens);
+    //limpa lista
+    g_list_free_full(resultado, g_free);
+    
+    return output;
 }
