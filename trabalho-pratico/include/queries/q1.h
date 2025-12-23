@@ -1,7 +1,6 @@
 #ifndef Q1_H
 #define Q1_H
 
-#include <stdio.h> //tipo FILE*
 #include <glib.h>
 #include "entidades/airports.h"
 

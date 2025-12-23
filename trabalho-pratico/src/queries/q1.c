@@ -1,9 +1,9 @@
 #define _POSIX_C_SOURCE 200809L
 
-#include "queries/q1.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "queries/q1.h"
 #include "entidades/airports.h"
 #include "validacoes/validacoes_airports.h"
 
