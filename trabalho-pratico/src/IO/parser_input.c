@@ -3,7 +3,6 @@
 #include "utils/utils.h"
 #include <stdio.h>
 #include <string.h>
-#include "csv.h"
 
 #define MAX_LINHA 2000
 

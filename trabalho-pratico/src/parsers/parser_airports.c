@@ -3,7 +3,7 @@
 #include "parsers/parser_airports.h"
 #include "validacoes/validacoes_airports.h"
 #include "entidades/airports.h"
-#include "csv.h"
+#include "utils/utils.h"
 
 #include <glib.h>
 

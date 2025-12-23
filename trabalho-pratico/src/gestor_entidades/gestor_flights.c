@@ -1,7 +1,4 @@
 #include "gestor_entidades/gestor_flights.h"
-//#include "entidades/flights.h"
-//#include <stdlib.h>
-//#include <string.h>
 
 typedef struct gestor_flights {
     GHashTable *tabela_voos;   //chave: id do voo (char*), valor: Voo*

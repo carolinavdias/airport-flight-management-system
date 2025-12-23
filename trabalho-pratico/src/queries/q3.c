@@ -115,23 +115,3 @@ void query3(const char *data_inicio, const char *data_fim,GHashTable *tabelaVoos
 
     g_hash_table_destroy(contagens);
 }
-
-// =====================================================
-// VALIDAÇÕES (já declarada no header)
-// =====================================================
-
-/*
-int idVooValido(const char *id) {
-    if (!id) return 0;
-    int len = strlen(id);
-    if (len < 5 || len > 8) return 0;
-
-    int i = 0;
-    if (!isupper((unsigned char)id[i++]) || !isupper((unsigned char)id[i++])) return 0;
-    if (id[i] == '-') i++;
-    for (; i < len; i++) {
-        if (!isdigit((unsigned char)id[i])) return 0;
-    }
-    return 1;
-}
-*/

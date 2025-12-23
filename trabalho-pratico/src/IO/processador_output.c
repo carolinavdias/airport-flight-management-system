@@ -25,11 +25,6 @@ ErrorWriter* processador_output_create_error_file(const char *entity_name,
         return NULL;
     }
     
-    // if (ficheiro_erros && !header_escrito) {
-    //     fputs(header, ficheiro_erros);
-    //     fputc('\n', ficheiro_erros);
-    //     header_escrito = 1;
-    // }
     if (header && !writer->header_escrito) {
         fputs(header, writer->file);
         fputc('\n', writer->file);
@@ -42,10 +37,6 @@ ErrorWriter* processador_output_create_error_file(const char *entity_name,
 void processador_output_write_error(ErrorWriter *writer, const char *line) {
     if (!writer || !writer->file || !line) return;
     
-    // if (ficheiro_erros) {
-    //     fputs(buffer, ficheiro_erros);
-    //     fputc('\n', ficheiro_erros);
-    // }
     fputs(line, writer->file);
     fputc('\n', writer->file);
 }

@@ -5,7 +5,7 @@
 #include <time.h>
 #include <sys/resource.h>
 
-// compara dois ficheiros linha a linha
+//compara dois ficheiros linha a linha
 static int compare_files(const char *expected, const char *output) {
     FILE *f1 = fopen(expected, "r");
     FILE *f2 = fopen(output, "r");
@@ -56,7 +56,6 @@ int main(int argc, char *argv[]) {
     printf("====================================\n");
 
     // garante que a pasta resultados está limpa
-//    system("rm -rf resultados && mkdir -p resultados");
     if (system("rm -rf resultados && mkdir -p resultados") != 0) {
 	fprintf(stderr, "Erro ao criar diretório de resultados.\n");
     }

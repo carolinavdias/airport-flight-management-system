@@ -10,9 +10,3 @@ typedef struct contagens2 Contagens2;
 void query3(const char *data_inicio, const char *data_fim, GHashTable *tabelaVoos, GHashTable *tabelaAeroportos, FILE *out);
 
 #endif
-
-//carrega voos de um ficheiro CSV para uma GHashTable
-//GHashTable* carregarVoos(const char *caminhoFicheiro);
-
-//verifica se o identificador de voo é válido (7 caracteres alfanuméricos)
-//int idVooValido(const char *id);
