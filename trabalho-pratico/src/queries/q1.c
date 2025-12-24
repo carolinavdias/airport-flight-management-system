@@ -5,6 +5,7 @@
 #include <string.h>
 #include "queries/q1.h"
 #include "entidades/airports.h"
+#include "gestor_entidades/gestor_airports.h"
 #include "validacoes/validacoes_airports.h"
 
 const char* tipoToString(Tipo_aeroporto t) {
@@ -19,12 +20,12 @@ const char* tipoToString(Tipo_aeroporto t) {
 }
 
 //query 1 (dado um código de aeroporto, procura-o na tabela e imprime as suas informações)
-char *query1(const char *code, GHashTable *tabelaAeroportos) {
+char *query1(const char *code, GestorAirports *gestorAeroportos) {
     if (!valida_codigoIATA(code)) {
         return strdup("\n");
     }
     
-    Aeroporto *a = g_hash_table_lookup(tabelaAeroportos, code);
+    Aeroporto *a = gestor_airports_procura(gestorAeroportos, code);
     if (a == NULL) {
         return strdup("\n");
     }

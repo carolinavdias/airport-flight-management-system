@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
 
     // Inicializar arrays ordenados para queries otimizadas
     query2_init(gestor_flights_table(gestorVoos));
-    query3_init(gestor_flights_table(gestorVoos));
+    query3_init(gestorVoos);
 
     FILE *ficheiroComandos = fopen(argv[2], "r");
     if (!ficheiroComandos) {
@@ -103,7 +103,7 @@ int main(int argc, char **argv) {
         switch (idQuery) {
             case 1: {
                 if (param && read_check[1]) {
-                    char *resultado = query1(param, gestor_airports_table(gestorAeroportos));
+                    char *resultado = query1(param, gestorAeroportos);
                     if (resultado) {
                         fprintf(out, "%s", resultado);
                         free(resultado);
@@ -118,7 +118,7 @@ int main(int argc, char **argv) {
 
             case 2: {
                 if (param && read_check[2] && read_check[0]) {
-                    char *resultado = query2(param, gestor_aircrafts_table(gestorAeronaves), gestor_flights_table(gestorVoos));
+                    char *resultado = query2(param, gestorAeronaves, gestor_flights_table(gestorVoos));
                     if (resultado) {
                         fprintf(out, "%s", resultado);
                         free(resultado);
@@ -136,7 +136,7 @@ int main(int argc, char **argv) {
                 if (param && (sscanf(param, "%31s %31s", d1, d2) == 2) && read_check[1] && read_check[0]) {
                     sprintf(data_inicio, "%s 00:00", d1);
                     sprintf(data_fim, "%s 23:59", d2);
-                    char *resultado = query3(data_inicio, data_fim, gestor_flights_table(gestorVoos), gestor_airports_table(gestorAeroportos));
+                    char *resultado = query3(data_inicio, data_fim, gestorVoos, gestorAeroportos);
                     if (resultado) {
                         fprintf(out, "%s", resultado);
                         free(resultado);

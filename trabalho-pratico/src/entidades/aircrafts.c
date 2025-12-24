@@ -1,7 +1,10 @@
 #include "entidades/aircrafts.h"
+#include "validacoes/validacoes_aircrafts.h"
+#include "utils/utils.h"
 #include <glib.h>
 #include <stdlib.h>  
 #include <string.h>
+#include <stdio.h>
 
 typedef struct aeronave {
     char *identifier;
@@ -51,10 +54,66 @@ void aircraft_set_year(Aeronave *a, int year) {
     a->year = year;
 }
 
+int valida_aeronave(const char *linha) {
+    if (!linha || linha[0] == '\0')
+        return 0;
+
+    char *tmp = strdup(linha);
+    if (!tmp) return 0;
+
+    char *campos[4];
+    int count = 0;
+
+    char *token = strtok(tmp, ";");
+    while (token && count < 4) {
+        campos[count++] = token;
+        token = strtok(NULL, ";");
+    }
+
+    // Tem de ter exatamente 4 campos
+    if (count != 4) {
+        free(tmp);
+        return 0;
+    }
+
+    // Campos não podem estar vazios
+    if (campos[0][0] == '\0' ||
+        campos[1][0] == '\0' ||
+        campos[2][0] == '\0' ||
+        campos[3][0] == '\0') {
+        free(tmp);
+        return 0;
+    }
+
+    // Validar ano
+    if (!valida_year(campos[3])) {
+        free(tmp);
+        return 0;
+    }
+
+    free(tmp);
+    return 1;
+}
+
 //CRIA E DESTROI
-Aeronave *criaAeronave () {
-    Aeronave *a = calloc (1, sizeof *a);
-    a->year = 0;
+Aeronave *criaAeronave(const char *linha) {
+
+    if (!valida_aeronave(linha)) {
+        errors_add("aircrafts.csv", -1, linha);   // envia para errors.csv
+        return NULL;
+    }
+
+    Aeronave *a = calloc(1, sizeof *a);
+
+    char identifier[32], manufacturer[64], model[64], year[8];
+    sscanf(linha, "%31[^;];%63[^;];%63[^;];%7s",
+           identifier, manufacturer, model, year);
+
+    a->identifier = strdup(identifier);
+    a->manufacturer = strdup(manufacturer);
+    a->model = strdup(model);
+    a->year = atoi(year);
+
     return a;
 }
 

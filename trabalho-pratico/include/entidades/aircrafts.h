@@ -13,7 +13,9 @@ void aircraft_set_model (Aeronave *a, char *model_);
 void aircraft_set_manuf (Aeronave *a, char *manuf);
 void aircraft_set_year(Aeronave *a, int year);
 
-Aeronave *criaAeronave ();
+int valida_aeronave(const char *linha);
+
+Aeronave *criaAeronave(const char *linha);
 void libertaAeronave(void *data);
 
 #endif

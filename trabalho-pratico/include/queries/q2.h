@@ -2,22 +2,15 @@
 #define Q2_H
 
 #include <glib.h>
+#include "gestor_entidades/gestor_aircrafts.h"  
 
-//contagem
-typedef struct contagem Contagem;
-
-//static void trim(char *s);
-
-//inicializa
+// Inicializa
 void query2_init(GHashTable *tabelaVoos);
 
-//limpeza
+// Limpeza
 void query2_cleanup(void);
 
-//query 2 (top N aeronaves com mais voos realizados, filtradas por fabricante opcional)
-char *query2(const char *linhaComando, GHashTable *tabelaAeronaves, GHashTable *tabelaVoos);
-
-//função auxiliar (ordenação por número de voos e depois por identificador)
-int comparaContagens(const Contagem *a, const Contagem *b);
+// Query 2 - ASSINATURA ATUALIZADA
+char *query2(const char *linhaComando, GestorAircrafts *gestorAeronaves, GHashTable *tabelaVoos);
 
 #endif

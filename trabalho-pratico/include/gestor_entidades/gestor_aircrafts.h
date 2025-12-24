@@ -19,8 +19,9 @@ Aeronave *gestor_aircrafts_procura(GestorAircrafts *g, const char *identifier);
 //verifica se uma aeronave existe
 int gestor_aircrafts_existe(GestorAircrafts *g, const char *identifier);
 
-//devolve a hash table (para queries que a precisam)
-GHashTable *gestor_aircrafts_table(GestorAircrafts *g);
+typedef void (*AircraftIterFunc)(Aeronave *a, void *user_data);
+
+void gestor_aircrafts_foreach(GestorAircrafts *g, AircraftIterFunc f, void *user_data);
 
 //liberta toda a memória (aeronaves + gestor)
 void gestor_aircrafts_liberta(GestorAircrafts *g);

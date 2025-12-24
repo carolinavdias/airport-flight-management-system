@@ -30,8 +30,16 @@ int gestor_aircrafts_existe(GestorAircrafts *g, const char *identifier) {
            g_hash_table_contains(g->tabela, identifier);
 }
 
-GHashTable *gestor_aircrafts_table(GestorAircrafts *g) {
-    return (g != NULL) ? g->tabela : NULL;
+void gestor_aircrafts_foreach(GestorAircrafts *g, AircraftIterFunc f, void *user_data) {
+    if (!g || !g->tabela || !f) return;
+
+    GHashTableIter iter;
+    gpointer key, value;
+
+    g_hash_table_iter_init(&iter, g->tabela);
+    while (g_hash_table_iter_next(&iter, &key, &value)) {
+        f((Aeronave *)value, user_data);
+    }
 }
 
 void gestor_aircrafts_liberta(GestorAircrafts *g) {
