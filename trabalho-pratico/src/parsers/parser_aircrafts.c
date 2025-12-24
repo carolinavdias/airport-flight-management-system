@@ -5,6 +5,7 @@
 #include "validacoes/validacoes_aircrafts.h"
 #include "utils/utils.h"
 #include <string.h>
+#include <stdlib.h>
 #include <glib.h>
 
 int le_tabela_Aeronaves(Contexto *ctx, GestorAircrafts *AC) {
@@ -36,13 +37,24 @@ int le_tabela_Aeronaves(Contexto *ctx, GestorAircrafts *AC) {
 
         char **campos = NULL;
         size_t n_campos = 0;
+
         if (csv_split(buffer, &campos, &n_campos) != 0) linha_valida = 0;
 
-        if (linha_valida) aircraft_set_id(aeronave_atual,campos[0]);
-        if (linha_valida) aircraft_set_manuf(aeronave_atual,campos[1]);
-        if (linha_valida) aircraft_set_model_(aeronave_atual,campos[2]);
+        if (linha_valida && n_campos < 4) linha_valida = 0; //VERIFICAR
+        
+        if (linha_valida && (!campos[0] || campos[0][0] == '\0')) linha_valida = 0;
+        if (linha_valida && (!campos[1] || campos[1][0] == '\0')) linha_valida = 0;
+        if (linha_valida && (!campos[2] || campos[2][0] == '\0')) linha_valida = 0;
+        if (linha_valida && (!campos[3] || campos[3][0] == '\0')) linha_valida = 0;
+        
+        if (linha_valida && !valida_year(campos[3])) linha_valida = 0;
 
-	else linha_valida = 0;
+        if (linha_valida) {
+            aircraft_set_id(aeronave_atual, campos[0]);
+            aircraft_set_manuf(aeronave_atual, campos[1]);
+            aircraft_set_model(aeronave_atual, campos[2]); 
+            aircraft_set_year(aeronave_atual, atoi(campos[3])); 
+        }
 
         if (!linha_valida) {
             if (!ficheiro_erros) {

@@ -1,5 +1,6 @@
 #include "gestor_entidades/gestor_aircrafts.h"
 #include <stdlib.h>
+#include <glib.h>
 //#include <string.h>
 
 //tabela guarda todas as aeronaves
@@ -16,7 +17,7 @@ GestorAircrafts *gestor_aircrafts_cria(void) {
 
 void gestor_aircrafts_insere(GestorAircrafts *g, Aeronave *a) {
     if (g == NULL || a == NULL || aircraft_get_identifier(a) == NULL) return;
-    g_hash_table_insert(g->tabela, strdup(aircraft_get_identifier(a)), a);
+    g_hash_table_insert(g->tabela, g_strdup(aircraft_get_identifier(a)), a);
 }
 
 Aeronave *gestor_aircrafts_procura(GestorAircrafts *g, const char *identifier) {
@@ -25,7 +26,8 @@ Aeronave *gestor_aircrafts_procura(GestorAircrafts *g, const char *identifier) {
 }
 
 int gestor_aircrafts_existe(GestorAircrafts *g, const char *identifier) {
-    return g && identifier && g_hash_table_contains(g->tabela, identifier);
+    return g && g->tabela && identifier &&
+           g_hash_table_contains(g->tabela, identifier);
 }
 
 GHashTable *gestor_aircrafts_table(GestorAircrafts *g) {
