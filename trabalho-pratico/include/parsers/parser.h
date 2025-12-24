@@ -8,6 +8,6 @@
 #include "gestor_entidades/gestor_passengers.h"
 #include "gestor_entidades/gestor_reservations.h"
 
-int* read (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircrafts *AC, GestorPassengers *P, GestorReservations *R);
+int* read1 (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircrafts *AC, GestorPassengers *P, GestorReservations *R);
 
 #endif

@@ -74,10 +74,8 @@ Passageiros *criaPassageiro() {
 void libertaPassageiro(void *data) {
     Passageiros *a = data;
     if (!a) return;
-    g_free(a->id_passageiro);
     g_free(a->primeiro_nome);
     g_free(a->ultimo_nome);
-    g_free(a->data_nascimento);
     g_free(a->nacionalidade);
     g_free(a);
 }

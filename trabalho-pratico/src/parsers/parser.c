@@ -9,7 +9,7 @@
 #include "parsers/parser_passengers.h"
 #include "parsers/parser_reservations.h"
 
-int* read (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircrafts *AC, GestorPassengers *P, GestorReservations *R) {
+int* read1 (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircrafts *AC, GestorPassengers *P, GestorReservations *R) {
 
     gchar *caminhoAeroportos = g_build_filename(get_contexto(ctx), "airports.csv", NULL);
     gchar *caminhoAeronaves  = g_build_filename(get_contexto(ctx), "aircrafts.csv", NULL);

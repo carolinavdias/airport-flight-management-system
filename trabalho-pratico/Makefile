@@ -3,7 +3,7 @@
 # ===================================================
 
 CC       = gcc
-CFLAGS   = -Wall -Wextra -O2 -Iinclude $(shell pkg-config --cflags glib-2.0)
+CFLAGS   = -Wall -Wextra -O2 -D_GNU_SOURCE -Iinclude $(shell pkg-config --cflags glib-2.0)
 LDLIBS   = $(shell pkg-config --libs glib-2.0) -lm
 
 SRC_DIR  = src

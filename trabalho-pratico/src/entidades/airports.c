@@ -79,7 +79,6 @@ void libertaAeroporto(void *data) {
     g_free(a->name);
     g_free(a->city);
     g_free(a->country);
-    g_free(a->code_IATA); 
-    g_free(a->type);
+    g_free(a->code_IATA);
     g_free(a);
 }

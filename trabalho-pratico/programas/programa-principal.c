@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-    int *read_check = read(ctx, gestorVoos, gestorAeroportos, gestorAeronaves, gestorPassageiros, gestorReservas);
+    int *read_check = read1(ctx, gestorVoos, gestorAeroportos, gestorAeronaves, gestorPassageiros, gestorReservas);
 
     // Inicializar arrays ordenados para queries otimizadas
     query2_init(gestor_flights_table(gestorVoos));

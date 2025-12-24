@@ -1,4 +1,3 @@
-#define _GNU_SOURCE
 #define _XOPEN_SOURCE 700
 #include "validacoes/validacoes_flights.h"
 #include "utils/utils.h"
