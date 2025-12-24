@@ -45,13 +45,24 @@ int valida_DataH(const char *s) { //, long long *out) {
     int hora = (s[11]-'0')*10  + (s[12]-'0');
     int min  = (s[14]-'0')*10  + (s[15]-'0');
 
-    return !(ano < 0 || ano > 2025 ||
-	     mes < 1 || mes > 12    ||
-	     dia < 1 || dia > qual_mes(ano,mes) ||
-	     hora < 0 || hora > 23  ||
-	     min < 0 || min > 59);
+    // validar limites básicos 
+    if (ano < 0 || ano > 2025) return 0; 
+    if (mes < 1 || mes > 12) return 0; 
+    if (dia < 1 || dia > 31) return 0; //ignora dias por mês 
+    if (hora < 0 || hora > 23) return 0; 
+    if (min < 0 || min > 59) return 0;
+
+    // validar que não é futura (data atual = 2025-09-30) 
+    int ano_atual = 2025, mes_atual = 9, dia_atual = 30; 
+    
+    if (ano > ano_atual) return 0; 
+    if (ano == ano_atual && mes > mes_atual) return 0; 
+    if (ano == ano_atual && mes == mes_atual && dia > dia_atual) return 0; 
+    
+    return 1;
 }
 
+//É NECESSARIA ESTA FUNCAO ????????
 //função valida_estado de um voo
 int valida_Estado(const char *s) {
     if (!s || strlen(s) == 0) return 0;

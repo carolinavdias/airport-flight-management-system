@@ -15,8 +15,10 @@ void gestor_flights_destroy(GestorFlights *g);
 void gestor_flights_inserir(GestorFlights *g, Voo *voo);
 
 //consultas
+
+const char *gestor_flights_obter_origem(GestorFlights *g, const char *flight_id);
 bool gestor_flights_existe(GestorFlights *g, const char *flight_id); //VERIFICAR SE É USADO
-//const char *gestor_flights_obter_destino(GestorFlights *g, const char *flight_id);
+const char *gestor_flights_obter_destino(GestorFlights *g, const char *flight_id);
 
 //para queries que precisam iterar
 GHashTable *gestor_flights_table(GestorFlights *g);

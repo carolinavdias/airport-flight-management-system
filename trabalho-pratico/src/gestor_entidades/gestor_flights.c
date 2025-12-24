@@ -29,13 +29,17 @@ bool gestor_flights_existe(GestorFlights *g, const char *flight_id) {
     return g && flight_id && g_hash_table_contains(g->tabela_voos, flight_id);
 }
 
-/*
+const char *gestor_flights_obter_origem(GestorFlights *g, const char *flight_id) {
+    if (!g) return NULL;
+    Voo *v = g_hash_table_lookup(g->tabela_voos, flight_id);
+    return v ? voo_get_code_origin(v) : NULL;
+}
+
 const char *gestor_flights_obter_destino(GestorFlights *g, const char *flight_id) {
     if (!g) return NULL;
     Voo *v = g_hash_table_lookup(g->tabela_voos, flight_id);
     return v ? voo_get_code_destination(v) : NULL;
 }
-*/
 
 GHashTable *gestor_flights_table(GestorFlights *g) {
     return (g != NULL) ? g->tabela_voos : NULL;

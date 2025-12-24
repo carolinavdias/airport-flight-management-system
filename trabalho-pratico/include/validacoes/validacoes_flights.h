@@ -6,7 +6,6 @@
 
 //validações sintáticas
 int valida_id_voo (const char *s);
-int qual_mes (int ano, int mes); //auxiliar -> para mudar de lugar
 int valida_DataH(const char *s); //, long long *out);
 
 int valida_Estado(const char *s); //, Estado *e);
