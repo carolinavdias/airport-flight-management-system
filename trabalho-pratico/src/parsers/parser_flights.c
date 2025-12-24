@@ -37,11 +37,11 @@ int le_tabela_Voos(Contexto *ctx, GestorFlights *V, GestorAircrafts *AC) {
         size_t n_campos = 0;
 
         if (csv_split(buffer, &campos, &n_campos) != 0) linha_valida = 0;
-/*
+
 	//FLIGHT_ID
 	if (linha_valida && valida_id_voo(campos[0])) voo_set_flight_id (voo_atual,campos[0]);
 	else linha_valida = 0;
-*/
+
 	//DEPARTURE
 	if (linha_valida && valida_DataH(campos[1])) voo_set_dataH(voo_atual,campos[1],1);
 	else linha_valida = 0;
@@ -56,7 +56,23 @@ int le_tabela_Voos(Contexto *ctx, GestorFlights *V, GestorAircrafts *AC) {
 		else linha_valida = 0;
 	    }
         }
-/*
+
+        //CODE_ORIGIN
+        if (linha_valida && valida_codigoIATA(campos[7])) voo_set_code(voo_atual,campos[7],'o');
+	else linha_valida = 0;
+
+        //STATUS
+        if (linha_valida) {
+           if (valida_Estado(campos[6])) {
+		voo_set_status(voo_atual,campos[6]);
+                if (voo_get_status(voo_atual) == ESTADO_CANCELLED && e_maybe != 2) linha_valida = 0;
+	   }
+	   else linha_valida = 0;
+        }
+
+	//ID_AIRCRAFT
+        if (linha_valida) voo_set_id_aircraft(voo_atual,campos[9]);
+
 	//ARRIVAL
         if (linha_valida && valida_DataH(campos[3])) voo_set_dataH(voo_atual,campos[3],3);
 	else linha_valida = 0;
@@ -71,28 +87,12 @@ int le_tabela_Voos(Contexto *ctx, GestorFlights *V, GestorAircrafts *AC) {
 		 else linha_valida = 0;
 	    }
         }
-        if (linha_valida) voo_set_gate(voo_atual,campos[5]);
-
-	//STATUS
-        if (linha_valida) {
-           if (valida_Estado(campos[6])) {
-		voo_set_status(voo_atual,campos[6]);
-                if (voo_get_status(voo_atual) == 2 && e_maybe != 2) linha_valida = 0;
-	   }
-	   else linha_valida = 0;
-        }
-
-	//CODE_ORIGIN
-        if (linha_valida && valida_codigoIATA(campos[7])) voo_set_code(voo_atual,campos[7],'o');
-	else linha_valida = 0;
+        //if (linha_valida) voo_set_gate(voo_atual,campos[5]);
 
 	//CODE_DESTINATION
         if (linha_valida && valida_codigoIATA(campos[8])) voo_set_code(voo_atual,campos[8],'d');
 	else linha_valida = 0;
 
-	//ID_AIRCRAFT
-        if (linha_valida) voo_set_id_aircraft(voo_atual,campos[9]);
-*/
 
 	//AIRLINE
         if (linha_valida) voo_set_airline(voo_atual,campos[10]);

@@ -2,10 +2,9 @@
 #define _XOPEN_SOURCE 700
 #include "validacoes/validacoes_flights.h"
 #include "utils/utils.h"
+#include <string.h>
 
 //VOOS -> VALIDAÇÃO SINTÁTICA
-
-
 //valida o id do voo
 int valida_id_voo (const char *s) {
     if (!s) return 0; //tirar ou nao o strlen?
@@ -21,10 +20,8 @@ int valida_id_voo (const char *s) {
     return s[7] == '\0';
 }
 
-
 //retorna 1 se válido; 0 se inválido.
 //out = inteiro comparável crescente YYYYMMDDHHMM
-
 int valida_DataH(const char *s) { //, long long *out) {
     if (!s) return 0;
 
@@ -62,30 +59,56 @@ int valida_Estado(const char *s) {
 }
 
 //VOOS -> VALIDAÇÃO LÓGICA
-
 int valida_VOO (Voo *voo, GestorAircrafts *gestor_aeronaves) {
-    //destino != origem
-    if (strcmp (voo_get_code_origin(voo), voo_get_code_destination(voo)) == 0) return 0;
-
-    //verifica se aeronave correspondente existe
-    if (!gestor_aircrafts_existe(gestor_aeronaves, voo_get_id_aircraft(voo))) return 0;
-
-    //if CANCELLED, actual departure e actual arrival == "N/A"
-    if (voo_get_status(voo) == 2) {
-        // CANCELLED: actual deve ser N/A (-2)
-        if (voo_get_actual_departure(voo) != -2 || voo_get_actual_arrival(voo) != -2) return 0;
-        // arrival deve ser DEPOIS de departure (pode ser igual)
-        if (voo_get_arrival(voo) < voo_get_departure(voo)) return 0;
+    
+    //DESTINATION != ORIGIN
+    if (strcmp(voo_get_code_origin(voo), voo_get_code_destination(voo)) == 0) {
+        return 0;
     }
-    else {
-        // arrival DEPOIS de departure (não pode ser igual)
-        if (voo_get_arrival(voo) < voo_get_actual_departure(voo) || voo_get_actual_arrival(voo) < voo_get_actual_departure(voo)) return 0;
-
-        //if DELAYED, actual departure/arrival >= departure/arrival (pode ser igual!)
-        if (voo_get_status(voo) == 1) {
-            if (voo_get_actual_departure(voo) < voo_get_departure(voo) || voo_get_actual_arrival(voo) < voo_get_arrival(voo)) return 0;
+    
+    //AIRCRAFT EXISTE
+    if (gestor_aeronaves && voo_get_id_aircraft(voo)) {
+        if (!gestor_aircrafts_existe(gestor_aeronaves, voo_get_id_aircraft(voo))) {
+            return 0;
         }
     }
-
-    return 1; //Válido!
+    
+    //ARRIVAL >= DEPARTURE
+    if (voo_get_arrival(voo) < voo_get_departure(voo)) {
+        return 0;
+    }
+    
+    //se CANCELLED, actual_departure E actual_arrival devem ser -2 (N/A)
+    if (voo_get_status(voo) == ESTADO_CANCELLED) {
+        if (voo_get_actual_departure(voo) != -2 || 
+            voo_get_actual_arrival(voo) != -2) {
+            return 0;
+        }
+    }
+    
+    //se NÃO CANCELLED: actual_arrival >= actual_departure
+    if (voo_get_status(voo) != ESTADO_CANCELLED) {
+        if (voo_get_actual_departure(voo) != -2 && 
+            voo_get_actual_arrival(voo) != -2) {
+            if (voo_get_actual_arrival(voo) < voo_get_actual_departure(voo)) {
+                return 0;
+            }
+        }
+    }
+    
+    // se DELAYED, actual >= scheduled
+    if (voo_get_status(voo) == ESTADO_DELAYED) {
+        // actual_departure >= departure
+        if (voo_get_actual_departure(voo) != -2 && 
+            voo_get_actual_departure(voo) < voo_get_departure(voo)) {
+            return 0;
+        }
+        //actual_arrival >= arrival
+        if (voo_get_actual_arrival(voo) != -2 && 
+            voo_get_actual_arrival(voo) < voo_get_arrival(voo)) {
+            return 0;
+        }
+    }
+    
+    return 1; //válido
 }

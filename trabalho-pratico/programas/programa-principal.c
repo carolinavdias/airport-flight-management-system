@@ -31,12 +31,12 @@ int main(int argc, char **argv) {
     }
 
     Contexto *ctx = cria_contexto();
-    set_contexto (ctx, argv[1]);
+    set_contexto(ctx, argv[1]);
 
     errors_begin();
     g_mkdir_with_parents("resultados", 0755);
 
-    //criar GESTORES (não hash tables!)
+    // Criar GESTORES
     GestorAircrafts *gestorAeronaves = gestor_aircrafts_cria();
     GestorFlights *gestorVoos = gestor_flights_novo();
     GestorAirports *gestorAeroportos = gestor_airports_cria();
@@ -54,13 +54,19 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-    int *read_check = read(ctx,gestorVoos, gestorAeroportos, gestorAeronaves, gestorPassageiros, gestorReservas);
+    int *read_check = read(ctx, gestorVoos, gestorAeroportos, gestorAeronaves, gestorPassageiros, gestorReservas);
+
+    // Inicializar arrays ordenados para queries otimizadas
+    query2_init(gestor_flights_table(gestorVoos));
+    query3_init(gestor_flights_table(gestorVoos));
 
     FILE *ficheiroComandos = fopen(argv[2], "r");
     if (!ficheiroComandos) {
         perror("Erro ao abrir o ficheiro de comandos");
         errors_write_csv("resultados/errors.csv");
         errors_end();
+        query2_cleanup();
+        query3_cleanup();
         gestor_aircrafts_liberta(gestorAeronaves);
         gestor_flights_destroy(gestorVoos);
         gestor_airports_liberta(gestorAeroportos);
@@ -95,31 +101,49 @@ int main(int argc, char **argv) {
         }
 
         switch (idQuery) {
-            case 1:
-
-                if (param && read_check[1])
-                    query1(param, gestor_airports_table(gestorAeroportos) , out);
-                else
+            case 1: {
+                if (param && read_check[1]) {
+                    char *resultado = query1(param, gestor_airports_table(gestorAeroportos));
+                    if (resultado) {
+                        fprintf(out, "%s", resultado);
+                        free(resultado);
+                    } else {
+                        fprintf(out, "\n");
+                    }
+                } else {
                     fprintf(out, "\n");
+                }
                 break;
+            }
 
-            case 2:
-
-                if (param && read_check[2] && read_check[0])
-                    query2(param, gestor_aircrafts_table(gestorAeronaves) , gestor_flights_table(gestorVoos) , out);
-                else
+            case 2: {
+                if (param && read_check[2] && read_check[0]) {
+                    char *resultado = query2(param, gestor_aircrafts_table(gestorAeronaves), gestor_flights_table(gestorVoos));
+                    if (resultado) {
+                        fprintf(out, "%s", resultado);
+                        free(resultado);
+                    } else {
+                        fprintf(out, "\n");
+                    }
+                } else {
                     fprintf(out, "\n");
+                }
                 break;
+            }
 
             case 3: {
-
                 char d1[16], d2[16], data_inicio[32], data_fim[32];
                 if (param && (sscanf(param, "%31s %31s", d1, d2) == 2) && read_check[1] && read_check[0]) {
                     sprintf(data_inicio, "%s 00:00", d1);
                     sprintf(data_fim, "%s 23:59", d2);
-                    query3(data_inicio, data_fim, gestor_flights_table(gestorVoos) , gestor_airports_table(gestorAeroportos) , out);
+                    char *resultado = query3(data_inicio, data_fim, gestor_flights_table(gestorVoos), gestor_airports_table(gestorAeroportos));
+                    if (resultado) {
+                        fprintf(out, "%s", resultado);
+                        free(resultado);
+                    } else {
+                        fprintf(out, "\n");
+                    }
                 } else {
-
                     fprintf(out, "\n");
                 }
                 break;
@@ -141,7 +165,11 @@ int main(int argc, char **argv) {
     errors_write_csv("resultados/errors.csv");
     errors_end();
 
-    //libertar memória
+    // Limpar queries
+    query2_cleanup();
+    query3_cleanup();
+
+    // Libertar memória
     gestor_aircrafts_liberta(gestorAeronaves);
     gestor_flights_destroy(gestorVoos);
     gestor_airports_liberta(gestorAeroportos);

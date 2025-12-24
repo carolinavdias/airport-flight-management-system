@@ -1,4 +1,6 @@
 #include "gestor_entidades/gestor_flights.h"
+#include <stdbool.h> //VERIFICAR SE gestor_flights_existe() É USADA
+#include <string.h>
 
 typedef struct gestor_flights {
     GHashTable *tabela_voos;
@@ -22,21 +24,18 @@ void gestor_flights_inserir(GestorFlights *g, Voo *voo) {
     g_hash_table_insert(g->tabela_voos, strdup(voo_get_flight_id(voo)), voo);
 }
 
+//VERIFICAR SE É USADO
 bool gestor_flights_existe(GestorFlights *g, const char *flight_id) {
     return g && flight_id && g_hash_table_contains(g->tabela_voos, flight_id);
 }
 
-const char *gestor_flights_obter_origem(GestorFlights *g, const char *flight_id) {
-    if (!g) return NULL;
-    Voo *v = g_hash_table_lookup(g->tabela_voos, flight_id);
-    return v ? voo_get_code_origin(v) : NULL;
-}
-
+/*
 const char *gestor_flights_obter_destino(GestorFlights *g, const char *flight_id) {
     if (!g) return NULL;
     Voo *v = g_hash_table_lookup(g->tabela_voos, flight_id);
     return v ? voo_get_code_destination(v) : NULL;
 }
+*/
 
 GHashTable *gestor_flights_table(GestorFlights *g) {
     return (g != NULL) ? g->tabela_voos : NULL;

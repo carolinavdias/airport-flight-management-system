@@ -42,11 +42,7 @@ int le_tabela_Aeronaves(Contexto *ctx, GestorAircrafts *AC) {
         if (linha_valida) aircraft_set_manuf(aeronave_atual,campos[1]);
         if (linha_valida) aircraft_set_model_(aeronave_atual,campos[2]);
 
-        if (linha_valida && valida_year(campos[3])) aircraft_set_year(aeronave_atual,campos[3]);
 	else linha_valida = 0;
-
-        if (linha_valida) aircraft_set_cap(aeronave_atual,campos[4]);
-        if (linha_valida) aircraft_set_range_(aeronave_atual,campos[5]);
 
         if (!linha_valida) {
             if (!ficheiro_erros) {
