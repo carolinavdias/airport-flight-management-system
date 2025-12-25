@@ -5,6 +5,19 @@
 #include "validacoes/validacoes_flights.h"
 #include "validacoes/validacoes_airports.h"
 #include "utils/utils.h"
+#include <stdlib.h>
+
+static int compara_voos_por_data(const void *a, const void *b) {
+    Voo *v1 = *(Voo **)a;
+    Voo *v2 = *(Voo **)b;
+    
+    long long t1 = voo_get_actual_departure(v1);
+    long long t2 = voo_get_actual_departure(v2);
+    
+    if (t1 < t2) return -1;
+    if (t1 > t2) return 1;
+    return 0;
+}
 
 int le_tabela_Voos(Contexto *ctx, GestorFlights *V, GestorAircrafts *AC) {
 
@@ -25,6 +38,11 @@ int le_tabela_Voos(Contexto *ctx, GestorFlights *V, GestorAircrafts *AC) {
 
     FILE *ficheiro_erros = NULL;
     int header_escrito = 0;
+
+    //array local
+    int capacidade_array = 10000;
+    Voo **array_voos = malloc(capacidade_array * sizeof(Voo *));
+    int num_voos_array = 0;
 
     while (fgets(buffer, sizeof(buffer), ficheiro) && no_header) {
         Voo *voo_atual = criaVoo();
@@ -117,14 +135,33 @@ int le_tabela_Voos(Contexto *ctx, GestorFlights *V, GestorAircrafts *AC) {
                 fputs(buffer, ficheiro_erros);
                 fputc('\n', ficheiro_erros);
             }
-	    libertaVoo(voo_atual);
+            libertaVoo(voo_atual);
         } else {
-	    gestor_flights_inserir(V, voo_atual);
+            //insere no gestor (hash table)
+            gestor_flights_inserir(V, voo_atual);
+            
+            //ADICIONA ao array local (se válido para query3)
+            if (voo_get_status(voo_atual) != ESTADO_CANCELLED && voo_get_code_origin(voo_atual)) {
+                //expaner array se necessário
+                if (num_voos_array >= capacidade_array) {
+                    capacidade_array *= 2;
+                    array_voos = realloc(array_voos, capacidade_array * sizeof(Voo *));
+                }
+                array_voos[num_voos_array++] = voo_atual;
+            }
         }
+        
         if (campos) csv_free_fields(campos, n_campos);
     }
-
+    
     if (ficheiro_erros) fclose(ficheiro_erros);
     fclose(ficheiro);
+    
+    //ORDENA array 1 ÚNICA VEZ (no parser!)
+    qsort(array_voos, num_voos_array, sizeof(Voo *), compara_voos_por_data);
+    
+    //passa array ordenado para o gestor
+    gestor_flights_set_array_ordenado(V, array_voos, num_voos_array);
+    
     return 1;
 }

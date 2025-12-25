@@ -10,9 +10,6 @@
 
 typedef struct contagens2 Contagens2;
 
-void query3_init(GestorFlights *gestorVoos);
-void query3_cleanup(void);
-
 //query 3 (aeroporto com mais partidas reais entre 2 datas, ignora cancelados)
 char *query3(const char *data_inicio, const char *data_fim, GestorFlights *gestorVoos, GestorAirports *gestorAeroportos);
 

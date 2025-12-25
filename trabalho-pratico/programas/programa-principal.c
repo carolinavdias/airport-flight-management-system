@@ -57,8 +57,7 @@ int main(int argc, char **argv) {
     int *read_check = read1(ctx, gestorVoos, gestorAeroportos, gestorAeronaves, gestorPassageiros, gestorReservas);
 
     // Inicializar arrays ordenados para queries otimizadas
-    query2_init(gestor_flights_table(gestorVoos));
-    query3_init(gestorVoos);
+    query2_init(gestorVoos);
 
     FILE *ficheiroComandos = fopen(argv[2], "r");
     if (!ficheiroComandos) {
@@ -66,7 +65,6 @@ int main(int argc, char **argv) {
         errors_write_csv("resultados/errors.csv");
         errors_end();
         query2_cleanup();
-        query3_cleanup();
         gestor_aircrafts_liberta(gestorAeronaves);
         gestor_flights_destroy(gestorVoos);
         gestor_airports_liberta(gestorAeroportos);
@@ -118,7 +116,7 @@ int main(int argc, char **argv) {
 
             case 2: {
                 if (param && read_check[2] && read_check[0]) {
-                    char *resultado = query2(param, gestorAeronaves, gestor_flights_table(gestorVoos));
+                    char *resultado = query2(param, gestorAeronaves, gestorVoos);
                     if (resultado) {
                         fprintf(out, "%s", resultado);
                         free(resultado);
@@ -167,7 +165,6 @@ int main(int argc, char **argv) {
 
     // Limpar queries
     query2_cleanup();
-    query3_cleanup();
 
     // Libertar memória
     gestor_aircrafts_liberta(gestorAeronaves);

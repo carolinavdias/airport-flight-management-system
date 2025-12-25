@@ -11,16 +11,20 @@ typedef struct gestor_flights GestorFlights;
 GestorFlights *gestor_flights_novo();
 void gestor_flights_destroy(GestorFlights *g);
 
-//inserção
+//operações básicas
 void gestor_flights_inserir(GestorFlights *g, Voo *voo);
+bool gestor_flights_existe(GestorFlights *g, const char *flight_id); //VERIFICAR SE É USADO
+
+void gestor_flights_print(GestorFlights *g);
+
+void gestor_flights_foreach(GestorFlights *g, void (*func)(Voo *, void *), void *user_data);
 
 //consultas
-
 const char *gestor_flights_obter_origem(GestorFlights *g, const char *flight_id);
-bool gestor_flights_existe(GestorFlights *g, const char *flight_id); //VERIFICAR SE É USADO
 const char *gestor_flights_obter_destino(GestorFlights *g, const char *flight_id);
 
-//para queries que precisam iterar
-GHashTable *gestor_flights_table(GestorFlights *g);
+//array ordenado
+void gestor_flights_set_array_ordenado(GestorFlights *g, Voo **array, int num_voos);
+Voo **gestor_flights_get_array_ordenado(GestorFlights *g, int *num_voos);
 
 #endif

@@ -1,16 +1,16 @@
 #ifndef Q2_H
 #define Q2_H
 
-#include <glib.h>
 #include "gestor_entidades/gestor_aircrafts.h"  
+#include "gestor_entidades/gestor_flights.h"
 
-// Inicializa
-void query2_init(GHashTable *tabelaVoos);
+//inicializa
+void query2_init(GestorFlights *gestorVoos);
 
-// Limpeza
+//limpeza
 void query2_cleanup(void);
 
-// Query 2 - ASSINATURA ATUALIZADA
-char *query2(const char *linhaComando, GestorAircrafts *gestorAeronaves, GHashTable *tabelaVoos);
+//query 2
+char *query2(const char *linhaComando, GestorAircrafts *gestorAeronaves, GestorFlights *gestorVoos);
 
 #endif
