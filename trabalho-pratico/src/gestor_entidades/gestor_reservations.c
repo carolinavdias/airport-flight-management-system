@@ -29,6 +29,7 @@ Reservas *gestor_reservations_procura(GestorReservations *g, const char *id_rese
     return g_hash_table_lookup(g->tabela, id_reserva);
 }
 
+//ALTERAR
 GHashTable *gestor_reservations_table(GestorReservations *g) {
     return (g != NULL) ? g->tabela : NULL;
 }

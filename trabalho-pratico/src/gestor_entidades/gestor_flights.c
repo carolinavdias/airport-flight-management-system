@@ -48,6 +48,7 @@ const char *gestor_flights_obter_destino(GestorFlights *g, const char *flight_id
     return v ? voo_get_code_destination(v) : NULL;
 }
 
+//ALTERAR
 GHashTable *gestor_flights_table(GestorFlights *g) {
     return (g != NULL) ? g->tabela_voos : NULL;
 }

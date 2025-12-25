@@ -27,6 +27,7 @@ int gestor_airports_existe(GestorAirports *g, const char *code_IATA) {
     return g && code_IATA && g_hash_table_contains(g->tabela, code_IATA);
 }
 
+//ALTERAR
 GHashTable *gestor_airports_table(GestorAirports *g) {
     return (g != NULL) ? g->tabela : NULL;
 }
