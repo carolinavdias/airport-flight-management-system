@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
         switch (idQuery) {
             case 1: {
                 if (param && read_check[1]) {
-                    char *resultado = query1(param, gestorAeroportos);
+                    char *resultado = query1(param, gestorAeroportos, gestorVoos);
                     if (resultado) {
                         fprintf(out, "%s", resultado);
                         free(resultado);
