@@ -11,4 +11,5 @@ const char* tipoToString(Tipo_aeroporto t);
 
 //query 1 (dado um código, imprime as informações do aeroporto)
 char *query1(const char *code, GestorAirports *gestorAeroportos, GestorFlights *gestorVoos);
+
 #endif

@@ -22,15 +22,50 @@
 #include "gestor_entidades/gestor_reservations.h"
 
 #include "utils/utils.h"
+#include "queries/interpreter.h"
+
+// Função auxiliar para processar linha de comando
+static void processa_linha_comando(const char *linha_completa, 
+                                   FILE *out,
+                                   GestorAirports *gestorAeroportos,
+                                   GestorFlights *gestorVoos,
+                                   GestorAircrafts *gestorAeronaves,
+                                   GestorPassengers *gestorPassageiros) {
+    (void)gestorPassageiros; // Mark as unused to suppress warning
+    
+    if (!linha_completa || !linha_completa[0]) {
+        fprintf(out, "\n");
+        return;
+    }
+
+    // Copiar linha para manipulação
+    char *linha = g_strdup(linha_completa);
+    char *comando = linha;
+    char *param = NULL;
+
+    // Separar comando e parâmetros
+    char *espaco = strchr(linha, ' ');
+    if (espaco) {
+        *espaco = '\0';
+        param = espaco + 1;
+    }
+
+    // Chamar interpretador
+    interpreta_comando(comando, param, out, 
+                      gestorAeroportos, gestorVoos, gestorAeronaves, gestorPassageiros);
+
+    g_free(linha);
+}
 
 int main(int argc, char **argv) {
-
     if (argc != 3) {
         fprintf(stderr, "Uso: %s <dataset-fase-1> <ficheiro_comandos>\n", argv[0]);
         return EXIT_FAILURE;
     }
 
     Contexto *ctx = cria_contexto();
+    if (!ctx) return EXIT_FAILURE;
+    
     set_contexto(ctx, argv[1]);
 
     errors_begin();
@@ -54,22 +89,20 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-    int *read_check = read1(ctx, gestorVoos, gestorAeroportos, gestorAeronaves, gestorPassageiros, gestorReservas);
-
-    // Inicializar arrays ordenados para queries otimizadas
-    query2_init(gestorVoos);
+    // Carregar dados (ignorando o retorno de read1)
+    read1(ctx, gestorVoos, gestorAeroportos, gestorAeronaves, gestorPassageiros, gestorReservas);
 
     FILE *ficheiroComandos = fopen(argv[2], "r");
     if (!ficheiroComandos) {
         perror("Erro ao abrir o ficheiro de comandos");
         errors_write_csv("resultados/errors.csv");
         errors_end();
-        query2_cleanup();
         gestor_aircrafts_liberta(gestorAeronaves);
         gestor_flights_destroy(gestorVoos);
         gestor_airports_liberta(gestorAeroportos);
         gestor_passengers_destroy(gestorPassageiros);
         gestor_reservations_liberta(gestorReservas);
+        free(ctx);
         return EXIT_FAILURE;
     }
 
@@ -79,15 +112,7 @@ int main(int argc, char **argv) {
 
     while (getline(&linha, &tamanho, ficheiroComandos) != -1) {
         linha[strcspn(linha, "\n")] = '\0';
-
-        int idQuery = 0;
-        char *param = NULL;
-
-        if (sscanf(linha, "%d", &idQuery) == 1) {
-            char *espaco = strchr(linha, ' ');
-            if (espaco != NULL)
-                param = espaco + 1;
-        }
+        if (linha[0] == '\0') continue; // Linha vazia
 
         gchar *nomeOutput = g_strdup_printf("resultados/command%d_output.txt", numeroComando);
         FILE *out = fopen(nomeOutput, "w");
@@ -98,59 +123,9 @@ int main(int argc, char **argv) {
             continue;
         }
 
-        switch (idQuery) {
-            case 1: {
-                if (param && read_check[1]) {
-                    char *resultado = query1(param, gestorAeroportos, gestorVoos);
-                    if (resultado) {
-                        fprintf(out, "%s", resultado);
-                        free(resultado);
-                    } else {
-                        fprintf(out, "\n");
-                    }
-                } else {
-                    fprintf(out, "\n");
-                }
-                break;
-            }
-
-            case 2: {
-                if (param && read_check[2] && read_check[0]) {
-                    char *resultado = query2(param, gestorAeronaves, gestorVoos);
-                    if (resultado) {
-                        fprintf(out, "%s", resultado);
-                        free(resultado);
-                    } else {
-                        fprintf(out, "\n");
-                    }
-                } else {
-                    fprintf(out, "\n");
-                }
-                break;
-            }
-
-            case 3: {
-                char d1[16], d2[16], data_inicio[32], data_fim[32];
-                if (param && (sscanf(param, "%31s %31s", d1, d2) == 2) && read_check[1] && read_check[0]) {
-                    sprintf(data_inicio, "%s 00:00", d1);
-                    sprintf(data_fim, "%s 23:59", d2);
-                    char *resultado = query3(data_inicio, data_fim, gestorVoos, gestorAeroportos);
-                    if (resultado) {
-                        fprintf(out, "%s", resultado);
-                        free(resultado);
-                    } else {
-                        fprintf(out, "\n");
-                    }
-                } else {
-                    fprintf(out, "\n");
-                }
-                break;
-            }
-
-            default:
-                fprintf(out, "\n");
-                break;
-        }
+        // Processar comando usando interpretador
+        processa_linha_comando(linha, out, 
+                               gestorAeroportos, gestorVoos, gestorAeronaves, gestorPassageiros);
 
         fclose(out);
         g_free(nomeOutput);
@@ -163,15 +138,14 @@ int main(int argc, char **argv) {
     errors_write_csv("resultados/errors.csv");
     errors_end();
 
-    // Limpar queries
-    query2_cleanup();
-
     // Libertar memória
     gestor_aircrafts_liberta(gestorAeronaves);
     gestor_flights_destroy(gestorVoos);
     gestor_airports_liberta(gestorAeroportos);
     gestor_passengers_destroy(gestorPassageiros);
     gestor_reservations_liberta(gestorReservas);
+    
+    free(ctx);
 
     return EXIT_SUCCESS;
 }
