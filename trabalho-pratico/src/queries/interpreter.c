@@ -14,24 +14,13 @@
 #include "gestor_entidades/gestor_aircrafts.h"
 #include "gestor_entidades/gestor_passengers.h"
 
-// Função auxiliar para converter Tipo_aeroporto para string
-static const char* tipo_aeroporto_para_string(int tipo) {
-    switch (tipo) {
-        case TIPO_SMALL_AIRPORT:   return "small_airport";
-        case TIPO_MEDIUM_AIRPORT:  return "medium_airport";
-        case TIPO_LARGE_AIRPORT:   return "large_airport";
-        case TIPO_HELIPORT:        return "heliport";
-        case TIPO_SEAPLANE_BASE:   return "seaplane_base";
-        default:                   return "unknown";
-    }
-}
-
-// Função para aplicar separador conforme formato
+//função para aplicar separador conforme formato
 static void aplica_formato(char *str, bool formato_alternativo) {
     if (!str) return;
     
     char separador = formato_alternativo ? '=' : ';';
     
+    //troca TODAS as vírgulas pelo separador correto
     for (int i = 0; str[i]; i++) {
         if (str[i] == ',') {
             str[i] = separador;
@@ -39,24 +28,24 @@ static void aplica_formato(char *str, bool formato_alternativo) {
     }
 }
 
-// Função para extrair número da query de forma segura
+//função para extrair número da query
 static int extrai_numero_query(const char *comando, bool *formato_alternativo) {
     if (!comando || !comando[0]) return 0;
     
     *formato_alternativo = false;
     
-    // Contar dígitos iniciais
+    //conta dígitos iniciais
     int i = 0;
     while (comando[i] && comando[i] >= '0' && comando[i] <= '9') {
         i++;
     }
     
-    // Se o próximo caractere é 'S' e é o fim da string
+    //se o próximo caractere é 'S' e é o fim da string
     if (comando[i] == 'S' && comando[i+1] == '\0') {
         *formato_alternativo = true;
     }
     
-    // Converter apenas a parte numérica
+    //converte apenas a parte numérica
     char num_str[16];
     int copy_len = i;
     if (copy_len >= (int)sizeof(num_str)) {
@@ -71,7 +60,7 @@ static int extrai_numero_query(const char *comando, bool *formato_alternativo) {
     return atoi(num_str);
 }
 
-// Função principal do interpretador (CORRIGIDA)
+//interpretador
 void interpreta_comando(const char *comando,
                         const char *param,
                         FILE *out,
@@ -80,71 +69,80 @@ void interpreta_comando(const char *comando,
                         GestorAircrafts *gestorAeronaves,
                         GestorPassengers *gestorPassageiros) {
     
-    (void)gestorPassageiros; // Silencia warning de parâmetro não usado
-    
-    if (!comando || !out) return;
+    if (!comando || !out) {
+        fprintf(out, "\n");
+        return;
+    }
 
     bool formato_alternativo = false;
     int query_num = extrai_numero_query(comando, &formato_alternativo);
 
-    // Processa cada query
-    if (query_num == 1 && param && param[0]) {
-        // Query 1: Formato "code;name;city;country;type"
-        Aeroporto *a = gestor_airports_procura(gestorAeroportos, param);
-        if (a) {
-            char linha[512];
+    //QUERY 1 - USA A FUNÇÃO query1() já implementada
+    if (query_num == 1) {
+        if (param && param[0]) {
+            //chama query1() (já conta passageiros corretamente!)
+            char *resultado = query1(param, gestorAeroportos, gestorVoos, gestorPassageiros);
             
-            // Obter tipo do aeroporto como número (0-4)
-            int tipo = airport_get_type(a); // Deve retornar 0, 1, 2, 3 ou 4
-            const char *tipo_str = tipo_aeroporto_para_string(tipo);
-            
-            // Formatar com vírgulas
-            int written = snprintf(linha, sizeof(linha), "%s,%s,%s,%s,%s\n",
-                    airport_get_code_IATA(a),
-                    airport_get_name(a),
-                    airport_get_city(a),
-                    airport_get_country(a),
-                    tipo_str);
-            
-            if (written > 0 && (size_t)written < sizeof(linha)) {
-                aplica_formato(linha, formato_alternativo);
-                fputs(linha, out);
-            } else {
-                fputs("\n", out);
-            }
-        } else {
-            fputs("\n", out);
-        }
-    }
-    else if (query_num == 2 && param && param[0]) {
-        // Query 2: Processamento específico
-        char *resultado = query2(param, gestorAeronaves, gestorVoos);
-        if (resultado) {
-            aplica_formato(resultado, formato_alternativo);
-            fputs(resultado, out);
-            free(resultado);
-        } else {
-            fputs("\n", out);
-        }
-    }
-    else if (query_num == 3 && param && param[0]) {
-        // Query 3: Processa duas datas
-        char data_inicio[32] = {0}, data_fim[32] = {0};
-        if (sscanf(param, "%31s %31s", data_inicio, data_fim) == 2) {
-            char *resultado = query3(data_inicio, data_fim, gestorVoos, gestorAeroportos);
-            if (resultado) {
+            if (resultado && resultado[0] != '\n') {
+                //zplica formato alternativo se necessário
                 aplica_formato(resultado, formato_alternativo);
-                fputs(resultado, out);
+                fprintf(out, "%s", resultado);
                 free(resultado);
             } else {
-                fputs("\n", out);
+                fprintf(out, "\n");
+                if (resultado) free(resultado);
             }
         } else {
-            fputs("\n", out);
+            fprintf(out, "\n");
         }
     }
+    //QUERY 2
+    else if (query_num == 2) {
+        if (param && param[0]) {
+            char *resultado = query2(param, gestorAeronaves, gestorVoos);
+            
+            if (resultado && resultado[0] != '\n') {
+                aplica_formato(resultado, formato_alternativo);
+                fprintf(out, "%s", resultado);
+                free(resultado);
+            } else {
+                fprintf(out, "\n");
+                if (resultado) free(resultado);
+            }
+        } else {
+            fprintf(out, "\n");
+        }
+    }
+    //QUERY 3
+    else if (query_num == 3) {
+        if (param && param[0]) {
+            char d1[32] = {0}, d2[32] = {0};
+            char data_inicio[64] = {0}, data_fim[64] = {0};
+            
+            if (sscanf(param, "%31s %31s", d1, d2) == 2) {
+                //adiciona hora
+                snprintf(data_inicio, sizeof(data_inicio), "%s 00:00", d1);
+                snprintf(data_fim, sizeof(data_fim), "%s 23:59", d2);
+                
+                char *resultado = query3(data_inicio, data_fim, gestorVoos, gestorAeroportos);
+                
+                if (resultado && resultado[0] != '\n') {
+                    aplica_formato(resultado, formato_alternativo);
+                    fprintf(out, "%s", resultado);
+                    free(resultado);
+                } else {
+                    fprintf(out, "\n");
+                    if (resultado) free(resultado);
+                }
+            } else {
+                fprintf(out, "\n");
+            }
+        } else {
+            fprintf(out, "\n");
+        }
+    }
+    //comando não reconhecido
     else {
-        // Comando não reconhecido ou sem parâmetros
-        fputs("\n", out);
+        fprintf(out, "\n");
     }
 }
