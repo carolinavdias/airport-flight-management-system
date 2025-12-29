@@ -4,7 +4,7 @@
 typedef struct aeronave Aeronave;
 
 char *aircraft_get_identifier (Aeronave *a);
-char *aircraft_get_manuf (Aeronave *a);
+char *aircraft_get_manufacturer (Aeronave *a);
 char *aircraft_get_model (Aeronave *a);
 int aircraft_get_year(Aeronave *a);
 

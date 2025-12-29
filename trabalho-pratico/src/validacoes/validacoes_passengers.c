@@ -61,8 +61,8 @@ int valida_Data (const char *s) {
     if (s[4] != '-' || s[7] != '-') return 0;
 
     //verificar que são dígitos
-    const int indices[] = {0,1,2,3,5,6,8,9,11,12,14,15};
-    for (int i = 0; i < 12; i++) {
+    const int indices[] = {0,1,2,3,5,6,8,9};  // 8 dígitos para YYYY-MM-DD
+    for (int i = 0; i < 8; i++) {  // 8 em vez de 12!
         if (s[indices[i]] < '0' || s[indices[i]] >'9') return 0;
     }
 

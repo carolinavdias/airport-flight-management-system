@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include <stddef.h>
-#include <glib.h>
 
 typedef struct contexto Contexto;
 Contexto *cria_contexto ();

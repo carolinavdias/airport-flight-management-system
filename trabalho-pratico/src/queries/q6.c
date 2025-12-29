@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <glib.h>  
 #include "queries/q6.h"
 #include "entidades/passengers.h"
 #include "entidades/flights.h"
@@ -17,67 +18,66 @@ typedef struct {
     GestorReservations *gestorReservas;
 } DadosQ6;
 
-// Callback para iterar passageiros
 static void processa_passageiro_q6(Passageiros *p, void *user_data) {
     DadosQ6 *dados = (DadosQ6 *)user_data;
 
-    const char *p_nat = passenger_get_nacionalidade(p);
-    if (!p_nat || strcmp(p_nat, dados->nacionalidade) != 0) return;
+    // CORRIGIDO: passenger_get_nacionalidade() retorna cópia, precisa free()
+    char *p_nat = passenger_get_nacionalidade(p);
+    if (!p_nat || strcmp(p_nat, dados->nacionalidade) != 0) {
+        g_free(p_nat);
+        return;
+    }
+    g_free(p_nat);  // Libertar após validação
 
-    const char *doc = passenger_get_id(p);
-    if (!doc) return;
+    const char *id = passenger_get_id(p);
+    GSList *reservas = gestor_reservations_get_by_passenger(dados->gestorReservas, id);
 
-    GSList *reservas = gestor_reservations_get_by_passenger(dados->gestorReservas, doc);
     for (GSList *it = reservas; it; it = it->next) {
         Reservas *r = it->data;
-        char **voos = r_get_lista_voos_reserv(r);
-        int n = r_get_lista_n_voos(r);
+        char **lista_voos = r_get_lista_voos_reserv(r);
+        int n_voos = r_get_lista_n_voos(r);
 
-        for (int i = 0; i < n; i++) {
-            const char *flight_id = voos[i];
-            Voo *v = gestor_flights_procura(dados->gestorVoos, flight_id);
-            if (!v) continue;
-            if (voo_get_status(v) == ESTADO_CANCELLED) continue;
+        for (int i = 0; i < n_voos; i++) {
+            Voo *voo = gestor_flights_procura(dados->gestorVoos, lista_voos[i]);
+            if (!voo) continue;
 
-            const char *destino = voo_get_code_destination(v);
-            if (!destino) continue;
+            const char *destino = voo_get_code_destination(voo);
+            if (!destino || !destino[0]) continue;
 
-            // Atualiza contagem
             int count = GPOINTER_TO_INT(g_hash_table_lookup(
-                        dados->contagens_destinos, destino));
-            count++;
-
+                dados->contagens_destinos, destino
+            ));
             g_hash_table_insert(dados->contagens_destinos,
                                 (gpointer)destino,
-                                GINT_TO_POINTER(count));
+                                GINT_TO_POINTER(count + 1));
         }
     }
+
     g_slist_free(reservas);
 }
 
-//Query 6
-char *query6(const char *nationality, 
+char *query6(const char *param,
              GestorPassengers *gestorPassageiros,
              GestorFlights *gestorVoos,
              GestorReservations *gestorReservas) {
-    if (!nationality || !gestorPassageiros || !gestorVoos || !gestorReservas)
-        return strdup("\n");
+
+    if (!param || !param[0]) return strdup("\n");
 
     GHashTable *contagens = g_hash_table_new(g_str_hash, g_str_equal);
 
     DadosQ6 dados = {
-        .nacionalidade = nationality,
+        .nacionalidade = param,
         .contagens_destinos = contagens,
         .gestorVoos = gestorVoos,
-        .gestorReservas = gestorReservas  
+        .gestorReservas = gestorReservas
     };
 
-    gestor_passengers_foreach(gestorPassageiros,
-                              processa_passageiro_q6,
-                              &dados);
+    gestor_passengers_foreach(gestorPassageiros, processa_passageiro_q6, &dados);
 
-    const char *melhor_aeroporto = NULL;
-    int max_count = 0;
+    if (g_hash_table_size(contagens) == 0) {
+        g_hash_table_destroy(contagens);
+        return strdup("\n");
+    }
 
     GHashTableIter iter;
     gpointer key, value;
@@ -85,23 +85,13 @@ char *query6(const char *nationality,
     while (g_hash_table_iter_next(&iter, &key, &value)) {
         const char *aeroporto = key;
         int count = GPOINTER_TO_INT(value);
-
-        if (count > max_count ||
-            (count == max_count && melhor_aeroporto &&
-             strcmp(aeroporto, melhor_aeroporto) < 0)) {
-            max_count = count;
-            melhor_aeroporto = aeroporto;
-        }
+        printf("%s: %d\n", aeroporto, count);  // DEBUG
     }
+
+    // TODO: Formatar saída correta (top 3, ordenado)
+    char *resultado = strdup("TODO: implementar formatação Q6\n");
 
     g_hash_table_destroy(contagens);
 
-    if (!melhor_aeroporto)
-        return strdup("\n");
-
-    char *resultado = NULL;
-    if (asprintf(&resultado, "%s;%d\n", melhor_aeroporto, max_count) == -1) {
-        return strdup("\n");
-    }
     return resultado;
 }

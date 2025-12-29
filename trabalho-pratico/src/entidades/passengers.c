@@ -11,15 +11,15 @@ typedef struct passageiros {
 
 //GETTERS
 const char *passenger_get_id (Passageiros *p) {
-    return p->id_passageiro;
+    return p->id_passageiro;  // const char* não precisa g_strdup
 }
 
 char *passenger_get_primeiro (Passageiros *p) {
-    return p->primeiro_nome;
+    return g_strdup(p->primeiro_nome);  
 }
 
 char *passenger_get_ultimo (Passageiros *p) {
-    return p->ultimo_nome;
+    return g_strdup(p->ultimo_nome);  
 }
 
 int passenger_get_data (Passageiros *p) {
@@ -27,7 +27,7 @@ int passenger_get_data (Passageiros *p) {
 }
 
 char *passenger_get_nacionalidade (Passageiros *p) {
-    return p->nacionalidade;
+    return g_strdup(p->nacionalidade);  
 }
 
 //SETTERS

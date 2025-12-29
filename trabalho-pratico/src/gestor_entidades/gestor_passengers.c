@@ -1,24 +1,22 @@
 #include "gestor_entidades/gestor_passengers.h"
 #include "entidades/passengers.h"
-#include "entidades/flights.h"
-#include <stdlib.h>
 #include <glib.h>
-#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-typedef struct gestor_passengers {
+struct gestor_passengers {
     GHashTable *tabela_passageiros;
-} GestorPassengers;
+};
 
-GestorPassengers *gestor_passengers_novo() {
-    GestorPassengers *g = malloc(sizeof(GestorPassengers));
+GestorPassengers *gestor_passengers_novo(void) {
+    GestorPassengers *g = malloc(sizeof(struct gestor_passengers));
     if (!g) return NULL;
 
     g->tabela_passageiros = g_hash_table_new_full(
-        g_int_hash,
-        g_int_equal,
-        g_free, 
-        (GDestroyNotify)libertaPassageiro  
+        g_str_hash,
+        g_str_equal,
+        g_free,
+        (GDestroyNotify)libertaPassageiro
     );
 
     return g;
@@ -33,8 +31,10 @@ void gestor_passengers_destroy(GestorPassengers *g) {
 void gestor_passengers_inserir(GestorPassengers *g, Passageiros *p) {
     if (!g || !p) return;
 
-    char *key = g_strdup(passenger_get_id(p));
-
+    const char *id = passenger_get_id(p);
+    if (!id) return;
+    
+    char *key = g_strdup(id);
     g_hash_table_insert(g->tabela_passageiros, key, p);
 }
 
@@ -48,17 +48,24 @@ int gestor_passengers_conta_por_voo(GestorPassengers *g, const char *flight_id) 
     g_hash_table_iter_init(&iter, g->tabela_passageiros);
     while (g_hash_table_iter_next(&iter, &key, &value)) {
         Passageiros *p = (Passageiros *)value;
-
-        const char *p_flight = passenger_get_id(p); 
-        if (strcmp(p_flight, flight_id) == 0) count++;
+        const char *p_flight = passenger_get_id(p);
+        if (p_flight && strcmp(p_flight, flight_id) == 0) {
+            count++;
+        }
     }
 
     return count;
 }
 
-bool gestor_passengers_existe(GestorPassengers *g, char *id_passageiro) {
-    if (!g) return false;
-    return g_hash_table_contains(g->tabela_passageiros, &id_passageiro);
+bool gestor_passengers_existe(GestorPassengers *g, const char *id_passageiro) {
+    if (!g || !id_passageiro) return false;
+    
+    return g_hash_table_contains(g->tabela_passageiros, id_passageiro);
+}
+
+Passageiros *gestor_passengers_procura(GestorPassengers *g, const char *doc_number) {
+    if (!g || !doc_number) return NULL;
+    return g_hash_table_lookup(g->tabela_passageiros, doc_number);
 }
 
 void gestor_passengers_foreach(GestorPassengers *g, PassengerIterFunc f, void *user_data) {

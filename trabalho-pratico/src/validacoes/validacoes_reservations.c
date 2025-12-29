@@ -2,6 +2,7 @@
 #include "validacoes/validacoes_flights.h"
 
 #include <string.h>
+#include <stdio.h>
 #include <glib.h>
 
 //RESERVAS -> VALIDAÇÃO SINTÁTICA
@@ -50,6 +51,7 @@ int valida_set_voos_reservados(const char *s, Reservas *r) {
     }
 
     r_set_lista(r, novo);
+    free(novo);  //libertar a estrutura Voos_reservados após copiar!
     g_free(string_voos);
     return 1;
 }
@@ -62,24 +64,29 @@ int valida_bool (const char *s) {
 //RESERVAS -> VALIDAÇÃO LÓGICA
 
 int valida_RESERVA(Reservas *reserva, GestorFlights *gestor_voos, GestorPassengers *gestor_passageiros) {
-    int length_vr = r_get_lista_n_voos(reserva); //reserva->reserva_lista.n_voos;
+    int length_vr = r_get_lista_n_voos(reserva);
     if (length_vr < 1 || length_vr > 2) return 0;
 
     //verifica se voos existem (USA O GESTOR!)
     for (int i = 0; i < length_vr; i++) {
-        char *voo_id = (r_get_lista_voos_reserv(reserva))[i]; //   reserva->reserva_lista.lista_voos_reservados[i];
+        char *voo_id = (r_get_lista_voos_reserv(reserva))[i];
         if (!gestor_flights_existe(gestor_voos, voo_id))
             return 0;
     }
 
     //verifica se passageiro existe (USA O GESTOR!)
-    if (!gestor_passengers_existe(gestor_passageiros, r_get_id_pessoa_reservou(reserva))) //->id_pessoa_reservou))
+    //FIX: Converter int para string
+    int id_pessoa = r_get_id_pessoa_reservou(reserva);
+    char id_str[32];
+    snprintf(id_str, sizeof(id_str), "%d", id_pessoa);
+    
+    if (!gestor_passengers_existe(gestor_passageiros, id_str))
         return 0;
 
     //valida escala (se 2 voos)
     if (length_vr == 2) {
-        const char *dest1 = gestor_flights_obter_destino(gestor_voos, (r_get_lista_voos_reserv(reserva))[0]); //reserva->reserva_lista.lista_voos_reservados[0]);
-        const char *orig2 = gestor_flights_obter_origem(gestor_voos, (r_get_lista_voos_reserv(reserva))[1]); //reserva->reserva_lista.lista_voos_reservados[1]);
+        const char *dest1 = gestor_flights_obter_destino(gestor_voos, (r_get_lista_voos_reserv(reserva))[0]);
+        const char *orig2 = gestor_flights_obter_origem(gestor_voos, (r_get_lista_voos_reserv(reserva))[1]);
 
         if (!dest1 || !orig2 || strcmp(dest1, orig2) != 0) return 0;
     }

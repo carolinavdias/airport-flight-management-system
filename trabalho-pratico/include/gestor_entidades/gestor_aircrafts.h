@@ -1,7 +1,6 @@
 #ifndef GESTOR_AIRCRAFTS_H
 #define GESTOR_AIRCRAFTS_H
 
-#include <glib.h>
 #include "entidades/aircrafts.h"
 
 //tabela guarda todas as aeronaves

@@ -1,5 +1,6 @@
 #include "gestor_entidades/gestor_airports.h"
 #include <stdlib.h>
+#include <glib.h>
 
 //tabela guarda todos os aeroportos
 typedef struct gestor_airports {
@@ -14,8 +15,10 @@ GestorAirports *gestor_airports_cria(void) {
 }
 
 void gestor_airports_insere(GestorAirports *g, Aeroporto *a) {
-    if (g == NULL || a == NULL || airport_get_code_IATA(a) == NULL) return;
-    g_hash_table_insert(g->tabela, airport_get_code_IATA(a), a);
+    if (g == NULL || a == NULL) return;
+    char *code = airport_get_code_IATA(a);
+    if (code == NULL) return;
+    g_hash_table_insert(g->tabela, code, a);  // chave será libertada por g_free
 }
 
 Aeroporto *gestor_airports_procura(GestorAirports *g, const char *code_IATA) {
@@ -27,10 +30,7 @@ int gestor_airports_existe(GestorAirports *g, const char *code_IATA) {
     return g && code_IATA && g_hash_table_contains(g->tabela, code_IATA);
 }
 
-//ALTERAR
-GHashTable *gestor_airports_table(GestorAirports *g) {
-    return (g != NULL) ? g->tabela : NULL;
-}
+//REMOVIDO: gestor_airports_table() - VIOLA ENCAPSULAMENTO
 
 void gestor_airports_liberta(GestorAirports *g) {
     if (g == NULL) return;

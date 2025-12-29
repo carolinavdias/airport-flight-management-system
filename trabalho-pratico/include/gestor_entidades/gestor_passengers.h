@@ -1,7 +1,6 @@
 #ifndef GESTOR_PASSENGERS_H
 #define GESTOR_PASSENGERS_H
 
-#include <glib.h>
 #include <stdbool.h>
 #include "entidades/passengers.h"
 
@@ -15,9 +14,12 @@ void gestor_passengers_destroy(GestorPassengers *g);
 void gestor_passengers_inserir(GestorPassengers *g, Passageiros *p);
 
 //consultas
-bool gestor_passengers_existe(GestorPassengers *g, char *id_passageiro);
+bool gestor_passengers_existe(GestorPassengers *g, const char *id_passageiro);
 
 int gestor_passengers_conta_por_voo(GestorPassengers *g, const char *flight_id);
+
+//procurar passageiro por id
+Passageiros *gestor_passengers_procura(GestorPassengers *g, const char *doc_number);
 
 //iteração
 typedef void (*PassengerIterFunc)(Passageiros *p, void *user_data);

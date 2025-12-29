@@ -6,6 +6,8 @@
 #include "validacoes/validacoes_airports.h"
 #include "utils/utils.h"
 #include <stdlib.h>
+#include <glib.h>
+#include <string.h>
 
 static int compara_voos_por_data(const void *a, const void *b) {
     Voo *v1 = *(Voo **)a;

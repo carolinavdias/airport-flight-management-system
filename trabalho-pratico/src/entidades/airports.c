@@ -12,19 +12,19 @@ typedef struct aeroporto {
 //GETTERS
 
 char *airport_get_code_IATA (Aeroporto *a) {
-    return a->code_IATA;
+    return g_strdup(a->code_IATA); 
 }
 
 char *airport_get_name (Aeroporto *a) {
-    return a->name;
+    return g_strdup(a->name);  
 }
 
 char *airport_get_city (Aeroporto *a) {
-    return a->city;
+    return g_strdup(a->city); 
 }
 
 char *airport_get_country (Aeroporto *a) {
-    return a->country;
+    return g_strdup(a->country); 
 }
 
 Tipo_aeroporto airport_get_type (Aeroporto *a) {
@@ -49,7 +49,7 @@ void airport_set_country (Aeroporto *a, char *country_) {
 
 void airport_set_code_IATA (Aeroporto *a, char *code_) {
     g_free(a->code_IATA);
-   a->country = g_strdup(code_);
+   a->code_IATA = g_strdup(code_);  //estava a->country (bug)
 }
 
 void airport_set_type (Aeroporto *a, char *tipo) {

@@ -1,7 +1,6 @@
 #ifndef GESTOR_FLIGHTS_H
 #define GESTOR_FLIGHTS_H
 
-#include <glib.h>
 #include <stdbool.h>
 #include "entidades/flights.h"
 
@@ -26,6 +25,11 @@ const char *gestor_flights_obter_destino(GestorFlights *g, const char *flight_id
 //array ordenado
 void gestor_flights_set_array_ordenado(GestorFlights *g, Voo **array, int num_voos);
 Voo **gestor_flights_get_array_ordenado(GestorFlights *g, int *num_voos);
+
+//contagens de aircraft (para Q2 otimizada)
+typedef struct _GHashTable GHashTable;
+void gestor_flights_set_contagens_aircraft(GestorFlights *g, GHashTable *contagens);
+GHashTable *gestor_flights_get_contagens_aircraft(GestorFlights *g);
 
 //procurar voo por id
 Voo *gestor_flights_procura(GestorFlights *gf, const char *flight_id);

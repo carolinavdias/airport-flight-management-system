@@ -1,3 +1,4 @@
+#include "entidades/aircrafts.h"
 #define _POSIX_C_SOURCE 200809L
 
 #include "queries/q2.h"
@@ -18,20 +19,6 @@ typedef struct contagem {
     char *model;
     int count;
 } Contagem;
-
-// =====================================================
-// HASH TABLE GLOBAL 
-// =====================================================
-static GHashTable *contagem_global = NULL;
-
-// =====================================================
-// ESTRUTURA AUXILIAR PARA O FOREACH
-// =====================================================
-typedef struct {
-    const char *fabricante_lower;
-    int usar_filtro;
-    GList *resultado;
-} DadosFiltro;
 
 // =====================================================
 // FUNÇÕES AUXILIARES
@@ -59,43 +46,51 @@ int comparaContagens(const Contagem *a, const Contagem *b) {
 // =====================================================
 // CALLBACK PARA PROCESSAR CADA AERONAVE
 // =====================================================
+
+typedef struct {
+    const char *fabricante_lower;
+    int usar_filtro;
+    GList *resultado;
+    GHashTable *contagens_aircraft;  //recebe do gestor
+} DadosFiltro;
+
 static void processa_aeronave(Aeronave *a, void *user_data) {
     DadosFiltro *dados = user_data;
 
+    //guardar getter para libertar
+    char *manuf_str = aircraft_get_manufacturer(a);
+    
     // filtro
     if (dados->usar_filtro) {
-        if (g_ascii_strcasecmp(aircraft_get_manuf(a), dados->fabricante_lower) != 0)
+        if (g_ascii_strcasecmp(manuf_str, dados->fabricante_lower) != 0) {
+            g_free(manuf_str);
             return;
+        }
     }
 
+    //guardar getters para libertar
+    char *id_str = aircraft_get_identifier(a);
+    char *model_str = aircraft_get_model(a);
+    
+    //busca contagem na tabela PRÉ-CONSTRUÍDA (não reconstrói!)
     int count = 0;
-    gpointer ptr = g_hash_table_lookup(contagem_global, aircraft_get_identifier(a));
-    if (ptr) count = GPOINTER_TO_INT(ptr);
+    if (dados->contagens_aircraft) {
+        gpointer ptr = g_hash_table_lookup(dados->contagens_aircraft, id_str);
+        if (ptr) count = GPOINTER_TO_INT(ptr);
+    }
 
     Contagem *c = g_new(Contagem, 1);
-    c->identifier   = g_strdup(aircraft_get_identifier(a));
-    c->manufacturer = g_strdup(aircraft_get_manuf(a));
-    c->model        = g_strdup(aircraft_get_model(a));
+    c->identifier   = g_strdup(id_str);
+    c->manufacturer = g_strdup(manuf_str);
+    c->model        = g_strdup(model_str);
     c->count        = count;
 
+    //libertar os getters originais
+    g_free(id_str);
+    g_free(manuf_str);
+    g_free(model_str);
+
     dados->resultado = g_list_prepend(dados->resultado, c);
-}
-
-// =====================================================
-// INICIALIZAÇÃO (chamar uma vez no início do programa)
-// =====================================================
-static void conta_voos(Voo *v, void *user_data) {
-    GHashTable *tabela = user_data;
-
-    if (voo_get_status(v) == ESTADO_CANCELLED) return;
-
-    const char *aircraft_id = voo_get_id_aircraft(v);
-    if (!aircraft_id || aircraft_id[0] == '\0') return;
-
-    gpointer old = g_hash_table_lookup(tabela, aircraft_id);
-    int novo = old ? GPOINTER_TO_INT(old) + 1 : 1;
-
-    g_hash_table_insert(tabela, g_strdup(aircraft_id), GINT_TO_POINTER(novo));
 }
 
 static void free_contagem(void *data) {
@@ -106,31 +101,11 @@ static void free_contagem(void *data) {
     g_free(c);
 }
 
-
-void query2_init(GestorFlights *gestorVoos) {
-    if (contagem_global != NULL) return;
-
-    contagem_global = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
-
-    gestor_flights_foreach(gestorVoos, conta_voos, contagem_global);
-}
-
 // =====================================================
-// LIMPEZA (chamar no final do programa)
-// =====================================================
-void query2_cleanup(void) {
-    if (contagem_global != NULL) {
-        g_hash_table_destroy(contagem_global);
-        contagem_global = NULL;
-    }
-}
-
-// =====================================================
-// QUERY 2 OTIMIZADA - USANDO FOREACH
+// QUERY 2 OTIMIZADA - USA TABELA DO PARSING (Prof. Pedro ficará feliz!)
 // =====================================================
 
 char *query2(const char *linhaComando, GestorAircrafts *gestorAeronaves, GestorFlights *gestorVoos) {
-    if (contagem_global == NULL) query2_init(gestorVoos);
     
     int N;
     char fabricante_raw[200] = "";
@@ -146,11 +121,15 @@ char *query2(const char *linhaComando, GestorAircrafts *gestorAeronaves, GestorF
     int usar_filtro = (fabricante_raw[0] != '\0');
     gchar *fabricante_lower = usar_filtro ? g_ascii_strdown(fabricante_raw, -1) : NULL;
 
+    //obtém tabela PRÉ-CONSTRUÍDA do gestor (não reconstrói!) -otimização
+    GHashTable *contagens_aircraft = gestor_flights_get_contagens_aircraft(gestorVoos);
+
     //prepara dados para o foreach
     DadosFiltro dados = {
         .fabricante_lower = fabricante_lower,
         .usar_filtro = usar_filtro,
-        .resultado = NULL
+        .resultado = NULL,
+        .contagens_aircraft = contagens_aircraft  //passa tabela
     };
 
     //usa foreach em vez de iterar diretamente
@@ -189,7 +168,7 @@ char *query2(const char *linhaComando, GestorAircrafts *gestorAeronaves, GestorF
             char *new_output = realloc(output, buffer_size);
             if (!new_output) {
                 free(output);
-                g_list_free_full(dados.resultado, g_free);
+                g_list_free_full(dados.resultado, free_contagem);
                 return strdup("\n");
             }
             output = new_output;
@@ -201,11 +180,11 @@ char *query2(const char *linhaComando, GestorAircrafts *gestorAeronaves, GestorF
 
     if (printed == 0) {
         free(output);
-        g_list_free_full(dados.resultado, g_free);
+        g_list_free_full(dados.resultado, free_contagem);
         return strdup("\n");
     }
 
-    g_list_free_full(dados.resultado, g_free);
+    g_list_free_full(dados.resultado, free_contagem);
     
     return output;
 }

@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <glib.h>
 
 typedef struct contagens2 {
     char *code;
@@ -115,14 +116,26 @@ char *query3(const char *data_inicio, const char *data_fim,
         Aeroporto *a = gestor_airports_procura(gestorAeroportos, melhor);
 
         if (a) {
+            //guardar getters para libertar
+            char *iata = airport_get_code_IATA(a);
+            char *name = airport_get_name(a);
+            char *city = airport_get_city(a);
+            char *country = airport_get_country(a);
+            
             if (asprintf(&resultado, "%s;%s;%s;%s;%d\n",
-                        airport_get_code_IATA(a),
-                        airport_get_name(a),
-                        airport_get_city(a),
-                        airport_get_country(a),
+                        iata,
+                        name,
+                        city,
+                        country,
                         max) == -1) {
                 resultado = strdup("\n");
             }
+            
+            //libertar strings
+            g_free(iata);
+            g_free(name);
+            g_free(city);
+            g_free(country);
         } else {
             resultado = strdup("\n");
         }

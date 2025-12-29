@@ -18,11 +18,11 @@ typedef struct voo {
 
 //GETTERS
 char *voo_get_flight_id (const Voo *v) {
-    return v->flight_id;
+    return g_strdup(v->flight_id); 
 }
 
 const char *voo_get_code_origin (const Voo *v) {
-    return v->code_origin;
+    return v->code_origin;  // const char* não precisa g_strdup
 }
 
 long long voo_get_departure (const Voo *v) {
@@ -38,11 +38,11 @@ Estado voo_get_status (const Voo *v) {
 }
 
 const char *voo_get_id_aircraft (const Voo *v) {
-    return v->id_aircraft;
+    return v->id_aircraft;  // const char* não precisa g_strdup
 }
 
 const char *voo_get_code_destination (const Voo *v) {
-    return v->code_destination;
+    return v->code_destination;  // const char* não precisa g_strdup
 }
 
 long long voo_get_arrival (const Voo *v) {

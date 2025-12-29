@@ -1,7 +1,6 @@
 #ifndef GESTOR_AIRPORTS_H
 #define GESTOR_AIRPORTS_H
 
-#include <glib.h>
 #include "entidades/airports.h"
 
 //tabela guarda todos os aeroportos
@@ -19,8 +18,7 @@ Aeroporto *gestor_airports_procura(GestorAirports *g, const char *code_IATA);
 //verifica se um aeroporto existe
 int gestor_airports_existe(GestorAirports *g, const char *code_IATA);
 
-//devolve a hash table (para queries que a precisam)
-GHashTable *gestor_airports_table(GestorAirports *g);
+//REMOVIDO: GHashTable *gestor_airports_table() - VIOLA ENCAPSULAMENTO
 
 //liberta toda a memória (aeroportos + gestor)
 void gestor_airports_liberta(GestorAirports *g);

@@ -10,6 +10,7 @@
 #include "gestor_entidades/gestor_flights.h"
 #include "gestor_entidades/gestor_passengers.h"
 #include "validacoes/validacoes_airports.h"
+#include <glib.h>
 
 //conversão do tipo de aeroporto
 const char* tipoToString(Tipo_aeroporto t) {
@@ -40,7 +41,7 @@ static void conta_movimentos(Voo *v, void *user_data) {
     
     const char *orig = voo_get_code_origin(v); 
     const char *dest = voo_get_code_destination(v); 
-    const char *flight_id = voo_get_flight_id(v); 
+    char *flight_id = voo_get_flight_id(v);  // ← char* precisa free!
         
     if (orig && strcmp(orig, d->codigo) == 0) { 
         int num_pass = gestor_passengers_conta_por_voo(d->gestorPass, flight_id); 
@@ -51,6 +52,9 @@ static void conta_movimentos(Voo *v, void *user_data) {
         int num_pass = gestor_passengers_conta_por_voo(d->gestorPass, flight_id); 
         d->chegadas += num_pass; 
     }
+    
+    //Libertar flight_id
+    g_free(flight_id);
 }
 
 // ---------------------------- 
@@ -74,15 +78,27 @@ char *query1(const char *code, GestorAirports *gestorAeroportos,
     
     gestor_flights_foreach(gestorVoos, conta_movimentos, &dados); 
     
+    // corrigi: Guardar getters para libertar depois
+    char *iata = airport_get_code_IATA(a);
+    char *name = airport_get_name(a);
+    char *city = airport_get_city(a);
+    char *country = airport_get_country(a);
+    
     char *resultado = NULL; 
     int len = asprintf(&resultado, "%s;%s;%s;%s;%s;%d;%d\n", 
-                       airport_get_code_IATA(a), 
-                       airport_get_name(a), 
-                       airport_get_city(a), 
-                       airport_get_country(a), 
+                       iata, 
+                       name, 
+                       city, 
+                       country, 
                        tipoToString(airport_get_type(a)), 
                        dados.chegadas, 
                        dados.partidas); 
+    
+    // corrigi: Libertar strings
+    g_free(iata);
+    g_free(name);
+    g_free(city);
+    g_free(country);
     
     if (len == -1) return strdup("\n"); 
     
