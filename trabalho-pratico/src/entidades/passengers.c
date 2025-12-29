@@ -2,7 +2,7 @@
 #include <glib.h>
 
 typedef struct passageiros {
-    int id_passageiro;
+    char *id_passageiro;
     char *primeiro_nome;
     char *ultimo_nome;
     int data_nascimento;
@@ -10,7 +10,7 @@ typedef struct passageiros {
 } Passageiros;
 
 //GETTERS
-int passenger_get_id (Passageiros *p) {
+const char *passenger_get_id (Passageiros *p) {
     return p->id_passageiro;
 }
 
@@ -32,7 +32,7 @@ char *passenger_get_nacionalidade (Passageiros *p) {
 
 //SETTERS
 void passenger_set_id (Passageiros *p, char *id) {
-    p->id_passageiro = atoi(id);
+    p->id_passageiro =  g_strdup(id);
 }
 
 void passenger_set_pn (Passageiros *p, char *pn) {
@@ -74,6 +74,7 @@ Passageiros *criaPassageiro() {
 void libertaPassageiro(void *data) {
     Passageiros *a = data;
     if (!a) return;
+    g_free(a->id_passageiro);
     g_free(a->primeiro_nome);
     g_free(a->ultimo_nome);
     g_free(a->nacionalidade);

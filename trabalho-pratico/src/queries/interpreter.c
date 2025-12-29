@@ -9,6 +9,9 @@
 #include "queries/q1.h"
 #include "queries/q2.h"
 #include "queries/q3.h"
+//#include "queries/q4.h"
+//#include "queries/q5.h"
+#include "queries/q6.h"
 #include "gestor_entidades/gestor_airports.h"
 #include "gestor_entidades/gestor_flights.h"
 #include "gestor_entidades/gestor_aircrafts.h"
@@ -136,6 +139,23 @@ void interpreta_comando(const char *comando,
                 }
             } else {
                 fprintf(out, "\n");
+            }
+        } else {
+            fprintf(out, "\n");
+        }
+    }
+    //QUERY 6
+    else if (query_num == 6) {
+        if (param && param[0]) {
+            char *resultado = query6(param, gestorPassageiros, gestorVoos);
+            
+            if (resultado && resultado[0] != '\n') {
+                aplica_formato(resultado, formato_alternativo);
+                fprintf(out, "%s", resultado);
+                free(resultado);
+            } else {
+                fprintf(out, "\n");
+                if (resultado) free(resultado);
             }
         } else {
             fprintf(out, "\n");

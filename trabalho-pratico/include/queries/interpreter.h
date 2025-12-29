@@ -8,7 +8,7 @@
 #include "gestor_entidades/gestor_airports.h"
 #include "gestor_entidades/gestor_aircrafts.h"
 #include "gestor_entidades/gestor_passengers.h"
-#include "gestor_entidades/gestor_reservations.h"
+#include "gestor_entidades/gestor_aircrafts.h"
 
 void interpreta_comando(const char *comando,
                         const char *param,

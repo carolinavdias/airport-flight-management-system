@@ -7,6 +7,9 @@
 #include "queries/q1.h"
 #include "queries/q2.h"
 #include "queries/q3.h"
+//#include "queries/q4.h"
+//#include "queries/q5.h"
+#include "queries/q6.h"
 
 #include "parsers/parser.h"
 #include "parsers/parser_flights.h"

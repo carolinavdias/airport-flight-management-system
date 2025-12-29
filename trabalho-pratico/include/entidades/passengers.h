@@ -5,7 +5,7 @@
 
 typedef struct passageiros Passageiros;
 
-int passenger_get_id (Passageiros *p);
+const char *passenger_get_id (Passageiros *p);
 char *passenger_get_primeiro (Passageiros *p);
 char *passenger_get_ultimo (Passageiros *p);
 int passenger_get_data (Passageiros *p);

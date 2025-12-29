@@ -96,3 +96,8 @@ Voo **gestor_flights_get_array_ordenado(GestorFlights *g, int *num_voos) {
     if (num_voos) *num_voos = g->num_voos;
     return g->array_ordenado;
 }
+
+Voo *gestor_flights_procura(GestorFlights *g, const char *flight_id) {
+    if (!g || !flight_id) return NULL; //VERIFICAR
+    return g_hash_table_lookup(g->tabela_voos, flight_id);
+}

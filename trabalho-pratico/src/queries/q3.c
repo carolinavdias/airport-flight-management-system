@@ -115,7 +115,7 @@ char *query3(const char *data_inicio, const char *data_fim,
         Aeroporto *a = gestor_airports_procura(gestorAeroportos, melhor);
 
         if (a) {
-            if (asprintf(&resultado, "%s, %s, %s, %s, %d\n",
+            if (asprintf(&resultado, "%s;%s;%s;%s;%d\n",
                         airport_get_code_IATA(a),
                         airport_get_name(a),
                         airport_get_city(a),

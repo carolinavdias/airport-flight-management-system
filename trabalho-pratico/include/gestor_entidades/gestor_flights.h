@@ -27,4 +27,7 @@ const char *gestor_flights_obter_destino(GestorFlights *g, const char *flight_id
 void gestor_flights_set_array_ordenado(GestorFlights *g, Voo **array, int num_voos);
 Voo **gestor_flights_get_array_ordenado(GestorFlights *g, int *num_voos);
 
+//procurar voo por id
+Voo *gestor_flights_procura(GestorFlights *gf, const char *flight_id);
+
 #endif

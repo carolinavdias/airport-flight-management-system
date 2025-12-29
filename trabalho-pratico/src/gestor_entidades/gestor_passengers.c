@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <glib.h>
 #include <stdio.h>
+#include <string.h>
 
 typedef struct gestor_passengers {
     GHashTable *tabela_passageiros;
@@ -32,11 +33,8 @@ void gestor_passengers_destroy(GestorPassengers *g) {
 void gestor_passengers_inserir(GestorPassengers *g, Passageiros *p) {
     if (!g || !p) return;
 
-    int id = passenger_get_id(p);
+    char *key = g_strdup(passenger_get_id(p));
 
-    int *key = g_new(int, 1);
-    *key = id;
-    
     g_hash_table_insert(g->tabela_passageiros, key, p);
 }
 
@@ -51,17 +49,8 @@ int gestor_passengers_conta_por_voo(GestorPassengers *g, const char *flight_id) 
     while (g_hash_table_iter_next(&iter, &key, &value)) {
         Passageiros *p = (Passageiros *)value;
 
-        //obtém ID do passageiro (int)
-        int id_passageiro = passenger_get_id(p);
-
-        //converte para string
-        char id_str[32];
-        snprintf(id_str, sizeof(id_str), "%d", id_passageiro);
-
-        //compara com flight_id
-        if (strcmp(id_str, flight_id) == 0) {
-            count++;
-        }
+        const char *p_flight = passenger_get_id(p); 
+        if (strcmp(p_flight, flight_id) == 0) count++;
     }
 
     return count;
@@ -70,4 +59,15 @@ int gestor_passengers_conta_por_voo(GestorPassengers *g, const char *flight_id) 
 bool gestor_passengers_existe(GestorPassengers *g, int id_passageiro) {
     if (!g) return false;
     return g_hash_table_contains(g->tabela_passageiros, &id_passageiro);
+}
+
+void gestor_passengers_foreach(GestorPassengers *g, PassengerIterFunc f, void *user_data) {
+    if (!g || !g->tabela_passageiros || !f) return;
+    
+    GHashTableIter iter;
+    gpointer key, value;
+    g_hash_table_iter_init(&iter, g->tabela_passageiros);
+    while (g_hash_table_iter_next(&iter, &key, &value)) {
+        f((Passageiros *)value, user_data);
+    }
 }

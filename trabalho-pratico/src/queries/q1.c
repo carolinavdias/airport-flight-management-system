@@ -42,14 +42,14 @@ static void conta_movimentos(Voo *v, void *user_data) {
     const char *dest = voo_get_code_destination(v); 
     const char *flight_id = voo_get_flight_id(v); 
         
-    if (orig && strcmp(orig, d->codigo) == 0) {
-        int num_pass = gestor_passengers_conta_por_voo(d->gestorPass, flight_id);
-        d->partidas += num_pass;  
-    }
+    if (orig && strcmp(orig, d->codigo) == 0) { 
+        int num_pass = gestor_passengers_conta_por_voo(d->gestorPass, flight_id); 
+        d->partidas += num_pass; 
+    } 
     
-    if (dest && strcmp(dest, d->codigo) == 0) {
-        int num_pass = gestor_passengers_conta_por_voo(d->gestorPass, flight_id);
-        d->chegadas += num_pass;
+    if (dest && strcmp(dest, d->codigo) == 0) { 
+        int num_pass = gestor_passengers_conta_por_voo(d->gestorPass, flight_id); 
+        d->chegadas += num_pass; 
     }
 }
 
@@ -75,7 +75,7 @@ char *query1(const char *code, GestorAirports *gestorAeroportos,
     gestor_flights_foreach(gestorVoos, conta_movimentos, &dados); 
     
     char *resultado = NULL; 
-    int len = asprintf(&resultado, "%s,%s,%s,%s,%s,%d,%d\n", 
+    int len = asprintf(&resultado, "%s;%s;%s;%s;%s;%d;%d\n", 
                        airport_get_code_IATA(a), 
                        airport_get_name(a), 
                        airport_get_city(a), 
