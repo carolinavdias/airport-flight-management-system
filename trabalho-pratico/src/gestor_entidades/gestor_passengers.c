@@ -56,7 +56,7 @@ int gestor_passengers_conta_por_voo(GestorPassengers *g, const char *flight_id) 
     return count;
 }
 
-bool gestor_passengers_existe(GestorPassengers *g, int id_passageiro) {
+bool gestor_passengers_existe(GestorPassengers *g, char *id_passageiro) {
     if (!g) return false;
     return g_hash_table_contains(g->tabela_passageiros, &id_passageiro);
 }

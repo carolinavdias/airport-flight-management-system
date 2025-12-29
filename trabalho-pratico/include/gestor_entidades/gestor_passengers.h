@@ -15,7 +15,7 @@ void gestor_passengers_destroy(GestorPassengers *g);
 void gestor_passengers_inserir(GestorPassengers *g, Passageiros *p);
 
 //consultas
-bool gestor_passengers_existe(GestorPassengers *g, int id_passageiro);
+bool gestor_passengers_existe(GestorPassengers *g, char *id_passageiro);
 
 int gestor_passengers_conta_por_voo(GestorPassengers *g, const char *flight_id);
 

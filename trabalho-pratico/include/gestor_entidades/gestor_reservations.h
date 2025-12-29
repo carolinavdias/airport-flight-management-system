@@ -24,4 +24,6 @@ GHashTable *gestor_reservations_table(GestorReservations *g);
 //liberta tudo
 void gestor_reservations_liberta(GestorReservations *g);
 
+GSList *gestor_reservations_get_by_passenger(GestorReservations *gr, const char *id_pessoa);
+
 #endif

@@ -33,29 +33,28 @@ static void processa_linha_comando(const char *linha_completa,
                                    GestorAirports *gestorAeroportos,
                                    GestorFlights *gestorVoos,
                                    GestorAircrafts *gestorAeronaves,
-                                   GestorPassengers *gestorPassageiros) {
-    (void)gestorPassageiros; // Mark as unused to suppress warning
-    
+                                   GestorPassengers *gestorPassageiros,
+                                   GestorReservations *gestorReservas)   
+{
     if (!linha_completa || !linha_completa[0]) {
         fprintf(out, "\n");
         return;
     }
 
-    // Copiar linha para manipulação
     char *linha = g_strdup(linha_completa);
     char *comando = linha;
     char *param = NULL;
 
-    // Separar comando e parâmetros
     char *espaco = strchr(linha, ' ');
     if (espaco) {
         *espaco = '\0';
         param = espaco + 1;
     }
 
-    // Chamar interpretador
+    // AGORA PASSAMOS gestorReservas AO INTERPRETADOR
     interpreta_comando(comando, param, out, 
-                      gestorAeroportos, gestorVoos, gestorAeronaves, gestorPassageiros);
+                       gestorAeroportos, gestorVoos, gestorAeronaves,
+                       gestorPassageiros, gestorReservas);
 
     g_free(linha);
 }
@@ -79,9 +78,11 @@ int main(int argc, char **argv) {
     GestorFlights *gestorVoos = gestor_flights_novo();
     GestorAirports *gestorAeroportos = gestor_airports_cria();
     GestorPassengers *gestorPassageiros = gestor_passengers_novo();
-    GestorReservations *gestorReservas = gestor_reservations_cria();
+    GestorReservations *gestorReservas = gestor_reservations_cria();   // <-- NECESSÁRIO
 
-    if (!gestorAeroportos || !gestorAeronaves || !gestorVoos || !gestorPassageiros || !gestorReservas) {
+    if (!gestorAeroportos || !gestorAeronaves || !gestorVoos ||
+        !gestorPassageiros || !gestorReservas)
+    {
         errors_write_csv("resultados/errors.csv");
         errors_end();
         if (gestorAeronaves) gestor_aircrafts_liberta(gestorAeronaves);
@@ -92,8 +93,9 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-    // Carregar dados (ignorando o retorno de read1)
-    read1(ctx, gestorVoos, gestorAeroportos, gestorAeronaves, gestorPassageiros, gestorReservas);
+    // Carregar dados (agora incluindo reservas)
+    read1(ctx, gestorVoos, gestorAeroportos, gestorAeronaves,
+         gestorPassageiros, gestorReservas);
 
     FILE *ficheiroComandos = fopen(argv[2], "r");
     if (!ficheiroComandos) {
@@ -115,7 +117,7 @@ int main(int argc, char **argv) {
 
     while (getline(&linha, &tamanho, ficheiroComandos) != -1) {
         linha[strcspn(linha, "\n")] = '\0';
-        if (linha[0] == '\0') continue; // Linha vazia
+        if (linha[0] == '\0') continue;
 
         gchar *nomeOutput = g_strdup_printf("resultados/command%d_output.txt", numeroComando);
         FILE *out = fopen(nomeOutput, "w");
@@ -126,9 +128,11 @@ int main(int argc, char **argv) {
             continue;
         }
 
-        // Processar comando usando interpretador
-        processa_linha_comando(linha, out, 
-                               gestorAeroportos, gestorVoos, gestorAeronaves, gestorPassageiros);
+        // AGORA PASSAMOS gestorReservas
+        processa_linha_comando(linha, out,
+                               gestorAeroportos, gestorVoos,
+                               gestorAeronaves, gestorPassageiros,
+                               gestorReservas);
 
         fclose(out);
         g_free(nomeOutput);

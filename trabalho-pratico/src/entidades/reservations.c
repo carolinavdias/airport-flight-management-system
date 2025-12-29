@@ -10,7 +10,7 @@ typedef struct voos_reservados {
 typedef struct reservas {
     char *id_reserva;
     Voos_reservados reserva_lista; //lista
-    int id_pessoa_reservou; //reserva em nome de
+    char *id_pessoa_reservou; //reserva em nome de
     char *lugar_reservado;
     double preco_reserva;
     bool bagagem_extra;
@@ -24,12 +24,11 @@ int get_lista_n_voos (Voos_reservados *lvr) {
     return lvr->n_voos;
 }
 
-
 char *r_get_id_reserva (Reservas *r) {
     return r->id_reserva;
 }
 
-int r_get_id_pessoa_reservou (Reservas *r) {
+char *r_get_id_pessoa_reservou (Reservas *r) {
     return r->id_pessoa_reservou;
 }
 
@@ -64,7 +63,8 @@ void r_set_id_reserva (Reservas *r, char *s) {
 }
 
 void r_set_id_pessoa_reservou (Reservas *r, char *s) {
-    r->id_pessoa_reservou = atoi(s);
+    g_free(r->id_pessoa_reservou);
+    r->id_pessoa_reservou = g_strdup(s);
 }
 
 void r_set_lugar (Reservas *r, char *s) {

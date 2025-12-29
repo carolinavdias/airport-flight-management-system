@@ -16,6 +16,7 @@
 #include "gestor_entidades/gestor_flights.h"
 #include "gestor_entidades/gestor_aircrafts.h"
 #include "gestor_entidades/gestor_passengers.h"
+#include "gestor_entidades/gestor_reservations.h"
 
 //função para aplicar separador conforme formato
 static void aplica_formato(char *str, bool formato_alternativo) {
@@ -70,7 +71,8 @@ void interpreta_comando(const char *comando,
                         GestorAirports *gestorAeroportos,
                         GestorFlights *gestorVoos,
                         GestorAircrafts *gestorAeronaves,
-                        GestorPassengers *gestorPassageiros) {
+                        GestorPassengers *gestorPassageiros,
+                        GestorReservations *gestorReservas) {
     
     if (!comando || !out) {
         fprintf(out, "\n");
@@ -147,7 +149,7 @@ void interpreta_comando(const char *comando,
     //QUERY 6
     else if (query_num == 6) {
         if (param && param[0]) {
-            char *resultado = query6(param, gestorPassageiros, gestorVoos);
+            char *resultado = query6(param, gestorPassageiros, gestorVoos, gestorReservas);
             
             if (resultado && resultado[0] != '\n') {
                 aplica_formato(resultado, formato_alternativo);

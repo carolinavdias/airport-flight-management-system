@@ -41,3 +41,25 @@ void gestor_reservations_liberta(GestorReservations *g) {
     }
     free(g);
 }
+
+GSList *gestor_reservations_get_by_passenger(GestorReservations *gr, const char *id_pessoa) {
+    if (!gr || !id_pessoa) return NULL;
+
+    GSList *lista = NULL;
+
+    GHashTableIter iter;
+    gpointer key, value;
+
+    g_hash_table_iter_init(&iter, gr->tabela);
+
+    while (g_hash_table_iter_next(&iter, &key, &value)) {
+        Reservas *r = (Reservas *)value;
+
+        const char *id = r_get_id_pessoa_reservou(r);
+        if (id && strcmp(id, id_pessoa) == 0) {
+            lista = g_slist_prepend(lista, r);
+        }
+    }
+
+    return lista;
+}

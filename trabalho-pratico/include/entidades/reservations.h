@@ -8,7 +8,7 @@ typedef struct reservas Reservas;
 
 //int get_lista_n_voos (Voos_reservados *lvr);
 char *r_get_id_reserva (Reservas *r);
-int r_get_id_pessoa_reservou (Reservas *r);
+char *r_get_id_pessoa_reservou (Reservas *r);
 int r_get_lista_n_voos (Reservas *r);
 char **r_get_lista_voos_reserv (Reservas *r);
 
