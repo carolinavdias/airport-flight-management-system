@@ -15,9 +15,14 @@ GestorAircrafts *gestor_aircrafts_cria(void) {
     return g;
 }
 
-void gestor_aircrafts_insere(GestorAircrafts *g, Aeronave *a) {
-    if (g == NULL || a == NULL || aircraft_get_identifier(a) == NULL) return;
-    g_hash_table_insert(g->tabela, g_strdup(aircraft_get_identifier(a)), a);
+void gestor_aircrafts_insere(GestorAircrafts *g, Aeronave *a) { 
+    if (!g || !a) return; 
+    
+    const char *id_int = aircraft_get_identifier(a); 
+    if (!id_int) return; 
+    
+    char *id = g_strdup(id_int); 
+    g_hash_table_insert(g->tabela, id, a); 
 }
 
 Aeronave *gestor_aircrafts_procura(GestorAircrafts *g, const char *identifier) {
