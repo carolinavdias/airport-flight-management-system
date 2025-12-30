@@ -25,9 +25,9 @@ OBJS_TEST := $(OBJ_DIR)/programas/programa-testes.o $(OBJS_LIB)
 OBJS_INTER := $(OBJ_DIR)/programas/programa-interativo.o $(OBJS_LIB)
 
 # Executáveis
-MAIN_BIN  = programa-principal
-TESTS_BIN = programa-testes
-INTER_BIN = programa-interativo
+MAIN_BIN  = programas/programa-principal
+TESTS_BIN = programas/programa-testes
+INTER_BIN = programas/programa-interativo
 
 # ===================================================
 # Alvos
@@ -44,12 +44,15 @@ testes: $(TESTS_BIN)
 # Ligação
 # ===================================================
 $(MAIN_BIN): $(OBJS_MAIN)
+	mkdir -p programas
 	$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS)
 
 $(TESTS_BIN): $(OBJS_TEST)
+	mkdir -p programas
 	$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS)
 
 $(INTER_BIN): $(OBJS_INTER)
+	mkdir -p programas
 	$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS)
 
 # ===================================================
