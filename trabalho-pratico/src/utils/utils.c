@@ -19,7 +19,7 @@ char *get_contexto (Contexto *ctx) {
     return ctx->dataset_dir;
 }
 
-void set_contexto (Contexto *ctx, char *d) {
+void set_contexto (Contexto *ctx, const char *d) {
     strncpy(ctx->dataset_dir, d , sizeof(ctx->dataset_dir)-1);
 }
 

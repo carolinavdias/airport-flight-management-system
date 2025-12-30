@@ -7,7 +7,7 @@
 typedef struct contexto Contexto;
 Contexto *cria_contexto ();
 char *get_contexto (Contexto *ctx);
-void set_contexto (Contexto *ctx, char *d);
+void set_contexto (Contexto *ctx, const char *d);
 
 FILE* abrir_ficheiro(Contexto *ctx, const char *nome_ficheiro, const char *modo);
 int qual_mes (int ano, int mes);

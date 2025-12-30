@@ -21,17 +21,21 @@ OBJS_MAIN := $(OBJ_DIR)/programas/programa-principal.o $(OBJS_LIB)
 # Programa de testes
 OBJS_TEST := $(OBJ_DIR)/programas/programa-testes.o $(OBJS_LIB)
 
+# Programa interativo
+OBJS_INTER := $(OBJ_DIR)/programas/programa-interativo.o $(OBJS_LIB)
+
 # Executáveis
 MAIN_BIN  = programa-principal
 TESTS_BIN = programa-testes
+INTER_BIN = programa-interativo
 
 # ===================================================
 # Alvos
 # ===================================================
 .PHONY: all testes clean
 
-all: $(MAIN_BIN)
-	echo "✔ Programa principal compilado com sucesso!"
+all: $(MAIN_BIN) $(INTER_BIN)
+	echo "✔ Programas compilados com sucesso!"
 
 testes: $(TESTS_BIN)
 	echo "✔ Programa de testes compilado com sucesso!"
@@ -43,6 +47,9 @@ $(MAIN_BIN): $(OBJS_MAIN)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS)
 
 $(TESTS_BIN): $(OBJS_TEST)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS)
+
+$(INTER_BIN): $(OBJS_INTER)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS)
 
 # ===================================================
@@ -62,7 +69,7 @@ $(OBJ_DIR)/src/%.o: $(SRC_DIR)/%.c
 # Limpeza
 # ===================================================
 clean:
-	rm -rf $(OBJ_DIR) $(MAIN_BIN) $(TESTS_BIN) resultados
+	rm -rf $(OBJ_DIR) $(MAIN_BIN) $(TESTS_BIN) $(INTER_BIN) resultados
 	echo "✔ Limpeza concluída!"
 
 
