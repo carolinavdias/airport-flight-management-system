@@ -25,9 +25,9 @@ OBJS_TEST := $(OBJ_DIR)/programas/programa-testes.o $(OBJS_LIB)
 OBJS_INTER := $(OBJ_DIR)/programas/programa-interativo.o $(OBJS_LIB)
 
 # Executáveis
-MAIN_BIN  = programas/programa-principal
-TESTS_BIN = programas/programa-testes
-INTER_BIN = programas/programa-interativo
+MAIN_BIN  = programa-principal
+TESTS_BIN = programa-testes
+INTER_BIN = programa-interativo
 
 # ===================================================
 # Alvos
@@ -40,20 +40,26 @@ all: $(MAIN_BIN) $(INTER_BIN)
 testes: $(TESTS_BIN)
 	echo "✔ Programa de testes compilado com sucesso!"
 
+interativo: $(INTER_BIN)
+	echo "✔ Programa interativo compilado com sucesso!"
+
 # ===================================================
 # Ligação
 # ===================================================
 $(MAIN_BIN): $(OBJS_MAIN)
 	mkdir -p programas
 	$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS)
+	echo "✓ $(MAIN_BIN) criado"
 
 $(TESTS_BIN): $(OBJS_TEST)
 	mkdir -p programas
 	$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS)
+	echo "✓ $(TESTS_BIN) criado"
 
 $(INTER_BIN): $(OBJS_INTER)
 	mkdir -p programas
 	$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS)
+	echo "✓ $(INTER_BIN) criado"
 
 # ===================================================
 # Compilação
