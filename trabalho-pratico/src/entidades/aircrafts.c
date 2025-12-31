@@ -14,7 +14,7 @@ struct aeronave {
 
 //GETTERS com g_strdup() para encapsulamento
 char *aircraft_get_identifier(Aeronave *a) {
-    return a ? (a->identifier) : NULL;
+    return a ? g_strdup(a->identifier) : NULL;
 }
 
 char *aircraft_get_manufacturer(Aeronave *a) {
