@@ -86,7 +86,7 @@ void interpreta_comando(const char *comando,
     if (query_num == 1) {
         if (param && param[0]) {
             //chama query1() (já conta passageiros corretamente!)
-            char *resultado = query1(param, gestorAeroportos, gestorVoos, gestorPassageiros);
+            char *resultado = query1(param, gestorAeroportos, gestorVoos, gestorReservas);
             
             if (resultado && resultado[0] != '\n') {
                 //aplica formato alternativo se necessário

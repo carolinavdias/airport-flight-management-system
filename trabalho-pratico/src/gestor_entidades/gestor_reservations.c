@@ -89,3 +89,30 @@ void gestor_reservations_foreach(GestorReservations *g, ReservationIterFunc f, v
         f((Reservas *)value, user_data);
     }
 }
+// Conta quantas reservas têm este voo
+int gestor_reservations_conta_por_voo(GestorReservations *g, const char *flight_id) {
+    if (!g || !g->tabela || !flight_id) return 0;
+    
+    int count = 0;
+    GHashTableIter iter;
+    gpointer key, value;
+    
+    g_hash_table_iter_init(&iter, g->tabela);
+    
+    while (g_hash_table_iter_next(&iter, &key, &value)) {
+        Reservas *r = (Reservas *)value;
+        int n_voos = r_get_lista_n_voos(r);
+        
+        for (int i = 0; i < n_voos; i++) {
+            char *voo_id = r_get_voo_por_indice(r, i);
+            if (voo_id && strcmp(voo_id, flight_id) == 0) {
+                count++;
+                g_free(voo_id);
+                break;
+            }
+            g_free(voo_id);
+        }
+    }
+    
+    return count;
+}

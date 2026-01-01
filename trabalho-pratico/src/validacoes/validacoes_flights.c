@@ -16,7 +16,7 @@ int valida_id_voo (const char *s) {
             if (s[i] < '0' || s[i] > '9') return 0; //caracter invalido
         }
     }
-    return s[7] == '\0';
+    return (s[7] == '\0' || s[8] == '\0');
 }
 
 //retorna 1 se válido; 0 se inválido.

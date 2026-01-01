@@ -47,7 +47,7 @@ int le_tabela_Aeroportos(Contexto *ctx, GestorAirports *AP) {
         if (linha_valida) airport_set_country(aeroporto_atual,campos[3]);
 
 	//CODE_IATA
-        if (linha_valida) airport_set_code_IATA(aeroporto_atual,campos[6]); //CONFIRMAR CAMPO
+        if (linha_valida) airport_set_code_IATA(aeroporto_atual,campos[0]); //CONFIRMAR CAMPO
 
 	//TIPO_AEROPORTO
         if (linha_valida && valida_tipo_aer(campos[7])) airport_set_type(aeroporto_atual,campos[7]);

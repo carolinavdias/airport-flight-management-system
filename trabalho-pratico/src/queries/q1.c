@@ -1,5 +1,4 @@
 #define _POSIX_C_SOURCE 200809L
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,7 +7,7 @@
 #include "entidades/flights.h"
 #include "gestor_entidades/gestor_airports.h"
 #include "gestor_entidades/gestor_flights.h"
-#include "gestor_entidades/gestor_passengers.h"
+#include "gestor_entidades/gestor_reservations.h"
 #include "validacoes/validacoes_airports.h"
 #include <glib.h>
 
@@ -29,7 +28,7 @@ typedef struct {
     const char *codigo; 
     int chegadas; 
     int partidas; 
-    GestorPassengers *gestorPass; 
+    GestorReservations *gestorReservas;
 } DadosQ1;
 
 static void conta_movimentos(Voo *v, void *user_data) { 
@@ -41,19 +40,18 @@ static void conta_movimentos(Voo *v, void *user_data) {
     
     const char *orig = voo_get_code_origin(v); 
     const char *dest = voo_get_code_destination(v); 
-    char *flight_id = voo_get_flight_id(v);  // ← char* precisa free!
+    char *flight_id = voo_get_flight_id(v);
         
     if (orig && strcmp(orig, d->codigo) == 0) { 
-        int num_pass = gestor_passengers_conta_por_voo(d->gestorPass, flight_id); 
+        int num_pass = gestor_reservations_conta_por_voo(d->gestorReservas, flight_id); 
         d->partidas += num_pass; 
     } 
     
     if (dest && strcmp(dest, d->codigo) == 0) { 
-        int num_pass = gestor_passengers_conta_por_voo(d->gestorPass, flight_id); 
+        int num_pass = gestor_reservations_conta_por_voo(d->gestorReservas, flight_id); 
         d->chegadas += num_pass; 
     }
     
-    //Libertar flight_id
     g_free(flight_id);
 }
 
@@ -61,7 +59,7 @@ static void conta_movimentos(Voo *v, void *user_data) {
 // QUERY 1 (Fase 2) 
 // ---------------------------- 
 char *query1(const char *code, GestorAirports *gestorAeroportos, 
-             GestorFlights *gestorVoos, GestorPassengers *gestorPass) { 
+             GestorFlights *gestorVoos, GestorReservations *gestorReservas) { 
     
     if (!valida_codigoIATA(code)) 
         return strdup("\n"); 
@@ -73,12 +71,11 @@ char *query1(const char *code, GestorAirports *gestorAeroportos,
         .codigo = code, 
         .chegadas = 0, 
         .partidas = 0,
-        .gestorPass = gestorPass 
+        .gestorReservas = gestorReservas
     }; 
     
     gestor_flights_foreach(gestorVoos, conta_movimentos, &dados); 
     
-    // corrigi: Guardar getters para libertar depois
     char *iata = airport_get_code_IATA(a);
     char *name = airport_get_name(a);
     char *city = airport_get_city(a);
@@ -94,7 +91,6 @@ char *query1(const char *code, GestorAirports *gestorAeroportos,
                        dados.chegadas, 
                        dados.partidas); 
     
-    // corrigi: Libertar strings
     g_free(iata);
     g_free(name);
     g_free(city);

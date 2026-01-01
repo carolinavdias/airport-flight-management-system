@@ -53,3 +53,5 @@ typedef void (*ReservationIterFunc)(Reservas *r, void *user_data);
 void gestor_reservations_foreach(GestorReservations *g, ReservationIterFunc f, void *user_data);
 
 #endif
+// Conta quantas reservas têm este voo
+int gestor_reservations_conta_por_voo(GestorReservations *g, const char *flight_id);
