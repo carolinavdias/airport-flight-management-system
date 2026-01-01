@@ -46,6 +46,9 @@ int le_tabela_Voos(Contexto *ctx, GestorFlights *V, GestorAircrafts *AC) {
     Voo **array_voos = malloc(capacidade_array * sizeof(Voo *));
     int num_voos_array = 0;
 
+    //tabela de contagens para Q2
+    GHashTable *contagens = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+
     while (fgets(buffer, sizeof(buffer), ficheiro) && no_header) {
         Voo *voo_atual = criaVoo();
 
@@ -58,69 +61,63 @@ int le_tabela_Voos(Contexto *ctx, GestorFlights *V, GestorAircrafts *AC) {
 
         if (csv_split(buffer, &campos, &n_campos) != 0) linha_valida = 0;
 
-	//FLIGHT_ID
-	if (linha_valida && valida_id_voo(campos[0])) voo_set_flight_id (voo_atual,campos[0]);
-	else linha_valida = 0;
+        //FLIGHT_ID
+        if (linha_valida && valida_id_voo(campos[0])) voo_set_flight_id (voo_atual,campos[0]);
+        else linha_valida = 0;
 
-	//DEPARTURE
-	if (linha_valida && valida_DataH(campos[1])) voo_set_dataH(voo_atual,campos[1],1);
-	else linha_valida = 0;
+        //DEPARTURE
+        if (linha_valida && valida_DataH(campos[1])) voo_set_dataH(voo_atual,campos[1],1);
+        else linha_valida = 0;
 
-	//ACTUAL_DEPARTURE
+        //ACTUAL_DEPARTURE
         if (linha_valida) {
-	    if (strcmp(campos[2], "N/A") == 0) {
+            if (strcmp(campos[2], "N/A") == 0) {
                  e_maybe = 2;
-		 voo_set_dataH(voo_atual,"",2);
+                 voo_set_dataH(voo_atual,"",2);
             } else {
-		if (valida_DataH(campos[2])) voo_set_dataH(voo_atual,campos[2],2);
-		else linha_valida = 0;
-	    }
+                if (valida_DataH(campos[2])) voo_set_dataH(voo_atual,campos[2],2);
+                else linha_valida = 0;
+            }
         }
 
         //CODE_ORIGIN
         if (linha_valida && valida_codigoIATA(campos[7])) voo_set_code(voo_atual,campos[7],'o');
-	else linha_valida = 0;
+        else linha_valida = 0;
 
         //STATUS
         if (linha_valida) {
            if (valida_Estado(campos[6])) {
-		voo_set_status(voo_atual,campos[6]);
+                voo_set_status(voo_atual,campos[6]);
                 if (voo_get_status(voo_atual) == ESTADO_CANCELLED && e_maybe != 2) linha_valida = 0;
-	   }
-	   else linha_valida = 0;
+           }
+           else linha_valida = 0;
         }
 
-	//ID_AIRCRAFT
+        //ID_AIRCRAFT
         if (linha_valida) voo_set_id_aircraft(voo_atual,campos[9]);
 
-	//ARRIVAL
+        //ARRIVAL
         if (linha_valida && valida_DataH(campos[3])) voo_set_dataH(voo_atual,campos[3],3);
-	else linha_valida = 0;
+        else linha_valida = 0;
 
-	//ACTUAL_ARRIVAL
+        //ACTUAL_ARRIVAL
         if (linha_valida) {
             if (e_maybe == 2) {
                  if (strcmp(campos[4], "N/A") != 0) linha_valida = 0;
                  else voo_set_dataH(voo_atual,"",4);
             } else {
-		 if (valida_DataH(campos[4])) voo_set_dataH(voo_atual,campos[4],4);
-		 else linha_valida = 0;
-	    }
+                 if (valida_DataH(campos[4])) voo_set_dataH(voo_atual,campos[4],4);
+                 else linha_valida = 0;
+            }
         }
-        //if (linha_valida) voo_set_gate(voo_atual,campos[5]);
 
-	//CODE_DESTINATION
+        //CODE_DESTINATION
         if (linha_valida && valida_codigoIATA(campos[8])) voo_set_code(voo_atual,campos[8],'d');
-	else linha_valida = 0;
+        else linha_valida = 0;
 
-
-	//AIRLINE
+        //AIRLINE
         if (linha_valida) voo_set_airline(voo_atual,campos[10]);
-        
-/*
-	//TRACKING_URL
-        if (linha_valida) voo_set_tracking_url(voo_atual,campos[11]);
-*/
+
         //VALIDAÇÃO LÓGICA
         if (linha_valida && !valida_VOO(voo_atual, AC)) linha_valida = 0;
 
@@ -142,9 +139,18 @@ int le_tabela_Voos(Contexto *ctx, GestorFlights *V, GestorAircrafts *AC) {
             //insere no gestor (hash table)
             gestor_flights_inserir(V, voo_atual);
             
+            //CONTA voos por aircraft (para Q2) - só voos não cancelados
+            if (voo_get_status(voo_atual) != ESTADO_CANCELLED) {
+                const char *aircraft_id = voo_get_id_aircraft(voo_atual);
+                if (aircraft_id) {
+                    gpointer ptr = g_hash_table_lookup(contagens, aircraft_id);
+                    int count = ptr ? GPOINTER_TO_INT(ptr) : 0;
+                    g_hash_table_insert(contagens, g_strdup(aircraft_id), GINT_TO_POINTER(count + 1));
+                }
+            }
+            
             //ADICIONA ao array local (se válido para query3)
             if (voo_get_status(voo_atual) != ESTADO_CANCELLED && voo_get_code_origin(voo_atual)) {
-                //expaner array se necessário
                 if (num_voos_array >= capacidade_array) {
                     capacidade_array *= 2;
                     array_voos = realloc(array_voos, capacidade_array * sizeof(Voo *));
@@ -164,6 +170,9 @@ int le_tabela_Voos(Contexto *ctx, GestorFlights *V, GestorAircrafts *AC) {
     
     //passa array ordenado para o gestor
     gestor_flights_set_array_ordenado(V, array_voos, num_voos_array);
+    
+    //passa tabela de contagens para o gestor
+    gestor_flights_set_contagens_aircraft(V, contagens);
     
     return 1;
 }

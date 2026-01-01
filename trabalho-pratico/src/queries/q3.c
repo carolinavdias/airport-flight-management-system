@@ -1,6 +1,7 @@
 #define _XOPEN_SOURCE 700
 
 #include "queries/q3.h"
+#include "queries/q1.h"
 #include "validacoes/validacoes_flights.h"
 #include "entidades/flights.h"
 #include "entidades/airports.h"
@@ -11,10 +12,10 @@
 #include <stdio.h>
 #include <glib.h>
 
-typedef struct contagens2 {
-    char *code;
-    int count;
-} Contagens2;
+typedef struct contagens_aeroporto {
+    int partidas;
+    int chegadas;
+} ContagensAeroporto;
 
 // =====================================================
 // INÍCIO DO INTERVALO - encontra primeiro voo >= data
@@ -70,7 +71,7 @@ char *query3(const char *data_inicio, const char *data_fim,
     //busca binária no array (já ordenado)
     int inicio = intervalo_inicio(voos_ordenados, num_voos, t_inicio);
 
-    GHashTable *contagens = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, g_free);
+    GHashTable *contagens = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 
     //itera apenas voos no intervalo
     for (int i = inicio; i < num_voos; i++) {
@@ -80,38 +81,54 @@ char *query3(const char *data_inicio, const char *data_fim,
         if (t > t_fim) break;
 
         const char *origem = voo_get_code_origin(v);
-        if (!origem) continue;
+        const char *destino = voo_get_code_destination(v);
 
-        int *c = g_hash_table_lookup(contagens, origem);
-        if (!c) {
-            int *novo = g_new(int, 1);
-            *novo = 1;
-            g_hash_table_insert(contagens, (gpointer)origem, novo);
-        } else {
-            (*c)++;
+        //conta partidas
+        if (origem) {
+            ContagensAeroporto *c = g_hash_table_lookup(contagens, origem);
+            if (!c) {
+                c = g_new0(ContagensAeroporto, 1);
+                g_hash_table_insert(contagens, g_strdup(origem), c);
+            }
+            c->partidas++;
+        }
+
+        //conta chegadas
+        if (destino) {
+            ContagensAeroporto *c = g_hash_table_lookup(contagens, destino);
+            if (!c) {
+                c = g_new0(ContagensAeroporto, 1);
+                g_hash_table_insert(contagens, g_strdup(destino), c);
+            }
+            c->chegadas++;
         }
     }
 
-    //encontra aeroporto com mais partidas
+    //encontra aeroporto com mais voos (partidas + chegadas)
     const char *melhor = NULL;
-    int max = 0;
+    int max_total = 0;
+    int melhor_partidas = 0;
+    
 
     GHashTableIter iter;
     gpointer key, value;
     g_hash_table_iter_init(&iter, contagens);
     while (g_hash_table_iter_next(&iter, &key, &value)) {
-        int count = *((int *)value);
+        ContagensAeroporto *c = (ContagensAeroporto *)value;
+        int total = c->partidas + c->chegadas;
         char *code = key;
 
-        if (count > max || (count == max && melhor && strcmp(code, melhor) < 0)) {
-            max = count;
+        if (total > max_total || (total == max_total && melhor && strcmp(code, melhor) < 0)) {
+            max_total = total;
             melhor = code;
+            melhor_partidas = c->partidas;
+            
         }
     }
 
     char *resultado = NULL;
 
-    if (melhor && max > 0) {
+    if (melhor && max_total > 0) {
         //usa função do gestor (encapsulamento)
         Aeroporto *a = gestor_airports_procura(gestorAeroportos, melhor);
 
@@ -127,7 +144,7 @@ char *query3(const char *data_inicio, const char *data_fim,
                         name,
                         city,
                         country,
-                        max) == -1) {
+                        melhor_partidas) == -1) {
                 resultado = strdup("\n");
             }
             

@@ -160,7 +160,7 @@ char *query2(const char *linhaComando, GestorAircrafts *gestorAeronaves, GestorF
         Contagem *c = l->data;
         
         char linha[512];
-        int len = snprintf(linha, sizeof(linha), "%s, %s, %s, %d\n",
+        int len = snprintf(linha, sizeof(linha), "%s;%s;%s;%d\n",
                           c->identifier, c->manufacturer, c->model, c->count);
         
         if (current_pos + len + 1 > buffer_size) {

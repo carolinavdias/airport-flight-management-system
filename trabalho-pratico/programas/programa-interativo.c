@@ -138,7 +138,7 @@ static void executa_query1(EstadoPrograma *estado) {
     }
     
     char *resultado = query1(codigo, estado->gestorAeroportos, 
-                            estado->gestorVoos, estado->gestorPassageiros);
+                            estado->gestorVoos, estado->gestorReservas);
     
     if (resultado && resultado[0] != '\n') {
         printf(COLOR_GREEN "\n✓ Resultado:\n" COLOR_RESET);

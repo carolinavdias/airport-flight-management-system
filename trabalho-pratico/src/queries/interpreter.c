@@ -26,7 +26,7 @@ static void aplica_formato(char *str, bool formato_alternativo) {
     
     //troca TODAS as vírgulas pelo separador correto
     for (int i = 0; str[i]; i++) {
-        if (str[i] == ',') {
+        if (str[i] == ';' || str[i] == ',') {
             str[i] = separador;
         }
     }
@@ -45,7 +45,7 @@ static int extrai_numero_query(const char *comando, bool *formato_alternativo) {
     }
     
     //se o próximo caractere é 'S' e é o fim da string
-    if (comando[i] == 'S' && comando[i+1] == '\0') {
+    if (comando[i] == 'S' && (comando[i+1] == ' ' || comando[i+1] == '\0')) {
         *formato_alternativo = true;
     }
     
