@@ -9,8 +9,8 @@
 #include "queries/q1.h"
 #include "queries/q2.h"
 #include "queries/q3.h"
-//#include "queries/q4.h"
-//#include "queries/q5.h"
+#include "queries/q4.h"
+//#include "queries/q5.h"  // TODO: Responsabilidade de outra colega
 #include "queries/q6.h"
 #include "gestor_entidades/gestor_airports.h"
 #include "gestor_entidades/gestor_flights.h"
@@ -89,7 +89,7 @@ void interpreta_comando(const char *comando,
             char *resultado = query1(param, gestorAeroportos, gestorVoos, gestorPassageiros);
             
             if (resultado && resultado[0] != '\n') {
-                //zplica formato alternativo se necessário
+                //aplica formato alternativo se necessário
                 aplica_formato(resultado, formato_alternativo);
                 fprintf(out, "%s", resultado);
                 free(resultado);
@@ -145,6 +145,27 @@ void interpreta_comando(const char *comando,
         } else {
             fprintf(out, "\n");
         }
+    }
+    //QUERY 4 - Passageiro mais frequente no top 10 semanal
+    else if (query_num == 4) {
+        // param pode ser vazio (sem filtro) ou "begin_date end_date"
+        char *resultado = query4(param ? param : "", gestorPassageiros, gestorVoos, gestorReservas);
+        
+        if (resultado && resultado[0] != '\n') {
+            aplica_formato(resultado, formato_alternativo);
+            fprintf(out, "%s", resultado);
+            free(resultado);
+        } else {
+            fprintf(out, "\n");
+            if (resultado) free(resultado);
+        }
+    }
+    //QUERY 5 - TODO: responsabilidade de outra colega
+    else if (query_num == 5) {
+        // Quando a colega implementar, descomentar e adicionar:
+        // char *resultado = query5(param, gestorVoos);
+        // ...
+        fprintf(out, "\n");
     }
     //QUERY 6
     else if (query_num == 6) {
