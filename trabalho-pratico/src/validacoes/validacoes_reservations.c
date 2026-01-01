@@ -78,7 +78,7 @@ int valida_RESERVA(Reservas *reserva, GestorFlights *gestor_voos, GestorPassenge
     //FIX: Converter int para string
     int id_pessoa = r_get_id_pessoa_reservou(reserva);
     char id_str[32];
-    snprintf(id_str, sizeof(id_str), "%d", id_pessoa);
+    snprintf(id_str, sizeof(id_str), "%09d", id_pessoa);
     
     if (!gestor_passengers_existe(gestor_passageiros, id_str))
         return 0;
