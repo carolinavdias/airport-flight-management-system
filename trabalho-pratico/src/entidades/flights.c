@@ -122,8 +122,8 @@ long long converte_dataH (const char *s) {
 
 void voo_set_dataH (Voo *v, const char *s, int campo) {
 
-    if (s[0] == '\0' && campo == 2) v->actual_departure = (long long)-2;
-    if (s[0] == '\0' && campo == 4) v->actual_arrival = (long long)-2;
+    if (s[0] == '\0' && campo == 2) { v->actual_departure = (long long)-2; return; }
+    if (s[0] == '\0' && campo == 4) { v->actual_arrival = (long long)-2; return; }
 
     switch (campo) {
         case 1 : v->departure = converte_dataH(s);
