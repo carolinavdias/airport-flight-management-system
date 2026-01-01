@@ -1,6 +1,7 @@
 #include "entidades/reservations.h"
 #include <glib.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 typedef struct voos_reservados {
     char **lista_voos_reservados;
@@ -18,15 +19,16 @@ typedef struct reservas {
     char *qr_code;
 } Reservas;
 
-//GETTERS
+/* ============================================
+ * GETTERS EXISTENTES (sem alterações)
+ * ============================================ */
 
 int get_lista_n_voos (Voos_reservados *lvr) {
     return lvr->n_voos;
 }
 
-
 char *r_get_id_reserva (Reservas *r) {
-    return g_strdup(r->id_reserva);  // fix:g_strdup
+    return g_strdup(r->id_reserva);
 }
 
 int r_get_id_pessoa_reservou (Reservas *r) {
@@ -41,7 +43,28 @@ char **r_get_lista_voos_reserv (Reservas *r) {
     return r->reserva_lista.lista_voos_reservados;
 }
 
-//SETTERS
+/* ============================================
+ * NOVOS GETTERS PARA FASE 2
+ * ============================================ */
+
+double r_get_preco(Reservas *r) {
+    if (!r) return 0.0;
+    return r->preco_reserva;
+}
+
+char *r_get_voo_por_indice(Reservas *r, int indice) {
+    if (!r) return NULL;
+    if (indice < 0 || indice >= r->reserva_lista.n_voos) return NULL;
+    if (!r->reserva_lista.lista_voos_reservados) return NULL;
+    if (!r->reserva_lista.lista_voos_reservados[indice]) return NULL;
+    
+    // Retorna CÓPIA para encapsulamento - libertar com g_free()!
+    return g_strdup(r->reserva_lista.lista_voos_reservados[indice]);
+}
+
+/* ============================================
+ * SETTERS (sem alterações)
+ * ============================================ */
 
 Voos_reservados *cria0_lista_reserva (int n) {
     Voos_reservados *vr = calloc (1, sizeof *vr);
@@ -92,7 +115,9 @@ void r_set_qr_code (Reservas *r, char *s) {
      r->qr_code = g_strdup(s);
 }
 
-//CRIA E DESTROI
+/* ============================================
+ * CRIA E DESTROI (sem alterações)
+ * ============================================ */
 
 Reservas *criaReserva () {
     Reservas *r = calloc (1, sizeof *r);
@@ -110,7 +135,7 @@ void libertaReserva(void *data) {
         }
         free(a->reserva_lista.lista_voos_reservados);
     }
-    g_free(a->id_reserva);      //libertar id_reserva!
+    g_free(a->id_reserva);
     g_free(a->lugar_reservado);
     g_free(a->qr_code);
     g_free(a);

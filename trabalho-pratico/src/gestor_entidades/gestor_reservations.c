@@ -8,6 +8,10 @@ struct gestor_reservations {
     GHashTable *tabela;
 };
 
+/* ============================================
+ * FUNÇÕES EXISTENTES (sem alterações)
+ * ============================================ */
+
 GestorReservations *gestor_reservations_cria(void) {
     GestorReservations *g = malloc(sizeof(struct gestor_reservations));
     if (!g) return NULL;
@@ -43,6 +47,8 @@ void gestor_reservations_liberta(GestorReservations *g) {
 }
 
 // Função auxiliar para Q6 - procurar reservas por passageiro
+// NOTA: Esta função retorna GSList* o que viola encapsulamento,
+// mas mantém-se para compatibilidade com código existente
 GSList *gestor_reservations_get_by_passenger(GestorReservations *gr, const char *doc_number) {
     if (!gr || !doc_number) return NULL;
 
@@ -65,4 +71,21 @@ GSList *gestor_reservations_get_by_passenger(GestorReservations *gr, const char 
     }
 
     return lista;
+}
+
+/* ============================================
+ * NOVA FUNÇÃO PARA FASE 2 (encapsulamento)
+ * ============================================ */
+
+void gestor_reservations_foreach(GestorReservations *g, ReservationIterFunc f, void *user_data) {
+    if (!g || !g->tabela || !f) return;
+    
+    GHashTableIter iter;
+    gpointer key, value;
+    
+    g_hash_table_iter_init(&iter, g->tabela);
+    
+    while (g_hash_table_iter_next(&iter, &key, &value)) {
+        f((Reservas *)value, user_data);
+    }
 }
