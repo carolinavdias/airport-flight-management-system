@@ -64,6 +64,9 @@ int adiciona_voo_para_Q5 (Estrt_aux_q5 *lista, char *hora_efetiva, char *hora_pr
 */
 
 int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircrafts *AC, GestorPassengers *P, GestorReservations *R) {
+    // Inicializar contagens de passageiros por aeroporto (para Q1 otimizada)
+    gestor_airports_init_contagens(AP);
+
 
     gchar *caminhoAeroportos = g_build_filename(get_contexto(ctx), "airports.csv", NULL);
     gchar *caminhoAeronaves  = g_build_filename(get_contexto(ctx), "aircrafts.csv", NULL);
@@ -195,11 +198,26 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                    	csv_file_error_name = strdup("resultados/passengers_errors.csv");
                    	break;
                    case 5:
-                   	Reservas *reserva_atual = validacoes_campos_reservations(campos,V,P);
-                   	if (reserva_atual) gestor_reservations_insere(R, reserva_atual);
-                   	else linha_valida = 0;
-                   	csv_file_error_name = strdup("resultados/reservations_errors.csv");
-                   	break;
+                        Reservas *reserva_atual = validacoes_campos_reservations(campos,V,P);
+                        if (reserva_atual) {
+                            gestor_reservations_insere(R, reserva_atual);
+                            int n_voos = r_get_lista_n_voos(reserva_atual);
+                            for (int iv = 0; iv < n_voos; iv++) {
+                                char *voo_id = r_get_voo_por_indice(reserva_atual, iv);
+                                if (voo_id) {
+                                    Voo *voo = gestor_flights_procura(V, voo_id);
+                                    if (voo && voo_get_status(voo) != ESTADO_CANCELLED) {
+                                        const char *origem = voo_get_code_origin(voo);
+                                        const char *destino = voo_get_code_destination(voo);
+                                        if (origem) gestor_airports_incrementa_partidas(AP, origem);
+                                        if (destino) gestor_airports_incrementa_chegadas(AP, destino);
+                                    }
+                                    g_free(voo_id);
+                                }
+                            }
+                        } else linha_valida = 0;
+                        csv_file_error_name = strdup("resultados/reservations_errors.csv");
+                        break;
 
            	}
 

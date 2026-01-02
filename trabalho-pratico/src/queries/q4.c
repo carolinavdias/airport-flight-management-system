@@ -352,7 +352,7 @@ char *query4(const char *linhaComando,
             
             // Output com VÍRGULAS (o interpreter converte para ; ou =)
             // Formato: document_number,first_name,last_name,dob,nationality,count_top_10
-            if (asprintf(&resultado, "%s,%s,%s,%s,%s,%d\n",
+            if (asprintf(&resultado, "%s;%s;%s;%s;%s;%d\n",
                         melhor_doc, 
                         primeiro, 
                         ultimo, 

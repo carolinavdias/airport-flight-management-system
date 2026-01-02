@@ -117,6 +117,13 @@ long long voo_get_departure (const Voo *v);
 
 long long voo_get_actual_departure (const Voo *v);
 
+/**
+ * @brief Obtém a companhia aérea do voo
+ * @param v Ponteiro para o voo
+ * @return Cópia da airline (deve ser libertada com g_free)
+ */
+char *voo_get_airline(const Voo *v);
+
 //SETTERS
 
 /**
@@ -208,3 +215,4 @@ Voo *criaVoo ();
 void libertaVoo(void *data);
 
 #endif
+

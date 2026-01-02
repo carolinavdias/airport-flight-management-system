@@ -139,7 +139,7 @@ char *query6(const char *param,
     // Formatar resultado com VÍRGULAS (interpreter converte para ; ou =)
     char *resultado = NULL;
     if (melhor_aeroporto && max_count > 0) {
-        if (asprintf(&resultado, "%s,%d\n", melhor_aeroporto, max_count) == -1) {
+        if (asprintf(&resultado, "%s;%d\n", melhor_aeroporto, max_count) == -1) {
             resultado = strdup("\n");
         }
     } else {

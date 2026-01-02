@@ -231,3 +231,8 @@ void libertaVoo(void *data) {
 
 
 
+
+char *voo_get_airline(const Voo *v) {
+    if (!v || !v->airline) return NULL;
+    return g_strdup(v->airline);
+}

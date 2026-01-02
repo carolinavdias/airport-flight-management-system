@@ -26,7 +26,7 @@ static void aplica_formato(char *str, bool formato_alternativo) {
     
     //troca TODAS as vírgulas pelo separador correto
     for (int i = 0; str[i]; i++) {
-        if (str[i] == ';' || str[i] == ',') {
+        if (str[i] == ';') {
             str[i] = separador;
         }
     }
