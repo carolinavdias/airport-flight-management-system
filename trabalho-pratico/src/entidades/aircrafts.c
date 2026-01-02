@@ -5,14 +5,31 @@
 #include <ctype.h>
 #include <glib.h>
 
+/**
+ * Este ficheiro contém a definição da estrutura interna Aeronave e
+ * a implementação das funções de acesso (getters), modificação 
+ * (setters), validação, criação e libertação de aeronaves.
+ *
+ * As aeronaves são construídas a partir de linhas do ficheiro
+ * aircrafts.csv, sendo garantido o encapsulamento da estrutura
+ * através da devolução de cópias nos getters.
+ */
+
+// Estrutura interna que representa uma aeronave 
 struct aeronave {
-    char *identifier;
-    char *manufacturer;
-    char *model;
-    int year;
+    char *identifier;      // Identificador único da aeronave 
+    char *manufacturer;    // Fabricante 
+    char *model;           // Modelo 
+    int year;              // Ano de fabrico 
 };
 
-//GETTERS com g_strdup() para encapsulamento
+// GETTERS devolvem cópias (g_strdup) para garantir encapsulamento
+/*
+ * Devolvem cópias (g_strdup) dos campos internos para garantir
+ * encapsulamento. A memória devolvida deve ser libertada pelo
+ * utilizador.
+*/
+
 char *aircraft_get_identifier(Aeronave *a) {
     return a ? g_strdup(a->identifier) : NULL;
 }
@@ -29,7 +46,12 @@ int aircraft_get_year(Aeronave *a) {
     return a ? a->year : 0;
 }
 
-//SETTERS - compatíveis com o .h original
+//SETTERS
+/*
+ * Atualizam os campos da aeronave, libertando previamente
+ * a memória existente para evitar fugas de memória.
+*/
+
 void aircraft_set_id(Aeronave *a, char *s) {
     if (!a || !s) return;
     g_free(a->identifier);
@@ -59,6 +81,8 @@ void aircraft_set_year(Aeronave *a, char *year) {
 }
 
 //VALIDAÇÃO
+// Valida se o ano é numérico e se está dentro de um intervalo aceitável
+
 static int valida_year(const char *s) {
     if (!s || s[0] == '\0') return 0;
     for (int i = 0; s[i]; i++) {
@@ -68,7 +92,8 @@ static int valida_year(const char *s) {
     return year >= 1900 && year <= 2100;
 }
 
-// Função auxiliar para remover aspas
+// Remove aspas de campos CSV
+
 static void remove_quotes(char *str) {
     if (!str) return;
     size_t len = strlen(str);
@@ -78,7 +103,8 @@ static void remove_quotes(char *str) {
     }
 }
 
-// Libertar campos do csv_split
+// Liberta campos do csv_split
+
 static void free_csv_fields(char **campos, size_t n) {
     if (!campos) return;
     for (size_t i = 0; i < n; i++) {
@@ -86,6 +112,13 @@ static void free_csv_fields(char **campos, size_t n) {
     }
     free(campos);
 }
+
+/*
+ * Verifica:
+ *  - existência dos campos obrigatórios
+ *  - campos não vazios
+ *  - validade do ano
+*/
 
 int valida_aeronave(const char *linha) {
     if (!linha || linha[0] == '\0')
@@ -130,12 +163,13 @@ int valida_aeronave(const char *linha) {
     return 1;
 }
 
+//CRIA AERONAVE
+
 Aeronave *criaAeronave() {
    Aeronave *a = calloc (1, sizeof *a);
    return a;
 }
 
-//CRIA E DESTROI
 Aeronave *criaAeronave2(const char *linha) {
 
     if (!valida_aeronave(linha)) {
@@ -169,6 +203,8 @@ Aeronave *criaAeronave2(const char *linha) {
     return a;
 }
 
+//DESTRÓI AERONAVE
+
 void libertaAeronave(void *data) {
     Aeronave *a = data;
     if (!a) return;
@@ -177,3 +213,4 @@ void libertaAeronave(void *data) {
     g_free(a->model);
     g_free(a);
 }
+

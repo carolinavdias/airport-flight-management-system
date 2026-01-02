@@ -3,10 +3,19 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-typedef struct voos_reservados {
-    char **lista_voos_reservados;
-    int n_voos;
+/**
+ * Contém a definição interna das estruturas `Reservas` e `Voos_reservados`,
+ * bem como a implementação dos getters, setters e funções de criação e
+ * destruição.
+ */
+
+// Estrutura interna que representa a lista de voos reservados 
+typedef struct voos_reservados { 
+    char **lista_voos_reservados;   // Array de IDs de voos 
+    int n_voos;                     // Número de voos 
 } Voos_reservados;
+
+// Estrutura interna que representa uma reserva
 
 typedef struct reservas {
     char *id_reserva;
@@ -19,9 +28,19 @@ typedef struct reservas {
     char *qr_code;
 } Reservas;
 
-/* ============================================
- * GETTERS EXISTENTES (sem alterações)
- * ============================================ */
+// GETTERS 
+
+/**
+ * Os getters permitem consultar os campos internos da reserva.
+ *
+ * Getters que retornam strings devolvem cópias (g_strdup), devendo o
+ * utilizador libertar a memória retornada.
+ * 
+ * Getters que retornam ponteiros internos (`char **`) devolvem dados
+ * pertencentes à estrutura e não devem ser libertados.
+ * 
+ * Getters numéricos devolvem os valores diretamente.
+ */
 
 int get_lista_n_voos (Voos_reservados *lvr) {
     return lvr->n_voos;
@@ -43,10 +62,6 @@ char **r_get_lista_voos_reserv (Reservas *r) {
     return r->reserva_lista.lista_voos_reservados;
 }
 
-/* ============================================
- * NOVOS GETTERS PARA FASE 2
- * ============================================ */
-
 double r_get_preco(Reservas *r) {
     if (!r) return 0.0;
     return r->preco_reserva;
@@ -62,9 +77,18 @@ char *r_get_voo_por_indice(Reservas *r, int indice) {
     return g_strdup(r->reserva_lista.lista_voos_reservados[indice]);
 }
 
-/* ============================================
- * SETTERS (sem alterações)
- * ============================================ */
+// SETTERS 
+
+/**
+ * Os setters atualizam os campos internos da reserva.
+ *
+ * Sempre que substituem uma string, libertam previamente a memória antiga
+ * para evitar fugas de memória.
+ * 
+ * Campos numéricos são convertidos a partir de strings (ex.: preço, ID da pessoa).
+ * 
+ * Campos booleanos são interpretados a partir de `'t'` ou `'f'`.
+ */
 
 Voos_reservados *cria0_lista_reserva (int n) {
     Voos_reservados *vr = calloc (1, sizeof *vr);
@@ -115,9 +139,7 @@ void r_set_qr_code (Reservas *r, char *s) {
      r->qr_code = g_strdup(s);
 }
 
-/* ============================================
- * CRIA E DESTROI (sem alterações)
- * ============================================ */
+// CRIA E DESTROI
 
 Reservas *criaReserva () {
     Reservas *r = calloc (1, sizeof *r);
@@ -125,6 +147,8 @@ Reservas *criaReserva () {
     r->reserva_lista.lista_voos_reservados = NULL;
     return r;
 }
+
+// Liberta todos os campos internos e a própria estrutura
 
 void libertaReserva(void *data) {
     Reservas *a = data;

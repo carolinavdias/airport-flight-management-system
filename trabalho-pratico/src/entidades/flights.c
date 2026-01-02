@@ -1,22 +1,47 @@
 #include "entidades/flights.h"
 #include <glib.h>
 
+/**
+ * Contém a definição da estrutura interna Voo e a implementação
+ * das funções de acesso (getters), modificação (setters), 
+ * conversão de datas e libertação de memória associada aos voos 
+ * lidos do ficheiro flights.csv.
+ */
+
+// Estrutura interna que representa um voo
+
 typedef struct voo {
-    char *flight_id; //voo_id
-    long long departure; //partida_prevista
-    long long actual_departure; //partida_efetiva
-    long long arrival; //chegada prevista
-    long long actual_arrival; //chegada efetiva
-    //char *gate; //porta_embarque
-    Estado status; //++ Estado
-    char *code_origin; //codigo IATA origem
-    char *code_destination; //codigo IATA destino
-    char *id_aircraft; //id_aeronave
-    char *airline; //companhia aerea
-    //char *tracking_url;
-} Voo;
+    char *flight_id;              // Identificador único do voo 
+    long long departure;          // Data/hora prevista de partida 
+    long long actual_departure;   // Data/hora efetiva de partida 
+    long long arrival;            // Data/hora prevista de chegada 
+    long long actual_arrival;     // Data/hora efetiva de chegada 
+    Estado status;                // Estado atual do voo 
+    char *code_origin;            // Código IATA do aeroporto de origem
+    char *code_destination;       // Código IATA do aeroporto de destino 
+    char *id_aircraft;            // Identificador da aeronave 
+    char *airline;                // Companhia aérea 
+}; Voo;
 
 //GETTERS
+
+/**
+ * As funções de acesso permitem consultar os campos internos
+ * da estrutura Voo.  
+ *
+ * Os getters que retornam strings devolvem cópias (g_strdup),
+ * cabendo ao utilizador libertar a memória retornada.
+ * 
+ * Os getters que retornam `const char *` devolvem ponteiros internos
+ * que não devem ser libertados, sendo apenas para leitura.
+ * 
+ * Os campos numéricos (datas e horas no formato inteiro ordenável)
+ * são devolvidos diretamente.
+ *
+ * Esta abordagem garante encapsulamento e evita que o utilizador
+ * modifique acidentalmente os dados internos do voo.
+ */
+
 char *voo_get_flight_id (const Voo *v) {
     return g_strdup(v->flight_id); 
 }
@@ -54,17 +79,34 @@ long long voo_get_actual_arrival (const Voo *v) {
 }
 
 //SETTERS
-/*
-void voo_set_gate (Voo *v, char *campo_gate) {
-   g_free(v->gate);
-   v->gate = g_strdup(campo_gate);
-}
 
-void voo_set_tracking_url (Voo *v, char *url) {
-   g_free(v->tracking_url);
-   v->tracking_url = g_strdup(url);
-}
-*/
+/**
+ * As funções de modificação atualizam os campos internos
+ * da estrutura Voo.
+ *
+ * Sempre que substituem uma string, libertam previamente a memória
+ * antiga com `g_free()` para evitar fugas de memória.
+ * 
+ * Os setters de datas e horas convertem strings no formato
+ * `"YYYY-MM-DD HH:MM"` para um valor inteiro ordenável no formato
+ * `YYYYMMDDHHMM`, permitindo comparações diretas.
+ * 
+ * O setter do estado (`status`) converte o texto do dataset para
+ * o enum interno `Estado`, usando apenas o primeiro caractere.
+ * 
+ * Campos vazios no dataset são tratados explicitamente, sendo
+ * representados pelo valor `-2` quando aplicável.
+ *
+ * Esta secção garante que todos os campos do voo são atualizados
+ * de forma segura, consistente e sem fugas de memória.
+ */
+
+
+/**
+ * O parâmetro versao indica qual dos campos deve ser atualizado:
+ *  - 'o' → aeroporto de origem
+ *  - 'd' → aeroporto de destino
+ */
 
 void voo_set_code (Voo *v, char *code, char versao) {
    switch (versao) {
@@ -92,6 +134,14 @@ void voo_set_airline (Voo *v, char *airl) {
    v->airline = g_strdup(airl);
 }
 
+// Conversão do estado textual do dataset para enum interno
+/**
+ * A decisão é feita com base no primeiro caractere:
+ *  - 'O' → ON_TIME
+ *  - 'D' → DELAYED
+ *  - 'C' → CANCELLED
+ */
+
 void voo_set_status (Voo *v, char *status) {
    switch (status[0]) {
 	case 'O' : v->status = ESTADO_ON_TIME;
@@ -102,6 +152,12 @@ void voo_set_status (Voo *v, char *status) {
 	      break;
    }
 }
+
+// Converte uma data/hora textual para um valor inteiro ordenável
+/**
+ * Formato esperado: YYYY-MM-DD HH:MM
+ * O valor devolvido permite comparações diretas entre datas.
+ */
 
 long long converte_dataH (const char *s) {
 
@@ -120,7 +176,21 @@ long long converte_dataH (const char *s) {
            (long long)min ;
 }
 
+/**
+ * O parâmetro campo identifica o atributo a preencher:
+ *  1 → departure
+ *  2 → actual_departure
+ *  3 → arrival
+ *  4 → actual_arrival
+ */
+
 void voo_set_dataH (Voo *v, const char *s, int campo) {
+
+    /**
+     * Campo vazio indica ausência de valor no dataset.
+     * O valor -2 é usado para representar dados não
+     * disponíveis.
+    */
 
     if (s[0] == '\0' && campo == 2) { v->actual_departure = (long long)-2; return; }
     if (s[0] == '\0' && campo == 4) { v->actual_arrival = (long long)-2; return; }
@@ -138,11 +208,13 @@ void voo_set_dataH (Voo *v, const char *s, int campo) {
     }
 }
 
-//CRIA/LIBERTA
+//CRIA E DESTRÓI
 Voo *criaVoo () {
     Voo *v = calloc (1, sizeof *v);
     return v;
 }
+
+// Liberta todos os campos internos e a própria estrutura
 
 void libertaVoo(void *data) {
     Voo *v = data;
