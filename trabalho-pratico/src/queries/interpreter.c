@@ -10,7 +10,7 @@
 #include "queries/q2.h"
 #include "queries/q3.h"
 #include "queries/q4.h"
-//#include "queries/q5.h"
+#include "queries/q5.h"
 #include "queries/q6.h"
 #include "gestor_entidades/gestor_airports.h"
 #include "gestor_entidades/gestor_flights.h"
@@ -81,6 +81,20 @@ void interpreta_comando(const char *comando,
 
     bool formato_alternativo = false;
     int query_num = extrai_numero_query(comando, &formato_alternativo);
+    // Q4 pode ser chamada sem parâmetros
+    if (query_num == 4) {
+        char *resultado = query4(param ? param : "", gestorPassageiros, gestorVoos, gestorReservas);
+        if (resultado && resultado[0] != '\n') {
+            aplica_formato(resultado, formato_alternativo);
+            fprintf(out, "%s", resultado);
+            free(resultado);
+        } else {
+            fprintf(out, "\n");
+            if (resultado) free(resultado);
+        }
+        return;
+    }
+
 
     if (param && param[0]) {
         //chama query1() (já conta passageiros corretamente!)
@@ -104,8 +118,8 @@ void interpreta_comando(const char *comando,
 		break;
 	  case 4: resultado = query4(param ? param : "", gestorPassageiros, gestorVoos, gestorReservas);
 		  break;
-//	  case 5: resultado = query5(param, gestorVoos);
-//	    	  break;
+          case 5: resultado = query5(param, gestorVoos);
+                  break;
 	  case 6: resultado = query6(param, gestorPassageiros, gestorVoos, gestorReservas);
 		  break;
       }
@@ -222,12 +236,17 @@ void interpreta_comando(const char *comando,
             if (resultado) free(resultado);
         }
     }
-    //QUERY 5 - TODO: responsabilidade de outra colega
+    //QUERY 5
     else if (query_num == 5) {
-        // Quando a colega implementar, descomentar e adicionar:
-        // char *resultado = query5(param, gestorVoos);
-        // ...
-        fprintf(out, "\n");
+        char *resultado = query5(param, gestorVoos);
+        if (resultado && resultado[0] != '\n') {
+            aplica_formato(resultado, formato_alternativo);
+            fprintf(out, "%s", resultado);
+            free(resultado);
+        } else {
+            fprintf(out, "\n");
+            if (resultado) free(resultado);
+        }
     }
     //QUERY 6
     else if (query_num == 6) {

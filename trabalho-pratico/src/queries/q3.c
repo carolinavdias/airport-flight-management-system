@@ -79,6 +79,9 @@ char *query3(const char *data_inicio, const char *data_fim,
         long long t = voo_get_actual_departure(v);
 
         if (t > t_fim) break;
+        
+        // Ignorar voos cancelados (conforme enunciado)
+        if (voo_get_status(v) == ESTADO_CANCELLED) continue;
 
         const char *origem = voo_get_code_origin(v);
         const char *destino = voo_get_code_destination(v);
@@ -115,7 +118,7 @@ char *query3(const char *data_inicio, const char *data_fim,
     g_hash_table_iter_init(&iter, contagens);
     while (g_hash_table_iter_next(&iter, &key, &value)) {
         ContagensAeroporto *c = (ContagensAeroporto *)value;
-        int total = c->partidas + c->chegadas;
+        int total = c->partidas;  // Q3 conta só partidas
         char *code = key;
 
         if (total > max_total || (total == max_total && melhor && strcmp(code, melhor) < 0)) {
