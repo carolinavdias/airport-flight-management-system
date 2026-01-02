@@ -276,7 +276,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
         	    free(array_voos);
         	    g_hash_table_destroy(contagens);
     		}
-    		resultados_read[c] = 0;
+    		resultados_read[c-1] = 0;
 		continue;
 	   }
 	   else {
@@ -295,7 +295,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
            if (ficheiro_erros) fclose(ficheiro_erros);
            if (ficheiro) fclose(ficheiro);
 
-     	   resultados_read[c] = 1;
+     	   resultados_read[c-1] = 1;
 
       }
 
