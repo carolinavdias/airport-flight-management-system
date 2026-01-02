@@ -23,7 +23,10 @@ typedef struct voo {
     char *airline;                // Companhia aérea 
 }; Voo;
 
-//GETTERS
+// ===================================================
+// GETTERS
+// ===================================================
+
 
 /**
  * As funções de acesso permitem consultar os campos internos
@@ -78,7 +81,9 @@ long long voo_get_actual_arrival (const Voo *v) {
     return v->actual_arrival;
 }
 
-//SETTERS
+// ===================================================
+// SETTERS
+// ===================================================
 
 /**
  * As funções de modificação atualizam os campos internos
@@ -152,6 +157,9 @@ void voo_set_status (Voo *v, char *status) {
 	      break;
    }
 }
+// ===================================================
+// USADO PARA SET
+// ===================================================
 
 // Converte uma data/hora textual para um valor inteiro ordenável
 /**
@@ -208,11 +216,18 @@ void voo_set_dataH (Voo *v, const char *s, int campo) {
     }
 }
 
-//CRIA E DESTRÓI
+// ===================================================
+// CRIA VOO
+// ===================================================
+
 Voo *criaVoo () {
     Voo *v = calloc (1, sizeof *v);
     return v;
 }
+
+// ===================================================
+// DESTRÓI VOO
+// ===================================================
 
 // Liberta todos os campos internos e a própria estrutura
 

@@ -17,7 +17,10 @@ typedef struct aeroporto {
     Tipo_aeroporto type;      // Tipo de aeroporto 
 } Aeroporto;
 
-//GETTERS
+// ===================================================
+// GETTERS
+// ===================================================
+
  /*
   * Devolvem cópias (g_strdup) dos campos internos de modo a evitar
   * o acesso direto à estrutura e garantir encapsulamento.
@@ -45,7 +48,10 @@ Tipo_aeroporto airport_get_type (Aeroporto *a) {
     return a->type;
 }
 
-//SETTERS
+// ===================================================
+// SETTERS
+// ===================================================
+
  /* 
   * Substituem os valores atuais dos campos, libertando previamente
   * a memória associada para evitar fugas de memória.
@@ -116,7 +122,9 @@ void airport_set_type(Aeroporto *a, char *tipo) {
 }
 */
 
-//CRIA E DESTRÓI
+// ===================================================
+// CRIA AEROPORTO
+// ===================================================
 
 /**
  * A estrutura é inicializada a zero e deve ser posteriormente
@@ -127,6 +135,10 @@ Aeroporto *criaAeroporto () {
     Aeroporto *ap = calloc (1, sizeof *ap);
     return ap;
 }
+
+// ===================================================
+// DESTRÓI AEROPORTO
+// ===================================================
 
 // Liberta todos os campos internos e a própria estrutura
 

@@ -10,11 +10,21 @@
     * lidas do ficheiro `reservations.csv`. 
     */
 
+// ===================================================
+// ESTRUTURAS
+// ===================================================
+
+// Estrutura que representa a lista de voos reservados 
+
 typedef struct voos_reservados Voos_reservados;
+
+// Estrutura que representa uma reserva
 
 typedef struct reservas Reservas;
 
-//GETTERS
+// ===================================================
+// GETTERS
+// ===================================================
 
 /**
  * @brief Obtém o ID da reserva.
@@ -68,13 +78,19 @@ double r_get_preco(Reservas *r);
 
 char *r_get_voo_por_indice(Reservas *r, int indice);
 
-// SETTERS
-
 /**
  * @brief Cria uma estrutura de lista de voos com espaço para n voos.
  * @param n Número de voos.
  * @return Estrutura alocada dinamicamente.
  */
+
+// ===================================================
+// SETTERS
+// ===================================================
+
+// ===================================================
+// USADO PARA SET
+// ===================================================
 
 Voos_reservados *cria0_lista_reserva (int n);
 
@@ -144,7 +160,9 @@ void r_set_bools (Reservas *r, char *s, int versao);
 
 void r_set_qr_code (Reservas *r, char *s);
 
-// CRIA E DESTRÓI
+// ===================================================
+// CRIA RESERVA
+// ===================================================
 
 /**
  * @brief Cria uma nova reserva vazia.
@@ -152,6 +170,10 @@ void r_set_qr_code (Reservas *r, char *s);
  */
 
 Reservas *criaReserva ();
+
+// ===================================================
+// DESTRÓI RESERVA
+// ===================================================
 
 /**
  * @brief Liberta toda a memória associada a uma reserva.

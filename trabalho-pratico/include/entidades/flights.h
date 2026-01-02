@@ -20,8 +20,10 @@ typedef uint8_t Estado;
 
 // * @brief Voo no horário previsto
 #define ESTADO_ON_TIME 0
+
 // * @brief Voo atrasado
 #define ESTADO_DELAYED 1
+
 // @brief Voo cancelado
 #define ESTADO_CANCELLED 2
 
@@ -34,7 +36,9 @@ typedef uint8_t Estado;
 
 typedef struct voo Voo;
 
+// ===================================================
 // GETTERS
+// ===================================================
 
 /**
  * @brief Obtém o identificador do voo.
@@ -124,7 +128,9 @@ long long voo_get_actual_departure (const Voo *v);
  */
 char *voo_get_airline(const Voo *v);
 
-//SETTERS
+// ===================================================
+// SETTERS
+// ===================================================
 
 /**
  * @brief Define o estado do voo.
@@ -180,6 +186,10 @@ void voo_set_id_aircraft (Voo *v, char *id_airc);
  * @return Valor inteiro ordenável.
  */
 
+// ===================================================
+// USADO PARA SET
+// ===================================================
+
 long long converte_dataH (const char *s);
 
 /**
@@ -196,7 +206,9 @@ long long converte_dataH (const char *s);
 
 void voo_set_dataH (Voo *v, const char *s, int campo);
 
-//CRIA E DESTRÓI
+// ===================================================
+// CRIA VOO
+// ===================================================
 
 /**
  * @brief Cria um novo voo vazio.
@@ -205,6 +217,10 @@ void voo_set_dataH (Voo *v, const char *s, int campo);
  */
 
 Voo *criaVoo ();
+
+// ===================================================
+// DESTRÓI VOO
+// ===================================================
 
 /**
  * @brief Liberta a memória associada a um voo.

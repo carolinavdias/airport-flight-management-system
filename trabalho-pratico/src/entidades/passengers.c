@@ -18,7 +18,9 @@ typedef struct passageiros {
     char *nacionalidade;     // Nacionalidade 
 } Passageiros;
 
-//GETTERS
+// ===================================================
+// GETTERS
+// ===================================================
 
 /**
  * As funções de acesso devolvem os valores dos campos internos.
@@ -50,7 +52,9 @@ char *passenger_get_nacionalidade (Passageiros *p) {
     return g_strdup(p->nacionalidade);  
 }
 
-//SETTERS
+// ===================================================
+// SETTERS
+// ===================================================
 
 /**
  * As funções de modificação atualizam os campos internos.
@@ -101,12 +105,18 @@ void passenger_set_nc (Passageiros *p, char *nc) {
     p->nacionalidade = g_strdup(nc);
 }
 
-//CRIA E DESTROI
+// ===================================================
+// CRIA PASSAGEIRO
+// ===================================================
 
 Passageiros *criaPassageiro() {
     Passageiros *p = calloc (1, sizeof *p);
     return p;
 }
+
+// ===================================================
+// DESTRÓI PASSAGEIRO
+// ===================================================
 
 // Liberta todos os campos internos e a própria estrutura
 

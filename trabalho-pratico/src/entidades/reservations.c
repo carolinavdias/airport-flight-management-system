@@ -9,26 +9,29 @@
  * destruição.
  */
 
-// Estrutura interna que representa a lista de voos reservados 
+// Estrutura que representa a lista de voos reservados 
+
 typedef struct voos_reservados { 
     char **lista_voos_reservados;   // Array de IDs de voos 
     int n_voos;                     // Número de voos 
 } Voos_reservados;
 
-// Estrutura interna que representa uma reserva
+// Estrutura que representa uma reserva
 
 typedef struct reservas {
-    char *id_reserva;
-    Voos_reservados reserva_lista; //lista
-    int id_pessoa_reservou; //reserva em nome de
-    char *lugar_reservado;
-    double preco_reserva;
-    bool bagagem_extra;
-    bool prioridade; //priority boarding
-    char *qr_code;
+    char *id_reserva;               // Identificador único da reserva
+    Voos_reservados reserva_lista;  // Lista de voos associados à reserva
+    int id_pessoa_reservou;         // Identificador da pessoa em nome de quem a reserva foi efetuada
+    char *lugar_reservado;          // Lugar atribuído ao passageiro no voo
+    double preco_reserva;           // Preço total da reserva
+    bool bagagem_extra;             // Indica se foi requisitada bagagem extra
+    bool prioridade;                // Indica se é necessária prioridade de embarque
+    char *qr_code;                  // Código QR associado à reserva
 } Reservas;
 
-// GETTERS 
+// ===================================================
+// GETTERS
+// ===================================================
 
 /**
  * Os getters permitem consultar os campos internos da reserva.
@@ -77,7 +80,9 @@ char *r_get_voo_por_indice(Reservas *r, int indice) {
     return g_strdup(r->reserva_lista.lista_voos_reservados[indice]);
 }
 
-// SETTERS 
+// ===================================================
+// SETTERS
+// ===================================================
 
 /**
  * Os setters atualizam os campos internos da reserva.
@@ -89,6 +94,10 @@ char *r_get_voo_por_indice(Reservas *r, int indice) {
  * 
  * Campos booleanos são interpretados a partir de `'t'` ou `'f'`.
  */
+
+// ===================================================
+// USADO PARA SET
+// ===================================================
 
 Voos_reservados *cria0_lista_reserva (int n) {
     Voos_reservados *vr = calloc (1, sizeof *vr);
@@ -139,7 +148,9 @@ void r_set_qr_code (Reservas *r, char *s) {
      r->qr_code = g_strdup(s);
 }
 
-// CRIA E DESTROI
+// ===================================================
+// CRIA RESERVA
+// ===================================================
 
 Reservas *criaReserva () {
     Reservas *r = calloc (1, sizeof *r);
@@ -147,6 +158,10 @@ Reservas *criaReserva () {
     r->reserva_lista.lista_voos_reservados = NULL;
     return r;
 }
+
+// ===================================================
+// DESTRÓI RESERVA
+// ===================================================
 
 // Liberta todos os campos internos e a própria estrutura
 
@@ -164,3 +179,4 @@ void libertaReserva(void *data) {
     g_free(a->qr_code);
     g_free(a);
 }
+

@@ -10,7 +10,16 @@
  * de aeronaves lidas a partir do ficheiro aircrafts.csv.
  */
 
+// ===================================================
+// ESTRUTURA
+// ===================================================
+
+// Estrutura que representa uma aeronave
 typedef struct aeronave Aeronave;
+
+// ===================================================
+// GETTERS
+// ===================================================
 
 /**
  * @brief Obtém o identificador da aeronave.
@@ -55,6 +64,10 @@ char *aircraft_get_model (Aeronave *a);
 
 int aircraft_get_year(Aeronave *a);
 
+// ===================================================
+// SETTERS
+// ===================================================
+
 /**
  * @brief Define o identificador da aeronave.
  *
@@ -97,6 +110,10 @@ void aircraft_set_year2(Aeronave *a, int year);
 
 void aircraft_set_year(Aeronave *a, char *year);
 
+// ===================================================
+// VALIDAÇÃO
+// ===================================================
+
 /**
  * @brief Valida uma linha do ficheiro aircrafts.csv.
  *
@@ -109,6 +126,10 @@ void aircraft_set_year(Aeronave *a, char *year);
 
 int valida_aeronave(const char *linha);
 
+// ===================================================
+// CRIA AERONAVE
+// ===================================================
+
 /**
  * @brief Cria uma aeronave a partir de uma linha CSV.
  *
@@ -119,6 +140,10 @@ int valida_aeronave(const char *linha);
  */
 
 Aeronave *criaAeronave();
+
+// ===================================================
+// DESTRÓI AERONAVE
+// ===================================================
 
 /**
  * @brief Liberta a memória associada a uma aeronave.
