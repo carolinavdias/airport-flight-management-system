@@ -111,7 +111,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
 
             FILE *ficheiro = abrir_ficheiro(ctx, csv_file_names[c], "r");
             if (ficheiro == NULL) {
-                resultados_read[c-1] = 0;
+                resultados_read[c] = 0;
                 continue;
             }
 
@@ -142,7 +142,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
 
 		if (!array_voos || !contagens) {
 		    fclose(ficheiro);
-		    resultados_read[c-1] = 0;
+		    resultados_read[c] = 0;
 		    continue;
 	        }
 
@@ -276,7 +276,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
         	    free(array_voos);
         	    g_hash_table_destroy(contagens);
     		}
-    		resultados_read[c-1] = 0;
+    		resultados_read[c] = 0;
 		continue;
 	   }
 	   else {
@@ -295,7 +295,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
            if (ficheiro_erros) fclose(ficheiro_erros);
            if (ficheiro) fclose(ficheiro);
 
-     	   resultados_read[c-1] = 1;
+     	   resultados_read[c] = 1;
 
       }
 
