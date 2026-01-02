@@ -13,4 +13,7 @@ int valida_bool (const char *s);
 //validacao logica
 int valida_RESERVA(Reservas *reserva, GestorFlights *gestor_voos, GestorPassengers *gestor_passageiros);
 
+//validação para parser
+Reservas *validacoes_campos_reservations(char **campos, GestorFlights *V, GestorPassengers *P);
+
 #endif

@@ -1,4 +1,4 @@
-#define _POSIX_C_SOURCE 200809L
+/*#define _POSIX_C_SOURCE 200809L
 
 #include "entidades/passengers.h"
 #include "parsers/parser_passengers.h"
@@ -6,6 +6,7 @@
 #include "utils/utils.h"
 #include <string.h>
 #include <glib.h>
+
 
 int le_tabela_Passageiros(Contexto *ctx, GestorPassengers *P) {
 
@@ -78,3 +79,4 @@ int le_tabela_Passageiros(Contexto *ctx, GestorPassengers *P) {
     fclose(ficheiro);
     return 1;
 }
+*/

@@ -1,4 +1,5 @@
 #define _XOPEN_SOURCE 700
+#include "validacoes/validacoes_airports.h"
 #include "validacoes/validacoes_flights.h"
 #include "utils/utils.h"
 #include <string.h>
@@ -121,4 +122,46 @@ int valida_VOO (Voo *voo, GestorAircrafts *gestor_aeronaves) {
     }
     
     return 1; //válido
+}
+
+
+Voo *validacoes_campos_flights(char **campos, GestorAircrafts *AC) {
+    Voo *v = criaVoo();
+
+    if (valida_id_voo(campos[0])     && // id_flight
+        valida_DataH(campos[1])      && //departure
+        valida_DataH(campos[3])      && // arrival
+        valida_Estado(campos[6])     && // status
+        valida_codigoIATA(campos[7]) && //codigoIATA origem
+        valida_codigoIATA(campos[8]) )  //codigoIATA destino
+    {
+
+
+        voo_set_flight_id (v,campos[0]);
+        voo_set_dataH(v,campos[1],1);
+        voo_set_dataH(v,campos[3],3);
+        voo_set_status(v,campos[6]);
+        voo_set_code(v,campos[7],'o');
+        voo_set_code(v,campos[8],'d');
+        voo_set_id_aircraft(v,campos[9]);
+        voo_set_airline(v,campos[10]);
+
+         //actual departure/arrival
+         if (voo_get_status(v) == ESTADO_CANCELLED) {
+              if (strcmp(campos[2],"N/A") != 0 || strcmp(campos[4],"N/A") != 0) return NULL;
+              else {
+                  voo_set_dataH(v,"",2);
+                  voo_set_dataH(v,"",4);
+              }
+         } else if (valida_DataH(campos[2]) && valida_DataH(campos[4])) {
+                  voo_set_dataH(v,campos[2],2);
+                  voo_set_dataH(v,campos[4],4);
+              } else return NULL;
+
+    }
+    else return NULL;
+
+    if (!valida_VOO(v, AC)) return NULL;
+
+    return v;
 }

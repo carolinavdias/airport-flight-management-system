@@ -1,4 +1,4 @@
-#define _POSIX_C_SOURCE 200809L
+/*#define _POSIX_C_SOURCE 200809L
 #include "parsers/parser_flights.h"
 
 #include "entidades/flights.h"
@@ -8,6 +8,9 @@
 #include <stdlib.h>
 #include <glib.h>
 #include <string.h>
+
+
+
 
 static int compara_voos_por_data(const void *a, const void *b) {
     Voo *v1 = *(Voo **)a;
@@ -21,10 +24,174 @@ static int compara_voos_por_data(const void *a, const void *b) {
     return 0;
 }
 
-int le_tabela_Voos(Contexto *ctx, GestorFlights *V, GestorAircrafts *AC) {
+int *le_tabela_Voos(Contexto *ctx, GestorFlights *V, GestorAircrafts *AC) {
 
-    int MAX_LINHA = 2000;
-    gchar buffer[MAX_LINHA];
+    int *resultados = [1,0,0,0,0,0];
+    char csv_file_names[[]] = ["aircrafts.csv","flights.csv","airports.csv","passengers.csv","reservations.csv"];
+    //char *csv_file_error_name = malloc(40);
+
+    for (int c = 1; resultados[c-1] = 1 && c < 6; c++) {
+
+        int MAX_LINHA = 512;
+        gchar buffer[MAX_LINHA];
+
+        //char *csv_file_name = malloc(20);
+        char *csv_file_error_name = malloc(40);
+
+        FILE *ficheiro = abrir_ficheiro(ctx, csv_file_names[c], "r");
+        if (ficheiro == NULL) {
+	    resultados[c-1] = 0;
+	    continue;
+ 	}
+
+        int no_header = 1;
+        char header[MAX_LINHA];
+
+        if (fgets(buffer, sizeof(buffer), ficheiro) == NULL) no_header = 0;
+        else {
+            buffer[strcspn(buffer,"\n")] = '\0';
+            strcpy(header, buffer);
+        }
+
+        FILE *ficheiro_erros = NULL;
+        int header_escrito = 0;
+
+        //array local
+        int capacidade_array = 10000;
+        Voo **array_voos = malloc(capacidade_array * sizeof(Voo *));
+        int num_voos_array = 0;
+
+        //tabela de contagens para Q2
+        GHashTable *contagens = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+
+	Estrt_aux *lista_Q5 = cria_estrutura_auxiliarpQ5();
+
+        while (fgets(buffer, sizeof(buffer), ficheiro) && no_header) {
+
+           buffer[strcspn(buffer, "\n")] = '\0';
+           char **campos = NULL;
+           size_t n_campos = 0;
+
+           if (csv_split(buffer, &campos, &n_campos) != 0) linha_valida = 0; //return ?
+
+           int linha_valida = 1;
+
+           //Voo *voo_atual = criaVoo();
+
+           switch (c) {
+                case 1:
+                   Aeronave *aeronave_atual = validacoes_campos_aircrafts(campos);
+                   if (aeronave_atual) gestor_aircrafts_insere(AC, aeronave_atual);
+                   else linha_valida = 0;
+		   csv_file_error_name = strdup("resultados/aircrafts_errors.csv");
+		   break;
+                case 2:
+
+		   Voo *voo_atual = validacoes_campos_flights(campos);
+                   if (voo_atual) {
+                        //insere no gestor (hash table)
+                        gestor_flights_inserir(V, voo_atual);
+
+                        //CONTA voos por aircraft (para Q2) - só voos não cancelados
+                        if (voo_get_status(voo_atual) != ESTADO_CANCELLED) {
+                            const char *aircraft_id = voo_get_id_aircraft(voo_atual);
+                            if (aircraft_id) {
+                                gpointer ptr = g_hash_table_lookup(contagens, aircraft_id);
+                                int count = ptr ? GPOINTER_TO_INT(ptr) : 0;
+                                g_hash_table_insert(contagens, g_strdup(aircraft_id), GINT_TO_POINTER(count + 1));
+                            }
+                        }
+
+                        //ADICIONA ao array local (se válido para query3)
+                        if (voo_get_status(voo_atual) != ESTADO_CANCELLED && voo_get_code_origin(voo_atual)) {
+                            if (num_voos_array >= capacidade_array) {
+                                capacidade_array *= 2;
+                                array_voos = realloc(array_voos, capacidade_array * sizeof(Voo *));
+                            }
+                            array_voos[num_voos_array++] = voo_atual;
+			}
+
+			//ADICIONA ao array (válido para Q5)
+                        if (voo_get_status(voo_atual) == ESTADO_DELAYED) {
+                            int new_count = adiciona_voo_para_Q5(lista_airlines_atrasos,num_voos_Q5,campos[2],campos[1]);
+                            num_voos_Q5 = new_count;
+			}
+
+		   } else linha_valida = 0;
+		   csv_file_error_name = strdup("resultados/flights_errors.csv");
+                   break;
+
+
+		case 3:
+		   Aeroporto *aeroporto_atual = validacoes_campos_airports(campos);
+	  	   if (aeroporto_atual) gestor_airports_insere(AP, aeroporto_atual);
+		   else linha_valida = 0;
+		   csv_file_error_name = strdup("resultados/airports_errors.csv");
+	           break;
+		case 4:
+                   Passageiro *passageiro_atual = validacoes_campos_passengers(campos);
+                   if (passageiro_atual) gestor_passengers_insere(P, passageiro_atual);
+                   else linha_valida = 0;
+		   csv_file_error_name = strdup("resultados/passengers_errors.csv");
+	  	   break;
+		case 5:
+                   Reserva *reserva_atual = validacoes_campos_reservations(campos);
+                   if (reserva_atual) gestor_reservations_insere(R, reserva_atual);
+                   else linha_valida = 0;
+		   csv_file_error_name = strdup("resultados/reservations_errors.csv");
+		   break;
+
+           }
+
+           if (!linha_valida) {
+                if (!ficheiro_erros) {
+                    ficheiro_erros = fopen(csv_file_error_name, "w");
+                    if (ficheiro_erros && !header_escrito) {
+                        fputs(header, ficheiro_erros);
+                        fputc('\n', ficheiro_erros);
+                        header_escrito = 1;
+                    }
+                }
+                if (ficheiro_erros) {
+                    fputs(buffer, ficheiro_erros);
+                    fputc('\n', ficheiro_erros);
+                }
+           }
+
+	   if (campos) csv_free_fields(campos, n_campos);
+        }
+
+        if (ficheiro_erros) fclose(ficheiro_erros);
+        fclose(ficheiro);
+
+	if (c == 2) {
+            //ORDENA array 1 ÚNICA VEZ (no parser!)
+            qsort(array_voos, num_voos_array, sizeof(Voo *), compara_voos_por_data);
+
+            //passa array ordenado para o gestor
+            gestor_flights_set_array_ordenado(V, array_voos, num_voos_array);
+
+            //passa tabela de contagens para o gestor
+            gestor_flights_set_contagens_aircraft(V, contagens);
+	}
+    resultados[c] = 1;
+    }
+    return resultados;
+}
+
+*/
+
+
+
+
+
+
+
+/*
+
+
+
+
 
     FILE *ficheiro = abrir_ficheiro(ctx, "flights.csv", "r");
     if (ficheiro == NULL) return 0;
@@ -112,7 +279,7 @@ int le_tabela_Voos(Contexto *ctx, GestorFlights *V, GestorAircrafts *AC) {
         }
 
         //CODE_DESTINATION
-        if (linha_valida && valida_codigoIATA(campos[8])) voo_set_code(voo_atual,campos[8],'d');
+        <if (linha_valida && valida_codigoIATA(campos[8])) voo_set_code(voo_atual,campos[8],'d');
         else linha_valida = 0;
 
         //AIRLINE
@@ -176,3 +343,4 @@ int le_tabela_Voos(Contexto *ctx, GestorFlights *V, GestorAircrafts *AC) {
     
     return 1;
 }
+*/

@@ -13,4 +13,6 @@ int valida_Estado(const char *s); //, Estado *e);
 //validação lógica
 int valida_VOO(Voo *voo, GestorAircrafts *gestor_aeronaves);
 
+Voo *validacoes_campos_flights(char **campos, GestorAircrafts *AC);
+
 #endif

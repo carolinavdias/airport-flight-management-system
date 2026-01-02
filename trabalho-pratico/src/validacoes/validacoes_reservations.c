@@ -1,5 +1,6 @@
 #include "validacoes/validacoes_reservations.h"
 #include "validacoes/validacoes_flights.h"
+#include "validacoes/validacoes_passengers.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -92,4 +93,30 @@ int valida_RESERVA(Reservas *reserva, GestorFlights *gestor_voos, GestorPassenge
     }
 
     return 1;
+}
+
+
+Reservas *validacoes_campos_reservations(char **campos, GestorFlights *V, GestorPassengers *P) {
+    Reservas *r = criaReserva();
+
+    if (valida_id_reserva(campos[0]) 	        && //id_reserva
+	valida_set_voos_reservados(campos[1],r) && //lista voos reservados
+	valida_id_passageiro(campos[2]) 	&& //ide pessoa q reservou
+	valida_bool(campos[5])  		&& //bagagem extra
+	valida_bool(campos[6])			)  //prioridade
+    {
+
+	r_set_id_reserva(r,campos[0]);
+	r_set_id_pessoa_reservou(r,campos[2]);
+	r_set_lugar(r,campos[3]);
+	r_set_preco(r,campos[4]);
+	r_set_bools(r,campos[5],1);
+	r_set_bools(r,campos[6],2);
+	r_set_qr_code(r,campos[7]);
+
+	if (!valida_RESERVA(r, V, P)) return NULL;
+
+        return r;
+    }
+    else return NULL;
 }

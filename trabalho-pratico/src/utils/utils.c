@@ -26,6 +26,10 @@ void set_contexto (Contexto *ctx, const char *d) {
 //abre um ficheiro no diretório do dataset
 FILE *abrir_ficheiro(Contexto *ctx, const char *nome_ficheiro, const char *modo) {
     char path[1024];
+    if (ctx->dataset_dir[0] == '\0') {
+	perror("Null path.\n");
+	return NULL;
+    }
     snprintf(path, sizeof(path), "%s/%s", ctx->dataset_dir, nome_ficheiro);
     FILE *ficheiro = fopen(path, modo);
     if (ficheiro == NULL) {
@@ -44,7 +48,38 @@ int qual_mes (int ano, int mes) {
     if (mes == 4 || mes == 6 || mes == 9 || mes == 11) return 30;
     return 31;
 }
+/*
+//struct auxiliares para Q5
+typedef struct contagemQ5 {
+    char *airline;
+    float delay_avg;
+    int delay_count;
+} ContagemQ5;
 
+typedef struct estrt_aux_q5 {
+    ContagemQ5 *listaQ5;
+    int num_voos;
+} Estrt_aux_q5;
+
+Estrt_aux_q5 *init_lista() {
+    Estrt_aux_q5 *nova_lista = malloc(sizeof *nova_lista);
+    if (!nova_lista) return NULL;
+
+    nova_lista->listaQ5 = calloc(1, sizeof(ContagemQ5));
+    nova_lista->num_voos = 0;
+    return nova_lista;
+}
+
+//Função auxiliar para Q5
+int get_time_datah (char *s) {
+
+    int hora = (s[11]-'0')*10  + (s[12]-'0');
+    int min  = (s[14]-'0')*10  + (s[15]-'0');
+
+    return hora * 60 +
+           min;
+}
+*/
 //===================================
 //ERRORS
 //===================================

@@ -34,7 +34,7 @@ static void processa_linha_comando(const char *linha_completa,
                                    GestorFlights *gestorVoos,
                                    GestorAircrafts *gestorAeronaves,
                                    GestorPassengers *gestorPassageiros,
-                                   GestorReservations *gestorReservas)   
+                                   GestorReservations *gestorReservas)
 {
     if (!linha_completa || !linha_completa[0]) {
         fprintf(out, "\n");
@@ -60,6 +60,7 @@ static void processa_linha_comando(const char *linha_completa,
 }
 
 int main(int argc, char **argv) {
+
     if (argc != 3) {
         fprintf(stderr, "Uso: %s <dataset-fase-1> <ficheiro_comandos>\n", argv[0]);
         return EXIT_FAILURE;
@@ -94,7 +95,7 @@ int main(int argc, char **argv) {
     }
 
     // Carregar dados (agora incluindo reservas)
-    read1(ctx, gestorVoos, gestorAeroportos, gestorAeronaves,
+    read_csv(ctx, gestorVoos, gestorAeroportos, gestorAeronaves,
          gestorPassageiros, gestorReservas);
 
     FILE *ficheiroComandos = fopen(argv[2], "r");

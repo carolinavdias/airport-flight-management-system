@@ -1,4 +1,4 @@
-#define _POSIX_C_SOURCE 200809L
+/*#define _POSIX_C_SOURCE 200809L
 
 #include "parsers/parser_reservations.h"
 #include "entidades/reservations.h"
@@ -92,3 +92,4 @@ int le_tabela_Reservas(Contexto *ctx, GestorFlights *V, GestorPassengers *P, Ges
     fclose(ficheiro);
     return 1;
 }
+*/

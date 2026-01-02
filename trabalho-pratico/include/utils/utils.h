@@ -12,6 +12,14 @@ void set_contexto (Contexto *ctx, const char *d);
 FILE* abrir_ficheiro(Contexto *ctx, const char *nome_ficheiro, const char *modo);
 int qual_mes (int ano, int mes);
 
+//AUXILARES para Q5
+//struct auxiliares para Q5
+typedef struct contagemQ5 ContagemQ5;
+
+typedef struct estrt_aux_q5 Estrt_aux_q5;
+
+int get_time_datah (char *s);
+
 //===================================
 //ERRORS
 //===================================

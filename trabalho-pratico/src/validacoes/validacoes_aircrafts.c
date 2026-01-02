@@ -13,3 +13,19 @@ int valida_year(const char *s) {
     }
     return year <= 2025;
 }
+
+Aeronave *validacoes_campos_aircrafts(char **campos) {
+    Aeronave *ac = criaAeronave();
+
+    if (valida_year(campos[3])) //ano fabrico aeronave
+    {
+
+        aircraft_set_id(ac,campos[0]);
+	aircraft_set_manuf(ac,campos[1]);
+	aircraft_set_model(ac,campos[2]);
+        aircraft_set_year(ac,campos[3]);
+        return ac;
+    }
+    else return NULL;
+}
+

@@ -1,5 +1,7 @@
 #include "gestor_entidades/gestor_flights.h"
 #include "entidades/flights.h"
+#include "queries/q5.h"
+#include "utils/utils.h"
 #include <glib.h>
 #include <stdbool.h>
 #include <string.h>
@@ -10,6 +12,7 @@ typedef struct gestor_flights {
     Voo **array_ordenado;      // Array ordenado por data (para Q3)
     int num_voos;
     GHashTable *contagens_aircraft;  // aircraft_id -> count (para Q2)
+//    Estrt_aux_q5 *listaQ5;
 } GestorFlights;
 
 GestorFlights *gestor_flights_novo() {
@@ -19,6 +22,7 @@ GestorFlights *gestor_flights_novo() {
     g->array_ordenado = NULL;
     g->num_voos = 0;
     g->contagens_aircraft = NULL;  // será criado no parsing
+//    g->listaQ5 = init_lista();
     return g;
 }
 

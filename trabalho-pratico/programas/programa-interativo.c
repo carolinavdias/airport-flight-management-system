@@ -114,7 +114,7 @@ static int carrega_dataset(EstadoPrograma *estado, const char *caminho) {
     }
     
     //carrega dados
-    read1(ctx, estado->gestorVoos, estado->gestorAeroportos, 
+    read_csv(ctx, estado->gestorVoos, estado->gestorAeroportos, 
           estado->gestorAeronaves, estado->gestorPassageiros, estado->gestorReservas);
     
     errors_end();

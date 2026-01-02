@@ -1,4 +1,4 @@
-#define _POSIX_C_SOURCE 200809L
+/*#define _POSIX_C_SOURCE 200809L
 
 #include "parsers/parser_airports.h"
 #include "validacoes/validacoes_airports.h"
@@ -77,3 +77,5 @@ int le_tabela_Aeroportos(Contexto *ctx, GestorAirports *AP) {
     fclose(ficheiro);
     return 1;
 }
+
+*/

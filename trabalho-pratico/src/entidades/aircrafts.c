@@ -30,13 +30,13 @@ int aircraft_get_year(Aeronave *a) {
 }
 
 //SETTERS - compatíveis com o .h original
-void aircraft_set_identifier(Aeronave *a, char *s) {
+void aircraft_set_id(Aeronave *a, char *s) {
     if (!a || !s) return;
     g_free(a->identifier);
     a->identifier = g_strdup(s);
 }
 
-void aircraft_set_manufacturer(Aeronave *a, char *s) {
+void aircraft_set_manuf(Aeronave *a, char *s) {
     if (!a || !s) return;
     g_free(a->manufacturer);
     a->manufacturer = g_strdup(s);
@@ -48,9 +48,14 @@ void aircraft_set_model(Aeronave *a, char *model_) {
     a->model = g_strdup(model_);
 }
 
-void aircraft_set_year(Aeronave *a, int year) {
+void aircraft_set_year2(Aeronave *a, int year) {
     if (!a) return;
     a->year = year;
+}
+
+void aircraft_set_year(Aeronave *a, char *year) {
+    if (!a || !year) return;
+    a->year = atoi(year);
 }
 
 //VALIDAÇÃO
@@ -125,8 +130,13 @@ int valida_aeronave(const char *linha) {
     return 1;
 }
 
+Aeronave *criaAeronave() {
+   Aeronave *a = calloc (1, sizeof *a);
+   return a;
+}
+
 //CRIA E DESTROI
-Aeronave *criaAeronave(const char *linha) {
+Aeronave *criaAeronave2(const char *linha) {
 
     if (!valida_aeronave(linha)) {
         errors_add("aircrafts.csv", -1, linha);

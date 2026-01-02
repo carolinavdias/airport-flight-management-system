@@ -31,7 +31,7 @@ int valida_email(const char *s) {
      for (; s[i] != '@' && s[i] != '\0'; i++) {
         if (!(islower(s[i]) || isdigit(s[i]) || s[i] == '.')) return 0;
      }
-     if (s[i] == '\0') return 0; // nada a seguir ao username
+     if (s[i] == '\0') return 0; // nada a seguir ao username ou sem '@'
      int j = i + 1;
      if (j - mark < 2) return 0;//username nulo -> inválido
      mark = j;
@@ -78,4 +78,25 @@ int valida_Data (const char *s) {
     if (dia < 1 || dia > qual_mes(ano,mes)) return 0;
 
     return 1;
+}
+
+
+Passageiros *validacoes_campos_passengers(char **campos) {
+    Passageiros *p = criaPassageiro();
+
+    if (valida_id_passageiro(campos[0]) && //id_passageiro
+        valida_Data(campos[3])          && //data de nascimento
+        valida_genero(campos[5])        && //genero
+        valida_email(campos[6])         )  //email
+    {
+
+        passenger_set_id(p,campos[0]);
+        passenger_set_pn(p,campos[1]);
+        passenger_set_un(p,campos[2]);
+        passenger_set_dn(p,campos[3]);
+        passenger_set_nc(p,campos[4]);
+
+        return p;
+    }
+    else return NULL;
 }

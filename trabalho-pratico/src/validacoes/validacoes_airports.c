@@ -49,3 +49,22 @@ int valida_tipo_aer(const char *s) {
 	    	 strcmp(s, "heliport") == 0	  ||
 	         strcmp(s, "seaplane_base") == 0   );
 }
+
+
+Aeroporto *validacoes_campos_airports(char **campos) {
+    Aeroporto *ap = criaAeroporto();
+
+    if (valida_codigoIATA(campos[0]) && //codigo_IATA
+        valida_tipo_aer(campos[7])   )  //tipo_aeroporto
+    {
+
+        airport_set_code_IATA(ap,campos[0]);
+        airport_set_name(ap,campos[1]);
+        airport_set_city(ap,campos[2]);
+        airport_set_country(ap,campos[3]);
+        airport_set_type(ap,campos[7]);
+
+        return ap;
+    }
+    else return NULL;
+}

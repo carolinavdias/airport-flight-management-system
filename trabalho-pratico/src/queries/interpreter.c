@@ -10,7 +10,7 @@
 #include "queries/q2.h"
 #include "queries/q3.h"
 #include "queries/q4.h"
-//#include "queries/q5.h"  // TODO: Responsabilidade de outra colega
+//#include "queries/q5.h"
 #include "queries/q6.h"
 #include "gestor_entidades/gestor_airports.h"
 #include "gestor_entidades/gestor_flights.h"
@@ -64,6 +64,68 @@ static int extrai_numero_query(const char *comando, bool *formato_alternativo) {
     return atoi(num_str);
 }
 
+//interpretador
+void interpreta_comando(const char *comando,
+                        const char *param,
+                        FILE *out,
+                        GestorAirports *gestorAeroportos,
+                        GestorFlights *gestorVoos,
+                        GestorAircrafts *gestorAeronaves,
+                        GestorPassengers *gestorPassageiros,
+                        GestorReservations *gestorReservas) {
+    
+    if (!comando || !out) {
+        fprintf(out, "\n");
+        return;
+    }
+
+    bool formato_alternativo = false;
+    int query_num = extrai_numero_query(comando, &formato_alternativo);
+
+    if (param && param[0]) {
+        //chama query1() (já conta passageiros corretamente!)
+	char *resultado = NULL;
+	switch (query_num) {
+	   case 1: resultado = query1(param, gestorAeroportos, gestorVoos, gestorReservas);
+		   break;
+	   case 2: resultado = query2(param, gestorAeronaves, gestorVoos);
+		   break;
+	   case 3:
+	        char d1[32] = {0}, d2[32] = {0};
+                char data_inicio[64] = {0}, data_fim[64] = {0};
+
+                if (sscanf(param, "%31s %31s", d1, d2) == 2) {
+                    //adiciona hora
+                    snprintf(data_inicio, sizeof(data_inicio), "%s 00:00", d1);
+                    snprintf(data_fim, sizeof(data_fim), "%s 23:59", d2);
+
+                    resultado = query3(data_inicio, data_fim, gestorVoos, gestorAeroportos);
+		}
+		break;
+	  case 4: resultado = query4(param ? param : "", gestorPassageiros, gestorVoos, gestorReservas);
+		  break;
+//	  case 5: resultado = query5(param, gestorVoos);
+//	    	  break;
+	  case 6: resultado = query6(param, gestorPassageiros, gestorVoos, gestorReservas);
+		  break;
+      }
+
+      if (resultado && resultado[0] != '\n') {
+          //aplica formato alternativo se necessário
+          aplica_formato(resultado, formato_alternativo);
+          fprintf(out, "%s", resultado);
+          free(resultado);
+      } else {
+          fprintf(out, "\n");
+          if (resultado) free(resultado);
+      }
+
+    } else fprintf(out, "\n");
+}
+
+
+
+/*
 //interpretador
 void interpreta_comando(const char *comando,
                         const char *param,
@@ -189,3 +251,4 @@ void interpreta_comando(const char *comando,
         fprintf(out, "\n");
     }
 }
+*/
