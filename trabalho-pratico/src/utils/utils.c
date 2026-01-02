@@ -27,7 +27,7 @@ void set_contexto (Contexto *ctx, const char *d) {
 FILE *abrir_ficheiro(Contexto *ctx, const char *nome_ficheiro, const char *modo) {
     char path[1024];
     if (ctx->dataset_dir[0] == '\0') {
-	perror("Null path.\n");
+	fprintf(stderr, "Diretoria do dataset não encontrada.\n");
 	return NULL;
     }
     snprintf(path, sizeof(path), "%s/%s", ctx->dataset_dir, nome_ficheiro);

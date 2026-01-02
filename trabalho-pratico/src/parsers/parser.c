@@ -93,6 +93,12 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
     {
 
         const char *csv_file_names[] = {"","aircrafts.csv","flights.csv","airports.csv","passengers.csv","reservations.csv"};
+	const char *csv_error_names[] = {"",
+					 "resultados/aircrafts_errors.csv",
+					 "resultados/flights_errors.csv",
+					 "resultados/airports_errors.csv",
+					 "resultados/passengers_errors.csv",
+					 "resultados/reservations_errors.csv"};
 
         for (int c = 1; c < 6; c++) {
 
@@ -102,7 +108,6 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
             int MAX_LINHA = 512;
             gchar buffer[MAX_LINHA];
 
-            char *csv_file_error_name = NULL;
 
             FILE *ficheiro = abrir_ficheiro(ctx, csv_file_names[c], "r");
             if (ficheiro == NULL) {
@@ -112,6 +117,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
 
             int no_header = 1;
             char header[MAX_LINHA];
+	    int erro_fatal = 0;
 
             if (fgets(buffer, sizeof(buffer), ficheiro) == NULL) no_header = 0;
             else {
@@ -124,11 +130,23 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
 
             //array local
             int capacidade_array = 10000;
-            Voo **array_voos = malloc(capacidade_array * sizeof(Voo *));
             int num_voos_array = 0;
+	    Voo **array_voos = NULL;
 
-            //tabela de contagens para Q2
-            GHashTable *contagens = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+	    //tabela de contagens para Q2
+	    GHashTable *contagens = NULL;
+
+	    if (c == 2) {
+	 	array_voos = malloc(capacidade_array * sizeof(Voo *));
+                contagens = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+
+		if (!array_voos || !contagens) {
+		    fclose(ficheiro);
+		    resultados_read[c-1] = 0;
+		    continue;
+	        }
+
+	    }
 
 //            Estrt_aux_q5 *lista_Q5 = init_lista();
 
@@ -147,7 +165,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                    	Aeronave *aeronave_atual = validacoes_campos_aircrafts(campos);
                    	if (aeronave_atual) gestor_aircrafts_insere(AC, aeronave_atual);
                    	else linha_valida = 0;
-                   	csv_file_error_name = strdup("resultados/aircrafts_errors.csv");
+                   	//csv_file_error_name = strdup("resultados/aircrafts_errors.csv");
                    	break;
                    case 2:
 
@@ -170,7 +188,13 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                             if (voo_get_status(voo_atual) != ESTADO_CANCELLED && voo_get_code_origin(voo_atual)) {
                             	if (num_voos_array >= capacidade_array) {
                                     capacidade_array *= 2;
-                                    array_voos = realloc(array_voos, capacidade_array * sizeof(Voo *));
+                                    Voo **temp = realloc(array_voos, capacidade_array * sizeof(Voo *));
+				    if (!temp) {
+					erro_fatal = 1;
+					break;
+				    } else {
+					array_voos = temp;
+				    }
                             	}
                             	array_voos[num_voos_array++] = voo_atual;
                             }
@@ -182,20 +206,20 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                             }
 */
                    	} else linha_valida = 0;
-                   	csv_file_error_name = strdup("resultados/flights_errors.csv");
+                   	//csv_file_error_name = strdup("resultados/flights_errors.csv");
                    	break;
 
                    case 3:
                    	Aeroporto *aeroporto_atual = validacoes_campos_airports(campos);
                    	if (aeroporto_atual) gestor_airports_insere(AP, aeroporto_atual);
                    	else linha_valida = 0;
-                   	csv_file_error_name = strdup("resultados/airports_errors.csv");
+                   	//csv_file_error_name = strdup("resultados/airports_errors.csv");
                    	break;
                    case 4:
                    	Passageiros *passageiro_atual = validacoes_campos_passengers(campos);
                    	if (passageiro_atual) gestor_passengers_inserir(P, passageiro_atual);
                    	else linha_valida = 0;
-                   	csv_file_error_name = strdup("resultados/passengers_errors.csv");
+                   	//csv_file_error_name = strdup("resultados/passengers_errors.csv");
                    	break;
                    case 5:
                         Reservas *reserva_atual = validacoes_campos_reservations(campos,V,P);
@@ -216,14 +240,21 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                                 }
                             }
                         } else linha_valida = 0;
-                        csv_file_error_name = strdup("resultados/reservations_errors.csv");
+                        //csv_file_error_name = strdup("resultados/reservations_errors.csv");
                         break;
 
            	}
+		if (erro_fatal) {
+	            break;
+	   	}
 
-           	if (!linha_valida && csv_file_error_name) {
+           	if (!linha_valida) {
                     if (!ficheiro_erros) {
-                        ficheiro_erros = fopen(csv_file_error_name, "w");
+                        ficheiro_erros = fopen(csv_error_names[c], "w");
+		 	if (!ficheiro_erros) {
+			    erro_fatal = 1;
+			    break;
+			}
                     	if (ficheiro_erros && !header_escrito) {
                             fputs(header, ficheiro_erros);
                             fputc('\n', ficheiro_erros);
@@ -240,19 +271,29 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                 if (campos) csv_free_fields(campos, n_campos);
            }
 
+    	   if (erro_fatal) {
+    		if (c == 2) {
+        	    free(array_voos);
+        	    g_hash_table_destroy(contagens);
+    		}
+    		resultados_read[c] = 0;
+		continue;
+	   }
+	   else {
+		if (c == 2) {
+                    //ORDENA array 1 ÚNICA VEZ (no parser!)
+                    qsort(array_voos, num_voos_array, sizeof(Voo *), compara_voos_por_data);
+
+                    //passa array ordenado para o gestor
+                    gestor_flights_set_array_ordenado(V, array_voos, num_voos_array);
+
+                    //passa tabela de contagens para o gestor
+                    gestor_flights_set_contagens_aircraft(V, contagens);
+		}
+	   }
+
            if (ficheiro_erros) fclose(ficheiro_erros);
-           fclose(ficheiro);
-	   if (csv_file_error_name) free(csv_file_error_name);
-           if (c == 2) {
-            	//ORDENA array 1 ÚNICA VEZ (no parser!)
-            	qsort(array_voos, num_voos_array, sizeof(Voo *), compara_voos_por_data);
-
-            	//passa array ordenado para o gestor
-            	gestor_flights_set_array_ordenado(V, array_voos, num_voos_array);
-
-            	//passa tabela de contagens para o gestor
-            	gestor_flights_set_contagens_aircraft(V, contagens);
-           }
+           if (ficheiro) fclose(ficheiro);
 
      	   resultados_read[c] = 1;
 
@@ -273,6 +314,26 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
 
 
 /*
+
+           if (c == 2 )
+             if (!erro_fatal) {
+                //ORDENA array 1 ÚNICA VEZ (no parser!)
+                qsort(array_voos, num_voos_array, sizeof(Voo *), compara_voos_por_data);
+
+                //passa array ordenado para o gestor
+                gestor_flights_set_array_ordenado(V, array_voos, num_voos_array);
+
+                //passa tabela de contagens para o gestor
+                gestor_flights_set_contagens_aircraft(V, contagens);
+             } else {
+                free(array_voos);
+                g_hash_table_destroy(contagens);
+             }
+           }
+
+
+
+
 
     if (g_file_test(caminhoAeronaves, G_FILE_TEST_EXISTS)) {
         le_3 = le_tabela_Aeronaves(ctx,AC);
