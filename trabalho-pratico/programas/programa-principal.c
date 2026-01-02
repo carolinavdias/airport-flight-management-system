@@ -93,9 +93,8 @@ int main(int argc, char **argv) {
         if (gestorReservas) gestor_reservations_liberta(gestorReservas);
         return EXIT_FAILURE;
     }
-
     // Carregar dados (agora incluindo reservas)
-    read_csv(ctx, gestorVoos, gestorAeroportos, gestorAeronaves,
+    int *resultados_read = read_csv(ctx, gestorVoos, gestorAeroportos, gestorAeronaves,
          gestorPassageiros, gestorReservas);
 
     FILE *ficheiroComandos = fopen(argv[2], "r");
@@ -140,6 +139,7 @@ int main(int argc, char **argv) {
         numeroComando++;
     }
 
+    free(resultados_read);
     free(linha);
     fclose(ficheiroComandos);
 

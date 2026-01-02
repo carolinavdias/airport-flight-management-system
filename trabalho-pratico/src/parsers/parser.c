@@ -89,7 +89,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
 	g_file_test(caminhoReservas, G_FILE_TEST_EXISTS)    )
     {
 
-        const char *csv_file_names[] = {"aircrafts.csv","flights.csv","airports.csv","passengers.csv","reservations.csv"};
+        const char *csv_file_names[] = {"","aircrafts.csv","flights.csv","airports.csv","passengers.csv","reservations.csv"};
 
         for (int c = 1; c < 6; c++) {
 
@@ -99,7 +99,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
             int MAX_LINHA = 512;
             gchar buffer[MAX_LINHA];
 
-            char *csv_file_error_name = malloc(40);
+            char *csv_file_error_name = NULL;
 
             FILE *ficheiro = abrir_ficheiro(ctx, csv_file_names[c], "r");
             if (ficheiro == NULL) {
@@ -203,7 +203,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
 
            	}
 
-           	if (!linha_valida) {
+           	if (!linha_valida && csv_file_error_name) {
                     if (!ficheiro_erros) {
                         ficheiro_erros = fopen(csv_file_error_name, "w");
                     	if (ficheiro_erros && !header_escrito) {
@@ -224,7 +224,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
 
            if (ficheiro_erros) fclose(ficheiro_erros);
            fclose(ficheiro);
-
+	   if (csv_file_error_name) free(csv_file_error_name);
            if (c == 2) {
             	//ORDENA array 1 ÚNICA VEZ (no parser!)
             	qsort(array_voos, num_voos_array, sizeof(Voo *), compara_voos_por_data);
