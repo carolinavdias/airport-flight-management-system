@@ -54,7 +54,9 @@ int valida_tipo_aer(const char *s) {
 Aeroporto *validacoes_campos_airports(char **campos) {
     Aeroporto *ap = criaAeroporto();
 
-    if (valida_codigoIATA(campos[0]) && //codigo_IATA
+    if (valida_codigoIATA(campos[0])    && //codigo_IATA
+	valida_coordenadas(campos[4],1) && //latitude
+	valida_coordenadas(campos[5],2) && //longitude
         valida_tipo_aer(campos[7])   )  //tipo_aeroporto
     {
 

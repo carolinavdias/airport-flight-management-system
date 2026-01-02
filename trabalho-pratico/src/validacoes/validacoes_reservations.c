@@ -42,17 +42,16 @@ int valida_set_voos_reservados(const char *s, Reservas *r) {
         char *end = token + strlen(token) - 1;
         while (end >= token && (*end == ' ' || *end == '\'')) *end-- = '\0';
 
-        if (valida_id_voo(token)) { //flight id invalido
-	   set_lista_voos(novo,i,token);
-	}
-	else {
+        if (!valida_id_voo(token)) { //flight id invalido
 	   g_free(string_voos);
-	   return 0; //liberta string_voos e novo?
+	   //free(novo)
+           return 0; //liberta string_voos e novo?
 	}
+	set_lista_voos(novo,i,token);
     }
 
     r_set_lista(r, novo);
-    free(novo);  //libertar a estrutura Voos_reservados após copiar!
+    //free(novo);  //libertar a estrutura Voos_reservados após copiar!
     g_free(string_voos);
     return 1;
 }
