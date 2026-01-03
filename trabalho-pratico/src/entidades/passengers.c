@@ -11,6 +11,7 @@
 /**
  * Estrutura interna que representa um passageiro.
  */
+
 typedef struct passageiros {
     char *id_passageiro;     /**< Identificador único do passageiro */
     char *primeiro_nome;     /**< Primeiro nome */

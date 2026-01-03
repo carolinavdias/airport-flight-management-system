@@ -9,9 +9,10 @@ LDLIBS   = $(shell pkg-config --libs glib-2.0) -lm
 SRC_DIR  = src
 OBJ_DIR  = obj
 
-# ---------------------------------------------------
+# ===================================================
 # Ficheiros fonte em src/ (TODOS os subdiretorios!)
-# ---------------------------------------------------
+# ===================================================
+
 SRCS_LIB := $(shell find $(SRC_DIR) -name '*.c')
 OBJS_LIB := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/src/%.o,$(SRCS_LIB))
 
@@ -32,6 +33,7 @@ INTER_BIN = programa-interativo
 # ===================================================
 # Alvos
 # ===================================================
+
 .PHONY: all testes clean
 
 all: $(MAIN_BIN) $(INTER_BIN)
@@ -46,6 +48,7 @@ interativo: $(INTER_BIN)
 # ===================================================
 # Ligação
 # ===================================================
+
 $(MAIN_BIN): $(OBJS_MAIN)
 	mkdir -p programas
 	$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS)
@@ -64,6 +67,7 @@ $(INTER_BIN): $(OBJS_INTER)
 # ===================================================
 # Compilação
 # ===================================================
+
 # Ficheiros em programas/
 $(OBJ_DIR)/programas/%.o: programas/%.c
 	mkdir -p $(dir $@)
@@ -77,6 +81,7 @@ $(OBJ_DIR)/src/%.o: $(SRC_DIR)/%.c
 # ===================================================
 # Limpeza
 # ===================================================
+
 clean:
 	rm -rf $(OBJ_DIR) $(MAIN_BIN) $(TESTS_BIN) $(INTER_BIN) resultados
 	echo "✔ Limpeza concluída!"

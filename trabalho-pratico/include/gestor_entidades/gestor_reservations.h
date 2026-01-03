@@ -17,9 +17,9 @@
  * a um passageiro.
  */
 
-// ===================================================
-// ESTRUTURA 
-// ===================================================
+/* ============================================
+ * ESTRUTURA 
+ * ============================================ */
 
 /**
  * @struct gestor_reservations
@@ -31,9 +31,9 @@
 
 typedef struct gestor_reservations GestorReservations;
 
-// ============================================
-// CRIA GESTOR DE RESERVAS
-// ============================================ */
+/* ============================================
+ * CRIA GESTOR DE RESERVAS
+ * ============================================ */
 
 /**
  * @brief Cria um novo gestor de reservas.
@@ -45,10 +45,10 @@ typedef struct gestor_reservations GestorReservations;
 
 GestorReservations *gestor_reservations_cria(void);
 
-// =================================================== 
-// OPERAÇÕES BÁSICAS 
-// =================================================== 
- 
+/* ============================================
+ * OPERAÇÕES BÁSICAS 
+ * ============================================ */
+
 /**
  * @brief Insere uma reserva no gestor.
  *

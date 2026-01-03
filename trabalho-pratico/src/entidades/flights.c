@@ -238,9 +238,8 @@ Voo *criaVoo () {
  * DESTRÓI VOO
  * ============================================ */
 
-// Liberta todos os campos internos e a própria estrutura
 /**
- * Estrutura interna que representa uma aeronave 
+ * Liberta todos os campos internos e a própria estrutura
  */
 
 void libertaVoo(void *data) {
