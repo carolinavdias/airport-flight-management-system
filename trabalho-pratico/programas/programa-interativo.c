@@ -8,6 +8,8 @@
 #include "queries/q1.h"
 #include "queries/q2.h"
 #include "queries/q3.h"
+#include "queries/q4.h"
+#include "queries/q5.h"
 #include "queries/q6.h"
 
 #include "parsers/parser.h"
@@ -80,6 +82,8 @@ static void mostra_menu() {
     printf(COLOR_GREEN "  1" COLOR_RESET " - Query 1: Resumo de aeroporto\n");
     printf(COLOR_GREEN "  2" COLOR_RESET " - Query 2: Top N aeronaves\n");
     printf(COLOR_GREEN "  3" COLOR_RESET " - Query 3: Aeroporto com mais partidas\n");
+    printf(COLOR_GREEN "  4" COLOR_RESET " - Query 4: Passageiro que esteve mais tempo no Top 10 dos que gastaram mais em reservas num período de tempo\n");
+    printf(COLOR_GREEN "  5" COLOR_RESET " - Query 5: Top N companhias aéreas\n");
     printf(COLOR_GREEN "  6" COLOR_RESET " - Query 6: Destino mais comum por nacionalidade\n");
     printf(COLOR_YELLOW "  r" COLOR_RESET " - Recarregar dataset\n");
     printf(COLOR_RED "  q" COLOR_RESET " - Sair\n");
@@ -230,10 +234,85 @@ static void executa_query3(EstadoPrograma *estado) {
 }
 
 //executa Query 4
-//static void executa_query4(EstadoPrograma *estado)
+static void executa_query4(EstadoPrograma *estado) {
+    printf(COLOR_CYAN "\n╔═══ Query 4: Passageiro que esteve mais tempo no Top 10 dos que gastaram mais em reservas num período de tempo\n" COLOR_RESET);
+
+    printf("Data início (YYYY-MM-DD)\n(opcional, Enter para todos): ");
+    
+    char *data_inicio = le_linha();
+    //limpa_buffer();
+/*
+    if (!data_inicio || data_inicio[0] == '\0') {
+        printf(COLOR_RED "⚠ Data inválida!\n" COLOR_RESET);
+        free(data_inicio);
+        return; */
+
+    char *data_fim = NULL;
+    char comando[512];
+
+    if (data_inicio && data_inicio[0] != '\0') {
+	printf("Data fim (YYYY-MM-DD): ");
+    	char *data_fim = le_linha();
+        if (!data_fim || data_fim[0] == '\0') {
+            printf(COLOR_RED "⚠ Data inválida!\n" COLOR_RESET);
+            free(data_inicio);
+            return;
+        }
+	else {
+	    snprintf(comando, sizeof(comando), "%s %s", data_inicio, data_fim);
+   	}
+    }
+/*
+	 &&
+	data_fim    && data_fim[0]    != '\0') {
+
+    	snprintf(comando, sizeof(comando), "%s %s", data_inicio, data_fim);
+    } else {
+	//snprintf(comando, sizeof(comando), "");
+    }
+  */  
+    char *resultado = query4(comando, estado->gestorPassageiros, estado->gestorVoos, estado->gestorReservas);
+    
+    if (resultado && resultado[0] != '\n') {
+        printf(COLOR_GREEN "\n✓ Resultado:\n" COLOR_RESET);
+        printf("%s", resultado);
+    } else {
+        printf(COLOR_YELLOW "\n⚠ Nenhum resultado encontrado.\n" COLOR_RESET);
+    }
+    
+    free(resultado);
+    if (data_inicio) free(data_inicio);
+    if (data_fim) free(data_fim);
+}
+
 
 //executa Query 5
-//static void executa_query5(EstadoPrograma *estado)
+static void executa_query5(EstadoPrograma *estado) {
+    printf(COLOR_CYAN "\n╔═══ Query 5: Top N Companhias Aéreas ═══╗\n" COLOR_RESET);
+    printf("Digite N (número de companhias aéreas): ");
+    
+    int n;
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        printf(COLOR_RED "⚠ Número inválido!\n" COLOR_RESET);
+        limpa_buffer();
+        return;
+    }
+    
+    char comando[512];
+    snprintf(comando, sizeof(comando), "%d", n);
+
+    char *resultado = query5(comando, estado->gestorVoos);
+    
+    if (resultado && resultado[0] != '\n') {
+        printf(COLOR_GREEN "\n✓ Resultado:\n" COLOR_RESET);
+        printf("%s", resultado);
+    } else {
+        printf(COLOR_YELLOW "\n⚠ Nenhum resultado encontrado.\n" COLOR_RESET);
+    }
+    
+    free(resultado);
+}
+
 
 //executa Query 6
 static void executa_query6(EstadoPrograma *estado) {
@@ -330,7 +409,7 @@ int main() {
             case '3':
                 executa_query3(&estado);
                 break;
-            /*  
+
             case '4':
                 executa_query4(&estado);
                 break;
@@ -338,7 +417,7 @@ int main() {
             case '5':
                 executa_query5(&estado);
                 break;
-            */
+
             case '6':
                 executa_query6(&estado);
                 break;

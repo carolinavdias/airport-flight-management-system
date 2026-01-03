@@ -20,7 +20,7 @@ typedef struct voos_reservados {
 
 typedef struct reservas {
     char *id_reserva;               // Identificador único da reserva
-    Voos_reservados reserva_lista;  // Lista de voos associados à reserva
+    Voos_reservados *reserva_lista;  // Lista de voos associados à reserva
     int id_pessoa_reservou;         // Identificador da pessoa em nome de quem a reserva foi efetuada
     char *lugar_reservado;          // Lugar atribuído ao passageiro no voo
     double preco_reserva;           // Preço total da reserva

@@ -100,14 +100,11 @@ void interpreta_comando(const char *comando,
         //chama query1() (já conta passageiros corretamente!)
 	char *resultado = NULL;
 	switch (query_num) {
-	   case 1: printf("q1\n");
-		   resultado = query1(param, gestorAeroportos, gestorVoos, gestorReservas);
+	   case 1: resultado = query1(param, gestorAeroportos, gestorVoos, gestorReservas);
 		   break;
-	   case 2: 
-		   printf("q2\n");
-		   resultado = query2(param, gestorAeronaves, gestorVoos);
+	   case 2: resultado = query2(param, gestorAeronaves, gestorVoos);
 		   break;
-	   case 3: printf("q3\n");
+	   case 3:
 	        char d1[32] = {0}, d2[32] = {0};
                 char data_inicio[64] = {0}, data_fim[64] = {0};
 
@@ -119,14 +116,11 @@ void interpreta_comando(const char *comando,
                     resultado = query3(data_inicio, data_fim, gestorVoos, gestorAeroportos);
 		}
 		break;
-	  case 4: printf("q4\n");
-resultado = query4(param ? param : "", gestorPassageiros, gestorVoos, gestorReservas);
+	  case 4: resultado = query4(param ? param : "", gestorPassageiros, gestorVoos, gestorReservas);
 		  break;
-          case 5: printf("q5\n");
-resultado = query5(param, gestorVoos);
+          case 5: resultado = query5(param, gestorVoos);
                   break;
-	  case 6: printf("q6\n");
-resultado = query6(param, gestorPassageiros, gestorVoos, gestorReservas);
+	  case 6: resultado = query6(param, gestorPassageiros, gestorVoos, gestorReservas);
 		  break;
       }
 
