@@ -17,19 +17,6 @@
  *  - validação completa dos campos e criação da estrutura Aeroporto.
  */
 
- /**
- * @brief Valida um código IATA.
- *
- * O código IATA deve:
- *  - ter exatamente 3 caracteres;
- *  - ser composto apenas por letras maiúsculas (A–Z).
- *
- * @param s String contendo o código IATA.
- * @return 1 se válido, 0 caso contrário.
- */
-
-int valida_codigoIATA (const char *s);
-
 /**
  * @brief Valida uma coordenada geográfica (latitude ou longitude).
  *

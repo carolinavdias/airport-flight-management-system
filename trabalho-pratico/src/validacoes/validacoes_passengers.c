@@ -1,5 +1,5 @@
 #include "validacoes/validacoes_passengers.h"
-
+#include "validacoes/validacoes.h"
 #include "utils/utils.h"
 
 #include <string.h>
@@ -51,37 +51,6 @@ int valida_email(const char *s) {
 
      return 1;
 }
-
-int valida_Data (const char *s) {
-    if (!s) return 0;
-
-    int tamanho = 0;
-    for (; s[tamanho] != '\0'; tamanho++);
-    if (tamanho != 10) return 0; // tamanho errado
-
-    // formato fixo
-    if (s[4] != '-' || s[7] != '-') return 0;
-
-    //verificar que são dígitos
-    const int indices[] = {0,1,2,3,5,6,8,9};  // 8 dígitos para YYYY-MM-DD
-    for (int i = 0; i < 8; i++) {  // 8 em vez de 12!
-        if (s[indices[i]] < '0' || s[indices[i]] >'9') return 0;
-    }
-
-    // extrair números
-    int ano  = (s[0]-'0')*1000 + (s[1]-'0')*100 + (s[2]-'0')*10 + (s[3]-'0');
-    int mes  = (s[5]-'0')*10   + (s[6]-'0');
-    int dia  = (s[8]-'0')*10   + (s[9]-'0');
-
-
-    // validar ranges
-    if (ano < 0 || ano > 2025) return 0;
-    if (mes < 1 || mes > 12) return 0;
-    if (dia < 1 || dia > qual_mes(ano,mes)) return 0;
-
-    return 1;
-}
-
 
 Passageiros *validacoes_campos_passengers(char **campos) {
     Passageiros *p = criaPassageiro();

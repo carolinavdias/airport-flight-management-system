@@ -57,23 +57,6 @@ int valida_id_reserva (const char *s);
 
 int valida_set_voos_reservados(const char *s, Reservas *r);
 
-/**
- * @brief Valida campos booleanos de uma reserva.
- *
- * Aceita apenas:
- *   - "true"
- *   - "false"
- *
- * Usado para:
- *   - bagagem extra
- *   - prioridade
- *
- * @param s String contendo o valor booleano.
- * @return 1 se válido, 0 caso contrário.
- */
-
-int valida_bool (const char *s);
-
 /* ============================================
  * RESERVAS -> VALIDAÇÃO LÓGICA
  * ============================================ */

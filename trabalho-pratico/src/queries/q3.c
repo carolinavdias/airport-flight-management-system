@@ -3,6 +3,7 @@
 #include "queries/q3.h"
 #include "queries/q1.h"
 #include "validacoes/validacoes_flights.h"
+#include "validacoes/validacoes.h"
 #include "entidades/flights.h"
 #include "entidades/airports.h"
 #include "gestor_entidades/gestor_flights.h"

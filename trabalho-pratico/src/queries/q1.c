@@ -8,6 +8,7 @@
 #include "gestor_entidades/gestor_flights.h"
 #include "gestor_entidades/gestor_reservations.h"
 #include "validacoes/validacoes_airports.h"
+#include "validacoes/validacoes.h"
 #include <glib.h>
 
 //conversão do tipo de aeroporto

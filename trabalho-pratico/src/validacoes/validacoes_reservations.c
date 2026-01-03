@@ -1,6 +1,7 @@
 #include "validacoes/validacoes_reservations.h"
 #include "validacoes/validacoes_flights.h"
 #include "validacoes/validacoes_passengers.h"
+#include "validacoes/validacoes.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -106,11 +107,6 @@ int valida_set_voos_reservados(const char *s, Reservas *r) {
     return 1;
 }
 */
-
-//valida BAGAGEM/PRIORIDADE das Reservas e passa a string para um bool nos respetivos campos em Reserva
-int valida_bool (const char *s) {
-    return s && (strcmp (s, "true") == 0 || strcmp (s, "false") == 0);
-}
 
 /* ============================================
  * RESERVAS -> VALIDAÇÃO LÓGICA

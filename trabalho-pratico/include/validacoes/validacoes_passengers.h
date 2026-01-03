@@ -65,21 +65,6 @@ int valida_genero(const char *s);
 int valida_email(const char *s);
 
 /**
- * @brief Valida uma data no formato YYYY-MM-DD.
- *
- * Verifica:
- *  - tamanho correto (10 caracteres)
- *  - posições fixas de '-'
- *  - todos os restantes caracteres são dígitos
- *  - limites válidos para ano, mês e dia
- *
- * @param s String contendo a data.
- * @return 1 se válido, 0 caso contrário.
- */
-
-int valida_Data (const char *s);
-
-/**
  * @brief Valida todos os campos de um passageiro e cria a estrutura correspondente.
  *
  * Esta função valida:

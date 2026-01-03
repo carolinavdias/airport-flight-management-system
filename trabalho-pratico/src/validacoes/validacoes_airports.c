@@ -1,4 +1,5 @@
 #include "validacoes/validacoes_airports.h"
+#include "validacoes/validacoes.h"
 #include <ctype.h>
 #include <string.h>
 #include <glib.h>
@@ -6,22 +7,6 @@
 /* ============================================
  * AEROPORTO -> VALIDAÇÃO SINTÁTICA
  * ============================================ */
-
-/**  
- * Valida o código IATA. 
- * 
- * O código deve ter exatamente 3 letras maiúsculas. 
- * A função verifica tamanho, caracteres e terminações. 
- */
-
-int valida_codigoIATA(const char *s) {
-    if (!s) return 0;
-    for (int i = 0; i < 3; i++) {
-        if (s[i] == '\0') return 0; //string demasiado curta
-        if (s[i] < 'A' || s[i] > 'Z') return 0; //caracter invalido
-    }
-    return s[3] == '\0'; //valido se !grande
-}
 
 /** 
  * Valida uma coordenada geográfica (latitude ou longitude).

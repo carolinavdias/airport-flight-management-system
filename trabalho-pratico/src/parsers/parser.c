@@ -11,6 +11,7 @@
 #include "validacoes/validacoes_aircrafts.h"
 #include "validacoes/validacoes_passengers.h"
 #include "validacoes/validacoes_reservations.h"
+#include "validacoes/validacoes.h"
 #include "utils/utils.h"
 
 #include <stdio.h>

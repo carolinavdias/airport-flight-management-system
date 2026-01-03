@@ -1,6 +1,8 @@
 #define _XOPEN_SOURCE 700
+
 #include "validacoes/validacoes_airports.h"
 #include "validacoes/validacoes_flights.h"
+#include "validacoes/validacoes.h"
 #include "utils/utils.h"
 #include <string.h>
 
@@ -21,48 +23,6 @@ int valida_id_voo (const char *s) {
         }
     }
     return (s[7] == '\0' || s[8] == '\0');
-}
-
-//retorna 1 se válido; 0 se inválido.
-//out = inteiro comparável crescente YYYYMMDDHHMM
-int valida_DataH(const char *s) { //, long long *out) {
-    if (!s) return 0;
-
-    int tamanho = 0;
-    for (; s[tamanho] != '\0'; tamanho++);
-    if (tamanho != 16) return 0; // tamanho errado
-
-    //formato fixo
-    if (s[4] != '-' || s[7] != '-' || s[10] != ' ' || s[13] != ':') return 0;
-
-    //verifica que são dígitos
-    const int indices[] = {0,1,2,3,5,6,8,9,11,12,14,15};
-    for (int i = 0; i < 12; i++) {
-        if (s[indices[i]] < '0' || s[indices[i]] >'9') return 0;
-    }
-
-    //extrai números
-    int ano  = (s[0]-'0')*1000 + (s[1]-'0')*100 + (s[2]-'0')*10 + (s[3]-'0');
-    int mes  = (s[5]-'0')*10   + (s[6]-'0');
-    int dia  = (s[8]-'0')*10   + (s[9]-'0');
-    int hora = (s[11]-'0')*10  + (s[12]-'0');
-    int min  = (s[14]-'0')*10  + (s[15]-'0');
-
-    // validar limites básicos 
-    if (ano < 0 || ano > 2025) return 0; 
-    if (mes < 1 || mes > 12) return 0; 
-    if (dia < 1 || dia > 31) return 0; //ignora dias por mês 
-    if (hora < 0 || hora > 23) return 0; 
-    if (min < 0 || min > 59) return 0;
-
-    // validar que não é futura (data atual = 2025-09-30) 
-    int ano_atual = 2025, mes_atual = 9, dia_atual = 30; 
-    
-    if (ano > ano_atual) return 0; 
-    if (ano == ano_atual && mes > mes_atual) return 0; 
-    if (ano == ano_atual && mes == mes_atual && dia > dia_atual) return 0; 
-    
-    return 1;
 }
 
 //É NECESSARIA ESTA FUNCAO ????????

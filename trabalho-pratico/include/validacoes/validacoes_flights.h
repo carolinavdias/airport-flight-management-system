@@ -37,22 +37,6 @@
 int valida_id_voo (const char *s);
 
 /**
- * @brief Valida uma data e hora no formato YYYY-MM-DD HH:MM.
- *
- * Verifica:
- *  - tamanho correto (16 caracteres);
- *  - posições fixas de '-', '-', ' ' e ':';
- *  - todos os restantes caracteres são dígitos;
- *  - limites válidos para ano, mês, dia, hora e minuto;
- *  - data não superior à data atual (2025-09-30).
- *
- * @param s String contendo a data e hora.
- * @return 1 se válido, 0 caso contrário.
- */
-
-int valida_DataH(const char *s); 
-
-/**
  * @brief Valida o estado textual de um voo.
  *
  * Aceita apenas:
