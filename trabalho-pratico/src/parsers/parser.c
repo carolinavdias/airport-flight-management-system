@@ -183,10 +183,12 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                                     int dep_min = dep % 100;
                                     int act_hora = (act % 10000) / 100;
                                     int act_min = act % 100;
-                                    int dep_total = dep_hora * 60 + dep_min;
-                                    int act_total = act_hora * 60 + act_min;
+                                    int dep_dia = (dep / 10000) % 100;
+                                    int act_dia = (act / 10000) % 100;
+                                    int dep_total = dep_dia * 24 * 60 + dep_hora * 60 + dep_min;
+                                    int act_total = act_dia * 24 * 60 + act_hora * 60 + act_min;
                                     int delay = act_total - dep_total;
-                                    if (delay < 0) delay += 24 * 60;
+                                    if (delay < 0) delay = 0;
                                     gestor_flights_add_atraso_q5(V, airline, delay);
                                     //g_free(airline);
                                 }

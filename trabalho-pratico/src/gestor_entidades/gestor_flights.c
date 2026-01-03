@@ -28,6 +28,15 @@ typedef struct gestor_flights {
     GHashTable *cache_q5;             /**< airline -> {total_delay, count} para Q5 */
 } GestorFlights;
 
+/**
+ * @brief Estrutura para dados de atraso por airline.
+ */
+
+typedef struct dadosAtrasoQ5{
+    long total_delay;
+    int count;
+} DadosAtrasoQ5;
+
 /* ============================================
  * CRIA GESTOR DE VOO
  * ============================================ */
