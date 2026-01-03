@@ -1,4 +1,5 @@
 #define _POSIX_C_SOURCE 200809L
+#include <math.h>
 #include "entidades/flights.h"
 #include "gestor_entidades/gestor_flights.h"
 #include "utils/utils.h"
@@ -21,8 +22,12 @@ int compara_delay_dec(const void *a, const void *b) {
     const AirlineData *x = *(const AirlineData **)a;
     const AirlineData *y = *(const AirlineData **)b;
     
-    if (x->delay_avg < y->delay_avg) return 1;
-    if (x->delay_avg > y->delay_avg) return -1;
+    // Arredondar para 3 casas decimais antes de comparar
+    double avg_x = round(x->delay_avg * 1000) / 1000;
+    double avg_y = round(y->delay_avg * 1000) / 1000;
+    
+    if (avg_x < avg_y) return 1;
+    if (avg_x > avg_y) return -1;
     return strcmp(x->airline, y->airline);
 }
 
