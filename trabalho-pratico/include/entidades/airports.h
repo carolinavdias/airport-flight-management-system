@@ -12,9 +12,9 @@
  * aeroportos, conforme o dataset airports.csv.
  */
 
-// ===================================================
-// ESTRUTURA
-// ===================================================
+/* ============================================
+ * ESTRUTURA 
+ * ============================================ */
 
 /**
  * @brief Tipo de aeroporto.
@@ -48,9 +48,9 @@ typedef uint8_t Tipo_aeroporto;
 
 typedef struct aeroporto Aeroporto;
 
-// ===================================================
-// GETTERS
-// ===================================================
+/* ============================================
+ * GETTERS
+ * ============================================ */
 
 /**
  * @brief Obtém o código IATA do aeroporto.
@@ -97,9 +97,9 @@ char *airport_get_country (Aeroporto *a);
 
 Tipo_aeroporto airport_get_type (Aeroporto *a);
 
-// ===================================================
-// SETTERS
-// ===================================================
+/* ============================================
+ * SETTERS 
+ * ============================================ */
 
 /**
  * @brief Define o nome do aeroporto.
@@ -148,9 +148,9 @@ void airport_set_code_IATA (Aeroporto *a, char *code_);
 
 void airport_set_type (Aeroporto *a, char *tipo);
 
-// ===================================================
-// CRIA AEROPORTO
-// ===================================================
+/* ============================================
+ * CRIA AEROPORTO
+ * ============================================ */
 
 /**
  * @brief Cria um novo aeroporto vazio.
@@ -160,9 +160,9 @@ void airport_set_type (Aeroporto *a, char *tipo);
 
 Aeroporto *criaAeroporto ();
 
-// ===================================================
-// DESTRÓI AEROPORTO
-// ===================================================
+/* ============================================
+ * DESTRÓI AEROPORTO
+ * ============================================ */
 
 /**
  * @brief Liberta a memória associada a um aeroporto.

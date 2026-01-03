@@ -16,9 +16,9 @@
  * contagem de passageiros por voo e iteração sobre todos os passageiros.
  */
 
-// ===================================================
-// ESTRUTURA 
-// ===================================================
+/* ============================================
+ * ESTRUTURA 
+ * ============================================ */
 
 /**
  * @struct gestor_passengers
@@ -29,9 +29,9 @@
 
 typedef struct gestor_passengers GestorPassengers;
 
-// =================================================== 
-// CRIA GESTOR DE PASSAGEIRO
-// =================================================== 
+/* ============================================
+ * CRIA GESTOR DE PASSAGEIRO
+ * ============================================ */
 
 /** 
  * @brief Cria um novo gestor de passageiros. 
@@ -43,9 +43,9 @@ typedef struct gestor_passengers GestorPassengers;
 
 GestorPassengers *gestor_passengers_novo();
 
-// =================================================== 
-// DESTRÓI GESTOR DE PASSAGEIRO
-// =================================================== 
+/* ============================================
+ * DESTRÓI GESTOR DE PASSAGEIRO
+ * ============================================ */
 
 /**
  * @brief Liberta toda a memória associada ao gestor de passageiros.
@@ -57,9 +57,9 @@ GestorPassengers *gestor_passengers_novo();
 
 void gestor_passengers_destroy(GestorPassengers *g);
 
-// =================================================== 
-// INSERÇÃO 
-// =================================================== 
+/* ============================================
+ * INSERÇÃO 
+ * ============================================ */
 
 /** 
  * @brief Insere um passageiro no gestor. 
@@ -72,9 +72,9 @@ void gestor_passengers_destroy(GestorPassengers *g);
 
 void gestor_passengers_inserir(GestorPassengers *g, Passageiros *p);
 
-// =================================================== 
-// CONSULTAS
-// =================================================== 
+/* ============================================
+ * CONSULTAS
+ * ============================================ */
 
 /**
  * @brief Verifica se um passageiro existe no gestor.
@@ -108,9 +108,9 @@ int gestor_passengers_conta_por_voo(GestorPassengers *g, const char *flight_id);
 
 Passageiros *gestor_passengers_procura(GestorPassengers *g, const char *doc_number);
 
-// =================================================== 
-// INTERAÇÃO
-// =================================================== 
+/* ============================================
+ * INTERAÇÃO
+ * ============================================ */
 
 /**
  * @brief Função callback usada na iteração de passageiros.

@@ -19,9 +19,9 @@
  *  - uma tabela auxiliar de contagens por aircraft_id (usada na Q2).
  */
 
-// ===================================================
-// ESTRUTURA 
-// ===================================================
+/* ============================================
+ * ESTRUTURA 
+ * ============================================ */
 
 /**
  * @struct gestor_flights
@@ -32,9 +32,9 @@
 
 typedef struct gestor_flights GestorFlights;
 
-// ===================================================
-// CRIA GESTOR DE VOO
-// ===================================================
+/* ============================================
+ * CRIA GESTOR DE VOO
+ * ============================================ */
 
 /**
  * @brief Cria um novo gestor de voos.
@@ -46,9 +46,9 @@ typedef struct gestor_flights GestorFlights;
 
 GestorFlights *gestor_flights_novo();
 
-// ===================================================
-// DESTRÓI GESTOR DE VOO 
-// ===================================================
+/* ============================================
+ * DESTRÓI GESTOR DE VOO 
+ * ============================================ */
 
  /** 
   * @brief Liberta toda a memória associada ao gestor de voos. 
@@ -61,10 +61,10 @@ GestorFlights *gestor_flights_novo();
 
 void gestor_flights_destroy(GestorFlights *g);
 
-// =================================================== 
-// OPERAÇÕES BÁSICAS 
-// =================================================== 
- 
+/* ============================================
+ * OPERAÇÕES BÁSICAS
+ * ============================================ */
+
  /** 
   * @brief Insere um voo no gestor. 
   * 
@@ -104,9 +104,9 @@ void gestor_flights_print(GestorFlights *g);
 
 void gestor_flights_foreach(GestorFlights *g, void (*func)(Voo *, void *), void *user_data);
 
-// =================================================== 
-// CONSULTAS 
-// =================================================== 
+/* ============================================
+ * CONSULTAS 
+ * ============================================ */
 
 /** 
  * @brief Obtém o código IATA de origem de um voo. 
@@ -128,9 +128,9 @@ const char *gestor_flights_obter_origem(GestorFlights *g, const char *flight_id)
 
 const char *gestor_flights_obter_destino(GestorFlights *g, const char *flight_id);
 
-// =================================================== 
-// ARRAY ORDENADO (Q3)
-// =================================================== 
+/* ============================================
+ * ARRAY ORDENADO (Q3)
+ * ============================================ */
 
 /** 
  * @brief Define o array ordenado de voos. 
@@ -152,9 +152,9 @@ void gestor_flights_set_array_ordenado(GestorFlights *g, Voo **array, int num_vo
 
 Voo **gestor_flights_get_array_ordenado(GestorFlights *g, int *num_voos);
 
-// =================================================== 
-// CONTAGENS DE AIRCRAFT (Q2) 
-// =================================================== 
+/* ============================================
+ * CONTAGENS DE AIRCRAFT (Q2) 
+ * ============================================ */
 
 typedef struct _GHashTable GHashTable;
 
@@ -176,9 +176,9 @@ void gestor_flights_set_contagens_aircraft(GestorFlights *g, GHashTable *contage
 
 GHashTable *gestor_flights_get_contagens_aircraft(GestorFlights *g);
 
-// =================================================== 
-// PROCURA 
-// =================================================== 
+/* ============================================
+ * PROCURA
+ * ============================================ */
 
 /** 
  * @brief Procura um voo pelo seu identificador. 

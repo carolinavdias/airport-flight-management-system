@@ -17,9 +17,9 @@ typedef struct aeroporto {
     Tipo_aeroporto type;      /**< Tipo de aeroporto */
 } Aeroporto;
 
-// ===================================================
-// GETTERS
-// ===================================================
+/* ============================================
+ * GETTERS
+ * ============================================ */
 
  /*
   * Devolvem cópias (g_strdup) dos campos internos de modo a evitar
@@ -48,9 +48,9 @@ Tipo_aeroporto airport_get_type (Aeroporto *a) {
     return a->type;
 }
 
-// ===================================================
-// SETTERS
-// ===================================================
+/* ============================================
+ * SETTERS
+ * ============================================ */
 
  /* 
   * Substituem os valores atuais dos campos, libertando previamente
@@ -122,9 +122,9 @@ void airport_set_type(Aeroporto *a, char *tipo) {
 }
 */
 
-// ===================================================
-// CRIA AEROPORTO
-// ===================================================
+/* ============================================
+ * CRIA AEROPORTO
+ * ============================================ */
 
 /**
  * A estrutura é inicializada a zero e deve ser posteriormente
@@ -136,9 +136,9 @@ Aeroporto *criaAeroporto () {
     return ap;
 }
 
-// ===================================================
-// DESTRÓI AEROPORTO
-// ===================================================
+/* ============================================
+ * DESTRÓI AEROPORTO
+ * ============================================ */
 
 // Liberta todos os campos internos e a própria estrutura
 

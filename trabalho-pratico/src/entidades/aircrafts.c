@@ -24,9 +24,9 @@ struct aeronave {
     int year;              /**< Ano de fabrico */
 };
 
-// ===================================================
-// GETTERS
-// ===================================================
+/* ============================================
+ * GETTERS
+ * ============================================ */
 
 /*
  * Devolvem cópias (g_strdup) dos campos internos para garantir
@@ -50,9 +50,9 @@ int aircraft_get_year(Aeronave *a) {
     return a ? a->year : 0;
 }
 
-// ===================================================
-// SETTERS
-// ===================================================
+/* ============================================
+ * SETTERS
+ * ============================================ */
 
 /*
  * Atualizam os campos da aeronave, libertando previamente
@@ -87,9 +87,9 @@ void aircraft_set_year(Aeronave *a, char *year) {
     a->year = atoi(year);
 }
 
-// ===================================================
-// VALIDAÇÃO
-// ===================================================
+/* ============================================
+ * VALIDAÇÃO
+ * ============================================ */
 
 // Valida se o ano é numérico e se está dentro de um intervalo aceitável
 
@@ -173,9 +173,9 @@ int valida_aeronave(const char *linha) {
     return 1;
 }
 
-// ===================================================
-// CRIA AERONAVE
-// ===================================================
+/* ============================================
+ * CRIA AERONAVE
+ * ============================================ */
 
 Aeronave *criaAeronave() {
    Aeronave *a = calloc (1, sizeof *a);
@@ -215,9 +215,9 @@ Aeronave *criaAeronave2(const char *linha) {
     return a;
 }
 
-// ===================================================
-// DESTRÓI AERONAVE
-// ===================================================
+/* ============================================
+ * DESTRÓI AERONAVE
+ * ============================================ */
 
 void libertaAeronave(void *data) {
     Aeronave *a = data;

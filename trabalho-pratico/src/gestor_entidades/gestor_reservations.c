@@ -4,9 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-// ===================================================
-// ESTRUTURA 
-// ===================================================
+/* ============================================
+ * ESTRUTURA 
+ * ============================================ */
 
 /**
  * Estrutura interna do gestor de reservas.
@@ -22,9 +22,9 @@ struct gestor_reservations {
 
 };
 
-// ============================================
-// CRIA GESTOR DE RESERVAS
-// ============================================ */
+/* ============================================
+ * CRIA GESTOR DE RESERVAS
+ * ============================================ */
 
 GestorReservations *gestor_reservations_cria(void) {
     GestorReservations *g = malloc(sizeof(struct gestor_reservations));
@@ -38,9 +38,9 @@ GestorReservations *gestor_reservations_cria(void) {
     return g;
 }
 
-// =================================================== 
-// OPERAÇÕES BÁSICAS 
-// =================================================== 
+/* ============================================
+ * OPERAÇÕES BÁSICAS 
+ * ============================================ */
 
 void gestor_reservations_insere(GestorReservations *g, Reservas *reserva) {
     if (!g || !reserva) return;
@@ -61,9 +61,9 @@ Reservas *gestor_reservations_procura(GestorReservations *g, const char *id_rese
     return g_hash_table_lookup(g->tabela, id_reserva);
 }
 
-// ============================================
-// DESTRÓI GESTOR DE RESERVAS
-// ============================================ */
+/* ============================================
+ * DESTRÓI GESTOR DE RESERVAS
+ * ============================================ */
 
 void gestor_reservations_liberta(GestorReservations *g) {
     if (!g) return;
@@ -106,9 +106,9 @@ GSList *gestor_reservations_get_by_passenger(GestorReservations *gr, const char 
     return lista;
 }
 
-// ============================================
-// NOVA FUNÇÃO PARA FASE 2 (encapsulamento)
-// ============================================ 
+/* ============================================
+ * NOVA FUNÇÃO PARA FASE 2 (encapsulamento)
+ * ============================================ */
 
 void gestor_reservations_foreach(GestorReservations *g, ReservationIterFunc f, void *user_data) {
     if (!g || !g->tabela || !f) return;
@@ -156,7 +156,7 @@ int gestor_reservations_conta_por_voo(GestorReservations *g, const char *flight_
     return count;
 }
 
-/* ============================================
+ /* ============================================
  * FUNÇÕES PARA CACHE Q4 (OTIMIZAÇÃO)
  * ============================================ */
 

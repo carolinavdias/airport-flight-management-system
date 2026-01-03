@@ -7,10 +7,10 @@
 #include <string.h>
 #include <stdio.h>
 
-// =================================================== 
-// ESTRUTURA
-// =================================================== 
- 
+/* ============================================
+ * ESTRUTURA 
+ * ============================================ */
+
 /**
  * Estrutura interna do gestor de voos.
  *
@@ -27,9 +27,9 @@ typedef struct gestor_flights {
     GHashTable *contagens_aircraft;   /**< Contagens por aircraft_id (Q2) */
 } GestorFlights;
 
-// =================================================== 
-// CRIA GESTOR DE VOO
-// ===================================================
+/* ============================================
+ * CRIA GESTOR DE VOO
+ * ============================================ */
 
 GestorFlights *gestor_flights_novo() {
     GestorFlights *g = malloc(sizeof(GestorFlights));
@@ -42,9 +42,9 @@ GestorFlights *gestor_flights_novo() {
     return g;
 }
 
-// =================================================== 
-// DESTRÓI GESTOR DE VOO
-// ===================================================
+/* ============================================
+ * DESTRÓI GESTOR DE VOO
+ * ============================================ */
 
 void gestor_flights_destroy(GestorFlights *g) {
     if (!g) return;
@@ -54,9 +54,9 @@ void gestor_flights_destroy(GestorFlights *g) {
     free(g);
 }
 
-// =================================================== 
-// OPERAÇÕES BÁSICAS 
-// =================================================== 
+/* ============================================
+ * OPERAÇÕES BÁSICAS 
+ * ============================================ */
 
 void gestor_flights_inserir(GestorFlights *g, Voo *voo) {
     if (!g || !voo) return;
@@ -96,9 +96,9 @@ void gestor_flights_print(GestorFlights *g) {
     }
 }
 
-// =================================================== 
-// CONSULTAS 
-// =================================================== 
+/* ============================================
+ * CONSULTAS 
+ * ============================================ */
 
 const char *gestor_flights_obter_origem(GestorFlights *g, const char *flight_id) {
     if (!g) return NULL;
@@ -112,9 +112,9 @@ const char *gestor_flights_obter_destino(GestorFlights *g, const char *flight_id
     return v ? voo_get_code_destination(v) : NULL;
 }
 
-// =================================================== 
-// ARRAY ORDENADO (Q3) 
-// =================================================== 
+/* ============================================
+ * ARRAY ORDENADO (Q3) 
+ * ============================================ */
 
 void gestor_flights_set_array_ordenado(GestorFlights *g, Voo **array, int num_voos) {
     if (!g) return;
@@ -128,9 +128,9 @@ Voo **gestor_flights_get_array_ordenado(GestorFlights *g, int *num_voos) {
     return g->array_ordenado;
 }
 
-// =================================================== 
-// CONTAGENS DE AIRCRAFT (Q2) 
-// =================================================== 
+/* ============================================
+ * CONTAGENS DE AIRCRAFT (Q2) 
+ * ============================================ */
 
 void gestor_flights_set_contagens_aircraft(GestorFlights *g, GHashTable *contagens) {
     if (!g) return;
@@ -141,9 +141,10 @@ GHashTable *gestor_flights_get_contagens_aircraft(GestorFlights *g) {
     return g ? g->contagens_aircraft : NULL;
 }
 
-// =================================================== 
-// PROCURA 
-// =================================================== 
+
+/* ============================================
+ * PROCURA 
+ * ============================================ */
 
 Voo *gestor_flights_procura(GestorFlights *g, const char *flight_id) {
     if (!g || !flight_id) return NULL;

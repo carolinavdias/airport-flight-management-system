@@ -3,19 +3,20 @@
 #include <glib.h>
 //#include <string.h>
 
-// ===================================================
-// ESTRUTURA 
-// ===================================================
+/* ============================================
+ * ESTRUTURA 
+ * ============================================ */
 
-// Estrutura interna do gestor de aeronaves.
-
+/** 
+ * Estrutura interna do gestor aeronaves.
+ */
 typedef struct gestor_aircrafts {
     GHashTable *tabela;   /**< Hash table: id_aeronave -> Aeronave* */
 } GestorAircrafts; 
 
-// ===================================================
-// GESTÃO DE AERONAVES
-// ===================================================
+/* ============================================
+ * GESTÃO DE AERONAVES
+ * ============================================ */
 
 /**
  * Cria e inicializa o gestor de aeronaves.
@@ -81,9 +82,9 @@ void gestor_aircrafts_foreach(GestorAircrafts *g, AircraftIterFunc f, void *user
     }
 }
 
-// ===================================================
-// DESTRÓI GESTOR DE RESERVAS
-// ===================================================
+/* ============================================
+ * DESTRÓI GESTOR DE RESERVAS
+ * ============================================ */
 
 /**
  * Liberta o gestor e todos os recursos associados.

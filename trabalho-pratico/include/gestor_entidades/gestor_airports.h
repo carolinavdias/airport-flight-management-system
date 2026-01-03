@@ -14,9 +14,9 @@
  * por aeroporto, usadas em consultas estatísticas otimizadas (ex.: Q1).
  */
 
-// ===================================================
-// ESTRUTURA 
-// ===================================================
+/* ============================================
+ * ESTRUTURA 
+ * ============================================ */
 
 /**
  * @struct gestor_airports
@@ -27,9 +27,9 @@
 
 typedef struct gestor_airports GestorAirports;
 
-// ===================================================
-// GESTÃO DE AEROPORTOS
-// ===================================================
+/* ============================================
+ * CONTAGENS DE PASSAGEIROS 
+ * ============================================ */
 
 /**
  * @brief Cria um novo gestor de aeroportos.
@@ -72,9 +72,9 @@ Aeroporto *gestor_airports_procura(GestorAirports *g, const char *code_IATA);
 
 int gestor_airports_existe(GestorAirports *g, const char *code_IATA);
 
-// ===================================================
-// CONTAGENS DE PASSAGEIROS 
-// ===================================================
+/* ============================================
+ * CONTAGENS DE PASSAGEIROS 
+ * ============================================ */
 
 /**
  * @brief Inicializa as estruturas de contagem de chegadas e partidas.
@@ -124,9 +124,9 @@ int gestor_airports_get_chegadas(GestorAirports *g, const char *code);
 
 int gestor_airports_get_partidas(GestorAirports *g, const char *code);
 
-// ===================================================
-// DESTRÓI GESTOR DE AEROPORTOS
-// ===================================================
+/* ============================================
+ * DESTRÓI GESTOR DE AEROPORTOS
+ * ============================================ */
 
 /**
  * @brief Liberta toda a memória associada ao gestor de aeroportos.

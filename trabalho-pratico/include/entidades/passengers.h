@@ -15,9 +15,9 @@
     * cabendo ao utilizador libertar a memória retornada. 
     */ 
 
-// ===================================================
-// ESTRUTURA
-// ===================================================
+/* ============================================
+ * ESTRUTURA 
+ * ============================================ */
 
 /**
  * @struct passageiros
@@ -26,9 +26,9 @@
 
 typedef struct passageiros Passageiros;
 
-// ===================================================
-// GETTERS
-// ===================================================
+/* ============================================
+ * GETTERS
+ * ============================================ */
 
 /**
  * @brief Obtém o identificador do passageiro.
@@ -89,9 +89,9 @@ char *passenger_get_nacionalidade (Passageiros *p);
  * @param id Novo identificador.
  */
 
-// ===================================================
-// SETTERS
-// ===================================================
+/* ============================================
+ * SETTERS
+ * ============================================ */
 
 void passenger_set_id (Passageiros *p, char *id);
 
@@ -133,9 +133,9 @@ void passenger_set_dn (Passageiros *p, char *dn);
 
 void passenger_set_nc (Passageiros *p, char *nc);
 
-// ===================================================
-// CRIA PASSAGEIRO
-// ===================================================
+/* ============================================
+ * CRIA PASSAGEIRO
+ * ============================================ */
 
 /**
  * @brief Cria um novo passageiro vazio.
@@ -147,9 +147,9 @@ void passenger_set_nc (Passageiros *p, char *nc);
 
 Passageiros *criaPassageiro();
 
-// ===================================================
-// DESTRÓI PASSAGEIRO
-// ===================================================
+/* ============================================
+ * DESTRÓI PASSAGEIRO
+ * ============================================ */
 
 /**
  * @brief Liberta toda a memória associada a um passageiro.

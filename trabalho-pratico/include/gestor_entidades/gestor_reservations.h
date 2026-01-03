@@ -95,9 +95,9 @@ int gestor_reservations_existe(GestorReservations *g, const char *id);
 typedef struct _GSList GSList;
 GSList *gestor_reservations_get_by_passenger(GestorReservations *g, const char *doc_number);
 
-// ============================================
-// DESTRÓI GESTOR DE RESERVAS
-// ============================================ */
+/* ============================================
+ * DESTRÓI GESTOR DE RESERVAS
+ * ============================================ */
 
 /**
  * @brief Liberta toda a memória associada ao gestor de reservas.
@@ -109,9 +109,9 @@ GSList *gestor_reservations_get_by_passenger(GestorReservations *g, const char *
 
 void gestor_reservations_liberta(GestorReservations *g);
 
-// ============================================
-// NOVA FUNÇÃO PARA FASE 2 (encapsulamento)
-// ============================================ 
+/* ============================================
+ * NOVA FUNÇÃO PARA FASE 2 (encapsulamento)
+ * ============================================ */
 
 /** 
  * @brief Tipo de função callback usada na iteração sobre reservas. 

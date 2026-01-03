@@ -4,9 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-// =================================================== 
-// ESTRUTURA
-// =================================================== 
+/* ============================================
+ * ESTRUTURA 
+ * ============================================ */
 
 /**
  * Estrutura interna do gestor de passageiros.
@@ -19,9 +19,9 @@ struct gestor_passengers {
     GHashTable *tabela_passageiros;  /**< Hash table: id_passageiro -> Passageiros* */
 };
 
-// =================================================== 
-// CRIA GESTOR DE PASSAGEIROS
-// =================================================== 
+/* ============================================
+ * CRIA GESTOR DE PASSAGEIROS
+ * ============================================ */
 
 GestorPassengers *gestor_passengers_novo(void) {
     GestorPassengers *g = malloc(sizeof(struct gestor_passengers));
@@ -37,9 +37,9 @@ GestorPassengers *gestor_passengers_novo(void) {
     return g;
 }
 
-// =================================================== 
-// DESTRÓI GESTOR DE PASSAGEIROS
-// =================================================== 
+/* ============================================
+ * DESTRÓI GESTOR DE PASSAGEIROS
+ * ============================================ */
 
 void gestor_passengers_destroy(GestorPassengers *g) {
     if (!g) return;
@@ -47,9 +47,9 @@ void gestor_passengers_destroy(GestorPassengers *g) {
     free(g);
 }
 
-// =================================================== 
-// INSERÇÃO
-// =================================================== 
+/* ============================================
+ * INSERÇÃO
+ * ============================================ */
 
 void gestor_passengers_inserir(GestorPassengers *g, Passageiros *p) {
     if (!g || !p) return;
@@ -61,9 +61,9 @@ void gestor_passengers_inserir(GestorPassengers *g, Passageiros *p) {
     g_hash_table_insert(g->tabela_passageiros, key, p);
 }
 
-// =================================================== 
-// CONSULTAS
-// =================================================== 
+/* ============================================
+ * CONSULTAS
+ * ============================================ */
 
 int gestor_passengers_conta_por_voo(GestorPassengers *g, const char *flight_id) {
     if (!g || !flight_id) return 0;
@@ -97,9 +97,9 @@ Passageiros *gestor_passengers_procura(GestorPassengers *g, const char *doc_numb
     return g_hash_table_lookup(g->tabela_passageiros, doc_number);
 }
 
-// =================================================== 
-// ITERAÇÃO
-// =================================================== 
+/* ============================================
+ * ITERAÇÃO
+ * ============================================ */
 
 void gestor_passengers_foreach(GestorPassengers *g, PassengerIterFunc f, void *user_data) {
     if (!g || !g->tabela_passageiros || !f) return;

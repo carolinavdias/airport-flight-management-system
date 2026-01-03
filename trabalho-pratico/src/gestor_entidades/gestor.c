@@ -1,6 +1,15 @@
 #include "gestor_entidades/gestor.h"
 #include <stdlib.h>
 
+/* ============================================
+ * ESTRUTURA 
+ * ============================================ */
+
+/** 
+ * Estrutura interna do gestor geral.
+ * Contém ponteiros para todos os gestores de entidades do sistema.
+ */
+
 struct gestor_geral {
     GestorAircrafts *aircrafts;
     GestorAirports *airports;
@@ -8,6 +17,11 @@ struct gestor_geral {
     GestorPassengers *passengers;
     GestorReservations *reservations;
 };
+
+/** 
+ * Cria o gestor geral e inicializa todos os gestores internos.
+ * Cada gestor é responsável por uma entidade específica.
+ */
 
 GestorGeral *gestor_geral_cria(void) {
     GestorGeral *g = malloc(sizeof(GestorGeral));
@@ -22,6 +36,12 @@ GestorGeral *gestor_geral_cria(void) {
     return g;
 }
 
+/**
+ * Liberta o gestor geral.
+ * Primeiro liberta todos os gestores internos
+ * e depois liberta a própria estrutura.
+ */
+
 void gestor_geral_liberta(GestorGeral *g) {
     if (!g) return;
 
@@ -34,25 +54,45 @@ void gestor_geral_liberta(GestorGeral *g) {
     free(g);
 }
 
-// ===================================================
-// GETTERS
-// ===================================================
+/* ============================================
+ * GETTERS
+ * ============================================ */
+
+/**
+ * Devolve o gestor de aeronaves associado ao gestor geral.
+ */
 
 GestorAircrafts *gestor_geral_aircrafts(GestorGeral *g) {
     return g ? g->aircrafts : NULL;
 }
 
+/**
+ * Devolve o gestor de aeroportos associado ao gestor geral.
+ */
+
 GestorAirports *gestor_geral_airports(GestorGeral *g) {
     return g ? g->airports : NULL;
 }
+
+/**
+ * Devolve o gestor de voos associado ao gestor geral.
+ */
 
 GestorFlights *gestor_geral_flights(GestorGeral *g) {
     return g ? g->flights : NULL;
 }
 
+/**
+ * Devolve o gestor de passageiros associado ao gestor geral.
+ */
+
 GestorPassengers *gestor_geral_passengers(GestorGeral *g) {
     return g ? g->passengers : NULL;
 }
+
+/**
+ * Devolve o gestor de reservas associado ao gestor geral.
+ */
 
 GestorReservations *gestor_geral_reservations(GestorGeral *g) {
     return g ? g->reservations : NULL;

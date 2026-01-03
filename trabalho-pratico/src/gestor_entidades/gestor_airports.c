@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <glib.h>
 
-// ===================================================
-// ESTRUTURA 
-// ===================================================
+/* ============================================
+ * ESTRUTURA 
+ * ============================================ */
 
 /**
  * Implementação interna do gestor de aeroportos.
@@ -22,9 +22,9 @@ typedef struct gestor_airports {
     GHashTable *contagens_partidas;   /**< Contagem de partidas por aeroporto */
 } GestorAirports;
 
-// ===================================================
-// GESTÃO DE AEROPORTOS
-// ===================================================
+/* ============================================
+ * GESTÃO DE AEROPORTOS
+ * ============================================ */
 
 /** 
  * Cria e inicializa o gestor de aeroportos.
@@ -45,9 +45,9 @@ GestorAirports *gestor_airports_cria(void) {
     return g;
 }
 
-// ===================================================
-// CONTAGENS DE PASSAGEIROS (Q1 OTIMIZADA)
-// ===================================================
+/* ============================================
+ * CONTAGENS DE PASSAGEIROS (Q1 OTIMIZADA)
+ * ============================================ */
 
 /** 
  * Inicializa as tabelas auxiliares de contagem de chegadas e partidas.
@@ -154,9 +154,9 @@ int gestor_airports_get_partidas(GestorAirports *g, const char *code) {
     return GPOINTER_TO_INT(g_hash_table_lookup(g->contagens_partidas, code));
 }
 
-// ===================================================
-// DESTRÓI GESTOR DE AEROPORTOS
-// ===================================================
+/* ============================================
+ * DESTRÓI GESTOR DE AEROPORTOS
+ * ============================================ */
 
 /** 
  * Liberta toda a memória associada ao gestor de aeroportos.

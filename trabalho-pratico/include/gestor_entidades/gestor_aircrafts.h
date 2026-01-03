@@ -12,9 +12,9 @@
  * aircrafts.csv, recorrendo a uma tabela de dispersão.
  */
 
-// ===================================================
-// ESTRUTURA 
-// ===================================================
+/* ============================================
+ * ESTRUTURA 
+ * ============================================ */
 
 /**
  * @struct gestor_aircrafts
@@ -26,9 +26,9 @@
 
 typedef struct gestor_aircrafts GestorAircrafts;
 
-// ===================================================
-// GESTÃO DE AERONAVES
-// ===================================================
+/* ============================================
+ * GESTÃO DE AERONAVES
+ * ============================================ */
 
 /**
  * @brief Cria e inicializa um gestor de aeronaves.
@@ -99,9 +99,9 @@ typedef void (*AircraftIterFunc)(Aeronave *a, void *user_data);
 
 void gestor_aircrafts_foreach(GestorAircrafts *g, AircraftIterFunc f, void *user_data);
 
-// ===================================================
-// DESTRÓI GESTOR DE AERONAVES
-// ===================================================
+/* ============================================
+ * DESTRÓI GESTOR DE AERONAVES 
+ * ============================================ */
 
 /**
  * @brief Liberta toda a memória associada ao gestor.

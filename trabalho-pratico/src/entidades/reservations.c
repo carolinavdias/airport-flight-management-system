@@ -29,9 +29,9 @@ typedef struct reservas {
     char *qr_code;                   /**< Código QR associado à reserva */ 
 } Reservas;
 
-// ===================================================
-// GETTERS
-// ===================================================
+/* ============================================
+ * GETTERS
+ * ============================================ */
 
 /**
  * Os getters permitem consultar os campos internos da reserva.
@@ -80,9 +80,9 @@ char *r_get_voo_por_indice(Reservas *r, int indice) {
     return g_strdup(r->reserva_lista->lista_voos_reservados[indice]);
 }
 
-// ===================================================
-// SETTERS
-// ===================================================
+/* ============================================
+ * SETTERS
+ * ============================================ */
 
 /**
  * Os setters atualizam os campos internos da reserva.
@@ -95,9 +95,9 @@ char *r_get_voo_por_indice(Reservas *r, int indice) {
  * Campos booleanos são interpretados a partir de `'t'` ou `'f'`.
  */
 
-// ===================================================
-// USADO PARA SET
-// ===================================================
+/* ============================================
+ * USADO PARA SET
+ * ============================================ */
 
 Voos_reservados *cria0_lista_reserva (int n) {
     Voos_reservados *vr = calloc (1, sizeof *vr);
@@ -160,9 +160,9 @@ void r_set_qr_code (Reservas *r, char *s) {
      r->qr_code = g_strdup(s);
 }
 
-// ===================================================
-// CRIA RESERVA
-// ===================================================
+/* ============================================
+ * CRIA RESERVA
+ * ============================================ */
 
 Reservas *criaReserva () {
     Reservas *r = calloc (1, sizeof *r);
@@ -171,9 +171,9 @@ Reservas *criaReserva () {
     return r;
 }
 
-// ===================================================
-// DESTRÓI RESERVA
-// ===================================================
+/* ============================================
+ * DESTRÓI RESERVA
+ * ============================================ */
 
 // Liberta todos os campos internos e a própria estrutura
 
