@@ -101,6 +101,13 @@ char *r_get_voo_por_indice(Reservas *r, int indice);
 Voos_reservados *cria0_lista_reserva (int n);
 
 /**
+ * @brief Liberta toda a memória associada a uma lista de voos reservados.
+ * @param data Ponteiro genérico para Voos_reservados.
+ */
+
+void liberta_lista_reserva(void *data);
+
+/**
  * @brief Define o ID de um voo na lista interna.
  * @param vr Estrutura de voos reservados.
  * @param i Índice.

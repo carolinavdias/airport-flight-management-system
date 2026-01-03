@@ -58,11 +58,11 @@ int r_get_id_pessoa_reservou (Reservas *r) {
 }
 
 int r_get_lista_n_voos (Reservas *r) {
-    return r->reserva_lista.n_voos;
+    return r->reserva_lista->n_voos;
 }
 
 char **r_get_lista_voos_reserv (Reservas *r) {
-    return r->reserva_lista.lista_voos_reservados;
+    return r->reserva_lista->lista_voos_reservados;
 }
 
 double r_get_preco(Reservas *r) {
@@ -72,12 +72,12 @@ double r_get_preco(Reservas *r) {
 
 char *r_get_voo_por_indice(Reservas *r, int indice) {
     if (!r) return NULL;
-    if (indice < 0 || indice >= r->reserva_lista.n_voos) return NULL;
-    if (!r->reserva_lista.lista_voos_reservados) return NULL;
-    if (!r->reserva_lista.lista_voos_reservados[indice]) return NULL;
+    if (indice < 0 || indice >= r->reserva_lista->n_voos) return NULL;
+    if (!r->reserva_lista->lista_voos_reservados) return NULL;
+    if (!r->reserva_lista->lista_voos_reservados[indice]) return NULL;
     
     // Retorna CÓPIA para encapsulamento - libertar com g_free()!
-    return g_strdup(r->reserva_lista.lista_voos_reservados[indice]);
+    return g_strdup(r->reserva_lista->lista_voos_reservados[indice]);
 }
 
 // ===================================================
@@ -106,12 +106,24 @@ Voos_reservados *cria0_lista_reserva (int n) {
     return vr;
 }
 
+void liberta_lista_reserva(void *data) {
+    Voos_reservados *v = data;
+    if (!v) return;
+    if (v->lista_voos_reservados) {
+        for (int i = 0; i < v->n_voos; i++) {
+            if (v->lista_voos_reservados[i]) g_free(v->lista_voos_reservados[i]);
+        }
+        free(v->lista_voos_reservados);
+    }
+    g_free(v);
+}
+
 void set_lista_voos (Voos_reservados *vr, int i, char *s) {
     vr->lista_voos_reservados[i] = g_strdup(s);
 }
 
 void r_set_lista (Reservas *r, Voos_reservados *novo) {
-    r->reserva_lista = *novo;
+    r->reserva_lista = novo;
 }
 
 void r_set_id_reserva (Reservas *r, char *s) {
@@ -154,8 +166,8 @@ void r_set_qr_code (Reservas *r, char *s) {
 
 Reservas *criaReserva () {
     Reservas *r = calloc (1, sizeof *r);
-    r->reserva_lista.n_voos = 0;
-    r->reserva_lista.lista_voos_reservados = NULL;
+    r->reserva_lista->n_voos = 0;
+    r->reserva_lista->lista_voos_reservados = NULL;
     return r;
 }
 
@@ -168,15 +180,14 @@ Reservas *criaReserva () {
 void libertaReserva(void *data) {
     Reservas *a = data;
     if (!a) return;
-    if (a->reserva_lista.lista_voos_reservados) {
-        for (int i = 0; i < a->reserva_lista.n_voos; i++) {
-            g_free(a->reserva_lista.lista_voos_reservados[i]);
+    if (a->reserva_lista->lista_voos_reservados) {
+        for (int i = 0; i < a->reserva_lista->n_voos; i++) {
+            g_free(a->reserva_lista->lista_voos_reservados[i]);
         }
-        free(a->reserva_lista.lista_voos_reservados);
+        free(a->reserva_lista->lista_voos_reservados);
     }
     g_free(a->id_reserva);
     g_free(a->lugar_reservado);
     g_free(a->qr_code);
     g_free(a);
 }
-
