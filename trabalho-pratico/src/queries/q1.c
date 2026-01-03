@@ -43,10 +43,10 @@ char *query1(const char *code, GestorAirports *gestorAeroportos,
     int chegadas = gestor_airports_get_chegadas(gestorAeroportos, code);
     int partidas = gestor_airports_get_partidas(gestorAeroportos, code);
     
-    char *iata = airport_get_code_IATA(a);
-    char *name = airport_get_name(a);
-    char *city = airport_get_city(a);
-    char *country = airport_get_country(a);
+    const char *iata = airport_get_code_IATA(a);
+    const char *name = airport_get_name(a);
+    const char *city = airport_get_city(a);
+    const char *country = airport_get_country(a);
     
     char *resultado = NULL; 
     int len = asprintf(&resultado, "%s;%s;%s;%s;%s;%d;%d\n", 
@@ -58,10 +58,10 @@ char *query1(const char *code, GestorAirports *gestorAeroportos,
                        chegadas, 
                        partidas); 
     
-    g_free(iata);
-    g_free(name);
-    g_free(city);
-    g_free(country);
+    //g_free(iata);
+    //g_free(name);
+    //g_free(city);
+    //g_free(country);
     
     if (len == -1) return strdup("\n"); 
     

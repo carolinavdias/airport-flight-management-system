@@ -34,37 +34,6 @@
 int valida_id_passageiro(const char *s);
 
 /**
- * @brief Valida o género do passageiro.
- *
- * Aceita apenas:
- *  - 'M' (Masculino)
- *  - 'F' (Feminino)
- *  - 'O' (Outro)
- *
- * @param s String contendo o género.
- * @return 1 se válido, 0 caso contrário.
- */
-
-
-/**
- * @brief Valida um email.
- *
- * O email deve seguir o formato:
- *   username@dominio.ext
- *
- * Regras:
- *  - username: letras minúsculas, dígitos ou '.'
- *  - domínio: apenas letras minúsculas
- *  - extensão: 2 a 3 letras minúsculas
- *
- * @param s String contendo o email.
- * @return 1 se válido, 0 caso contrário.
- */
-
-
-/**
-<<<<<<< HEAD
-=======
  * @brief Valida uma data no formato YYYY-MM-DD.
  *
  * Verifica:
@@ -79,7 +48,6 @@ int valida_id_passageiro(const char *s);
 
 
 /**
->>>>>>> 840f49e (limpeza e leaks)
  * @brief Valida todos os campos de um passageiro e cria a estrutura correspondente.
  *
  * Esta função valida:

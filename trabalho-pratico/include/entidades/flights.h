@@ -130,7 +130,7 @@ long long voo_get_actual_departure (const Voo *v);
  * @param v Ponteiro para o voo
  * @return Cópia da airline (deve ser libertada com g_free)
  */
-char *voo_get_airline(const Voo *v);
+const char *voo_get_airline(const Voo *v);
 
 /* ============================================
  * SETTERS

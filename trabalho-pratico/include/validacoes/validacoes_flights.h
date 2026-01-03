@@ -37,8 +37,6 @@
 int valida_id_voo (const char *s);
 
 /**
-<<<<<<< HEAD
-=======
  * @brief Valida uma data e hora no formato YYYY-MM-DD HH:MM.
  *
  * Verifica:
@@ -49,41 +47,6 @@ int valida_id_voo (const char *s);
  *  - data não superior à data atual (2025-09-30).
  *
  * @param s String contendo a data e hora.
- * @return 1 se válido, 0 caso contrário.
- */
-
-
-/**
->>>>>>> 840f49e (limpeza e leaks)
- * @brief Valida o estado textual de um voo.
- *
- * Aceita apenas:
- *  - "On Time"
- *  - "Delayed"
- *  - "Cancelled"
- *
- * @param s String contendo o estado.
- * @return 1 se válido, 0 caso contrário.
- */
-
-
-/* ============================================
- * VOO -> VALIDAÇÃO LÓGICA
- * ============================================ */
-
-/**
- * @brief Valida a coerência lógica de um voo.
- *
- * Verifica:
- *  - origem diferente do destino;
- *  - aeronave existente no gestor;
- *  - arrival >= departure;
- *  - regras específicas para voos cancelados;
- *  - regras específicas para voos atrasados;
- *  - coerência entre horários scheduled e actual.
- *
- * @param voo Ponteiro para o voo.
- * @param gestor_aeronaves Gestor de aeronaves para validação cruzada.
  * @return 1 se válido, 0 caso contrário.
  */
 

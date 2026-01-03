@@ -97,11 +97,3 @@ int valida_codigoIATA(const char *s) {
 
     return s[3] == '\0';
 }
-
-/**
- * Valida strings booleanas ("true" ou "false").
- */
-
-int valida_bool(const char *s) {
-    return s && (strcmp(s, "true") == 0 || strcmp(s, "false") == 0);
-}

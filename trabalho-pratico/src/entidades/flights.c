@@ -81,9 +81,8 @@ long long voo_get_actual_arrival (const Voo *v) {
     return v->actual_arrival;
 }
 
-char *voo_get_airline(const Voo *v) {
-    if (!v || !v->airline) return NULL;
-    return g_strdup(v->airline);
+const char *voo_get_airline(const Voo *v) {
+    return v->airline;
 }
 
 // ===================================================

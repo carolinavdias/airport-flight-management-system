@@ -138,10 +138,10 @@ char *query3(const char *data_inicio, const char *data_fim,
 
         if (a) {
             //guardar getters para libertar
-            char *iata = airport_get_code_IATA(a);
-            char *name = airport_get_name(a);
-            char *city = airport_get_city(a);
-            char *country = airport_get_country(a);
+            const char *iata = airport_get_code_IATA(a);
+            const char *name = airport_get_name(a);
+            const char *city = airport_get_city(a);
+            const char *country = airport_get_country(a);
             
             if (asprintf(&resultado, "%s;%s;%s;%s;%d\n",
                         iata,
@@ -153,10 +153,10 @@ char *query3(const char *data_inicio, const char *data_fim,
             }
             
             //libertar strings
-            g_free(iata);
-            g_free(name);
-            g_free(city);
-            g_free(country);
+            //g_free(iata);
+            //g_free(name);
+            //g_free(city);
+            //g_free(country);
         } else {
             resultado = strdup("\n");
         }

@@ -17,36 +17,6 @@
  *  - validação completa dos campos e criação da estrutura Aeroporto.
  */
 
-/**
- * @brief Valida uma coordenada geográfica (latitude ou longitude).
- *
- * A função verifica:
- *  - formato numérico válido (incluindo sinal e ponto decimal);
- *  - apenas um ponto decimal permitido;
- *  - limites válidos conforme o tipo:
- *      - versao = 1 → latitude (−90 a 90)
- *      - versao = 2 → longitude (−180 a 180)
- *
- * @param s String contendo a coordenada.
- * @param versao 1 para latitude, 2 para longitude.
- * @return 1 se válido, 0 caso contrário.
- */
-
-
-/**
- * @brief Valida o tipo de aeroporto.
- *
- * Aceita apenas os tipos definidos na especificação:
- *  - small_airport
- *  - medium_airport
- *  - large_airport
- *  - heliport
- *  - seaplane_base
- *
- * @param s String contendo o tipo.
- * @return 1 se válido, 0 caso contrário.
- */
-
 
  /** 
   * @brief Valida todos os campos de um aeroporto e cria a estrutura correspondente.

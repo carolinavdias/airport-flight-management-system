@@ -175,7 +175,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                             }
                             // Popular cache Q5: atrasos por airline (so voos Delayed)
                             if (voo_get_status(voo_atual) == ESTADO_DELAYED) {
-                                char *airline = voo_get_airline(voo_atual);
+                                const char *airline = voo_get_airline(voo_atual);
                                 if (airline) {
                                     long long dep = voo_get_departure(voo_atual);
                                     long long act = voo_get_actual_departure(voo_atual);
@@ -188,7 +188,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                                     int delay = act_total - dep_total;
                                     if (delay < 0) delay += 24 * 60;
                                     gestor_flights_add_atraso_q5(V, airline, delay);
-                                    g_free(airline);
+                                    //g_free(airline);
                                 }
                             }
                    	} else linha_valida = 0;
