@@ -59,15 +59,13 @@ static int dias_no_mes(int ano, int mes) {
  * @brief Converte data para número de dias desde 1 Jan 0001
  */
 static long data_para_dias(int ano, int mes, int dia) {
-    long total = 0;
-    for (int a = 1; a < ano; a++) {
-        total += eh_bissexto(a) ? 366 : 365;
-    }
-    for (int m = 1; m < mes; m++) {
-        total += dias_no_mes(ano, m);
-    }
-    total += dia;
-    return total;
+    // Fórmula O(1) em vez de loop
+    int a = ano - 1;
+    long dias_anos = a * 365L + a/4 - a/100 + a/400;
+    int dias_mes_acum[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
+    long dias_meses = dias_mes_acum[mes - 1];
+    if (mes > 2 && eh_bissexto(ano)) dias_meses++;
+    return dias_anos + dias_meses + dia;
 }
 
 /**
@@ -298,6 +296,30 @@ static void processa_reserva2(Reservas *r, void *user_data) {
  * QUERY 4 - IMPLEMENTAÇÃO PRINCIPAL
  * ===================================================== */
 
+/* =====================================================
+ * NOVA VERSÃO OTIMIZADA - USA CACHE TOP10
+ * ===================================================== */
+
+typedef struct {
+    GHashTable *contagem;  // doc_number -> count
+    long inicio_dias;
+    long fim_dias;
+} DadosTop10;
+
+static int semana_no_intervalo_v2(long id_semana, long inicio, long fim) {
+    if (inicio < 0 || fim < 0) return 1;
+    long dom = id_semana, sab = id_semana + 6;
+    return (dom <= fim && sab >= inicio);
+}
+
+static void conta_top10(long id_semana, const char *doc_number, void *user_data) {
+    DadosTop10 *d = user_data;
+    if (!semana_no_intervalo_v2(id_semana, d->inicio_dias, d->fim_dias)) return;
+    int *c = g_hash_table_lookup(d->contagem, doc_number);
+    if (!c) { c = g_new(int, 1); *c = 0; g_hash_table_insert(d->contagem, g_strdup(doc_number), c); }
+    (*c)++;
+}
+
 char *query4(const char *linhaComando,
              GestorPassengers *gestorPassageiros,
              GestorFlights *gestorVoos,
@@ -318,84 +340,25 @@ char *query4(const char *linhaComando,
     }
     
     // =========================================================
-    // FASE 1: Recolher gastos por passageiro, por semana
-    // =========================================================
-    GHashTable *semanas = g_hash_table_new_full(
-        g_direct_hash, g_direct_equal, 
-        NULL, (GDestroyNotify)g_hash_table_destroy
-    );
-    
-    DadosRecolha dados = {
-        .semanas = semanas,
-        .gestorVoos = gestorVoos,
-        .inicio_dias = inicio_dias,
-        .fim_dias = fim_dias
-    };
-    
-    // Usar função ENCAPSULADA para iterar
-    gestor_reservations_foreach_cache_q4(gestorReservas, processa_cache_q4, &dados);
-    
-    // =========================================================
-    // FASE 2: Calcular top 10 de cada semana (no intervalo)
+    // FASE 1+2: Usar cache pre-calculado de top 10
     // =========================================================
     GHashTable *contagem_top10 = g_hash_table_new_full(
         g_str_hash, g_str_equal, g_free, g_free
     );
     
-    GHashTableIter iter_sem;
-    gpointer key_sem, val_sem;
-    g_hash_table_iter_init(&iter_sem, semanas);
+    DadosTop10 dados_top = {
+        .contagem = contagem_top10,
+        .inicio_dias = inicio_dias,
+        .fim_dias = fim_dias
+    };
     
-    while (g_hash_table_iter_next(&iter_sem, &key_sem, &val_sem)) {
-        long id_semana = GPOINTER_TO_INT(key_sem);
-        GHashTable *gastos_semana = val_sem;
-        
-        // Verificar se semana intersecta com filtro
-        if (!semana_no_intervalo(id_semana, inicio_dias, fim_dias)) {
-            continue;
-        }
-        
-        guint n_pass = g_hash_table_size(gastos_semana);
-        if (n_pass == 0) continue;
-        
-        // Converter para array para ordenar
-        GastoPassageiro *arr = g_new(GastoPassageiro, n_pass);
-        
-        GHashTableIter iter_g;
-        gpointer key_doc, val_gasto;
-        guint idx = 0;
-        
-        g_hash_table_iter_init(&iter_g, gastos_semana);
-        while (g_hash_table_iter_next(&iter_g, &key_doc, &val_gasto)) {
-            arr[idx].doc_number = key_doc;
-            arr[idx].total_gasto = *((double *)val_gasto);
-            idx++;
-        }
-        
-        // Ordenar: maior gasto primeiro, empate por menor doc_number
-        qsort(arr, n_pass, sizeof(GastoPassageiro), compara_gastos);
-        
-        // Incrementar contagem para top 10
-        int limite = (n_pass < 10) ? (int)n_pass : 10;
-        for (int j = 0; j < limite; j++) {
-            int *count = g_hash_table_lookup(contagem_top10, arr[j].doc_number);
-            if (!count) {
-                count = g_new(int, 1);
-                *count = 0;
-                g_hash_table_insert(contagem_top10, g_strdup(arr[j].doc_number), count);
-            }
-            (*count)++;
-        }
-        
-        g_free(arr);
-    }
-    
-    // =========================================================
+    gestor_reservations_foreach_top10(gestorReservas, conta_top10, &dados_top);
+
     // FASE 3: Encontrar passageiro com mais aparições
     // =========================================================
     if (g_hash_table_size(contagem_top10) == 0) {
         g_hash_table_destroy(contagem_top10);
-        g_hash_table_destroy(semanas);
+        
         return strdup("\n");
     }
     
@@ -466,7 +429,7 @@ char *query4(const char *linhaComando,
     
     // Limpeza
     g_hash_table_destroy(contagem_top10);
-    g_hash_table_destroy(semanas);
+    
     
     return resultado;
 }

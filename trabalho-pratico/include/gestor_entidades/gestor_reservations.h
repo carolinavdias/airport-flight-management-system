@@ -182,5 +182,23 @@ void gestor_reservations_add_gasto_q4(GestorReservations *g, long id_semana, con
 typedef void (*CacheQ4IterFunc)(long id_semana, const char *doc_number, double gasto, void *user_data);
 void gestor_reservations_foreach_cache_q4(GestorReservations *g, CacheQ4IterFunc func, void *user_data);
 
+/**
+ * @brief Finaliza o cache Q4 calculando top 10 de cada semana.
+ * Deve ser chamado após carregar todas as reservas.
+ *
+ * @param g Ponteiro para o gestor.
+ */
+void gestor_reservations_finaliza_cache_q4(GestorReservations *g);
+
+/**
+ * @brief Itera sobre os top 10 pré-calculados.
+ *
+ * @param g Ponteiro para o gestor.
+ * @param func Função callback chamada para cada (semana, doc_number no top10).
+ * @param user_data Dados passados ao callback.
+ */
+typedef void (*Top10IterFunc)(long id_semana, const char *doc_number, void *user_data);
+void gestor_reservations_foreach_top10(GestorReservations *g, Top10IterFunc func, void *user_data);
+
 #endif
 
