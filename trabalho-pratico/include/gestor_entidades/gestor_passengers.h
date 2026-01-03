@@ -131,5 +131,29 @@ typedef void (*PassengerIterFunc)(Passageiros *p, void *user_data);
 
 void gestor_passengers_foreach(GestorPassengers *gp, PassengerIterFunc f, void *user_data);
 
+/**
+ * @brief Inicializa o cache Q6 para contagem de destinos por nacionalidade.
+ * @param gp Ponteiro para o gestor.
+ */
+void gestor_passengers_init_cache_q6(GestorPassengers *gp);
+
+/**
+ * @brief Adiciona contagem ao cache Q6.
+ * @param gp Ponteiro para o gestor.
+ * @param nacionalidade Nacionalidade do passageiro.
+ * @param destino Codigo do aeroporto de destino.
+ */
+void gestor_passengers_add_destino_q6(GestorPassengers *gp, const char *nacionalidade, const char *destino);
+
+/**
+ * @brief Itera sobre destinos de uma nacionalidade.
+ * @param gp Ponteiro para o gestor.
+ * @param nacionalidade Nacionalidade a consultar.
+ * @param func Callback para cada destino.
+ * @param user_data Dados do utilizador.
+ */
+typedef void (*DestinoIterFunc)(const char *destino, int count, void *user_data);
+void gestor_passengers_foreach_destinos_q6(GestorPassengers *gp, const char *nacionalidade, DestinoIterFunc func, void *user_data);
+
 #endif
 
