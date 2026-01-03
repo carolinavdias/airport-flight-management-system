@@ -14,7 +14,11 @@
 // ESTRUTURA
 // ===================================================
 
-// Estrutura que representa uma aeronave
+/**
+ * @struct aeronave 
+ * @brief Estrutura da entidade aeronave.
+ */
+
 typedef struct aeronave Aeronave;
 
 // ===================================================

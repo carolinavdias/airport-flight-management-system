@@ -4,20 +4,40 @@
 #include <stdlib.h>
 #include <string.h>
 
+// ===================================================
+// ESTRUTURA 
+// ===================================================
+
+/**
+ * Estrutura interna do gestor de reservas.
+ *
+ * Armazena todas as reservas numa hash table indexada pelo seu ID.
+ * A tabela liberta automaticamente as chaves e as reservas armazenadas.
+ */
+
 struct gestor_reservations {
-    GHashTable *tabela;
+    GHashTable *tabela;   // Hash table: id_reserva → Reservas*
 };
 
-/* ============================================
- * FUNÇÕES EXISTENTES (sem alterações)
- * ============================================ */
+// ============================================
+// CRIA GESTOR DE RESERVAS
+// ============================================ */
 
 GestorReservations *gestor_reservations_cria(void) {
     GestorReservations *g = malloc(sizeof(struct gestor_reservations));
     if (!g) return NULL;
-    g->tabela = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, libertaReserva);
+    g->tabela = g_hash_table_new_full(
+        g_str_hash, 
+        g_str_equal, 
+        g_free,          // liberta chave
+        libertaReserva   // liberta Reservas*
+    );
     return g;
 }
+
+// =================================================== 
+// OPERAÇÕES BÁSICAS 
+// =================================================== 
 
 void gestor_reservations_insere(GestorReservations *g, Reservas *reserva) {
     if (!g || !reserva) return;
@@ -38,6 +58,10 @@ Reservas *gestor_reservations_procura(GestorReservations *g, const char *id_rese
     return g_hash_table_lookup(g->tabela, id_reserva);
 }
 
+// ============================================
+// DESTRÓI GESTOR DE RESERVAS
+// ============================================ */
+
 void gestor_reservations_liberta(GestorReservations *g) {
     if (!g) return;
     if (g->tabela) {
@@ -46,9 +70,13 @@ void gestor_reservations_liberta(GestorReservations *g) {
     free(g);
 }
 
-// Função auxiliar para Q6 - procurar reservas por passageiro
-// NOTA: Esta função retorna GSList* o que viola encapsulamento,
-// mas mantém-se para compatibilidade com código existente
+/**
+ * Função auxiliar usada na Q6.
+ *
+ * Percorre todas as reservas e devolve uma GSList* contendo as reservas
+ * cujo id_pessoa_reservou coincide com o doc_number fornecido.
+ */
+
 GSList *gestor_reservations_get_by_passenger(GestorReservations *gr, const char *doc_number) {
     if (!gr || !doc_number) return NULL;
 
@@ -73,9 +101,9 @@ GSList *gestor_reservations_get_by_passenger(GestorReservations *gr, const char 
     return lista;
 }
 
-/* ============================================
- * NOVA FUNÇÃO PARA FASE 2 (encapsulamento)
- * ============================================ */
+// ============================================
+// NOVA FUNÇÃO PARA FASE 2 (encapsulamento)
+// ============================================ 
 
 void gestor_reservations_foreach(GestorReservations *g, ReservationIterFunc f, void *user_data) {
     if (!g || !g->tabela || !f) return;
@@ -89,7 +117,13 @@ void gestor_reservations_foreach(GestorReservations *g, ReservationIterFunc f, v
         f((Reservas *)value, user_data);
     }
 }
-// Conta quantas reservas têm este voo
+/**
+ * Conta quantas reservas incluem um determinado voo.
+ *
+ * Percorre todas as reservas e verifica se o flight_id aparece
+ * na lista de voos reservados.
+ */
+
 int gestor_reservations_conta_por_voo(GestorReservations *g, const char *flight_id) {
     if (!g || !g->tabela || !flight_id) return 0;
     

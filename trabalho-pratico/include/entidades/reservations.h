@@ -14,11 +14,17 @@
 // ESTRUTURAS
 // ===================================================
 
-// Estrutura que representa a lista de voos reservados 
+/**
+ * @struct voos_reservados
+ * @brief Estrutura que representa a lista de voos reservados.
+ */
 
 typedef struct voos_reservados Voos_reservados;
 
-// Estrutura que representa uma reserva
+/**
+ * @struct reservas
+ * @brief Estrutura que representa uma reserva.
+ */
 
 typedef struct reservas Reservas;
 

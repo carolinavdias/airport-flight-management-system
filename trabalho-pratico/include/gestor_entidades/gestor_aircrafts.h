@@ -17,6 +17,7 @@
 // ===================================================
 
 /**
+ * @struct gestor_aircrafts
  * @brief Estrutura do gestor de aeronaves.
  *
  * Internamente, o gestor utiliza uma GHashTable onde

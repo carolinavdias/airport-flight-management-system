@@ -19,7 +19,10 @@
 // ESTRUTURA
 // ===================================================
 
-// Estrutura que representa um passageiro
+/**
+ * @struct passageiros
+ * @brief Estrutura da entidade passageiro.
+ */
 
 typedef struct passageiros Passageiros;
 

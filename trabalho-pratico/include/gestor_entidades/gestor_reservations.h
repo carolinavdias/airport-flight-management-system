@@ -3,55 +3,150 @@
 
 #include "entidades/reservations.h"
 
+/**
+ * @file gestor_reservations.h
+ * @brief Interface do gestor de reservas.
+ *
+ * Este módulo define o gestor responsável por armazenar e gerir todas as
+ * reservas do sistema.  
+ *
+ * O gestor utiliza uma hash table para indexar reservas pelo seu ID,
+ * permitindo inserção, pesquisa, verificação de existência e iteração.
+ *
+ * Inclui ainda uma função auxiliar para obter todas as reservas associadas
+ * a um passageiro.
+ */
+
+// ===================================================
+// ESTRUTURA 
+// ===================================================
+
+/**
+ * @struct gestor_reservations
+ * @brief Estrutura do gestor de reservas.
+ *
+ * Armazena todas as reservas numa hash table indexada pelo seu ID.
+ * A tabela liberta automaticamente as chaves e as reservas armazenadas.
+ */
+
 typedef struct gestor_reservations GestorReservations;
 
-/* ============================================
- * FUNÇÕES EXISTENTES (sem alterações)
- * ============================================ */
+// ============================================
+// CRIA GESTOR DE RESERVAS
+// ============================================ */
 
-//cria o gestor
+/**
+ * @brief Cria um novo gestor de reservas.
+ *
+ * Inicializa a hash table interna responsável por armazenar as reservas.
+ *
+ * @return Ponteiro para o gestor criado, ou NULL em caso de erro.
+ */
+
 GestorReservations *gestor_reservations_cria(void);
 
-//insere uma reserva
+// =================================================== 
+// OPERAÇÕES BÁSICAS 
+// =================================================== 
+ 
+/**
+ * @brief Insere uma reserva no gestor.
+ *
+ * A reserva é indexada pelo seu ID.  
+ * A chave é duplicada internamente para garantir encapsulamento.
+ *
+ * @param g Ponteiro para o gestor.
+ * @param r Ponteiro para a reserva a inserir.
+ */
+
 void gestor_reservations_insere(GestorReservations *g, Reservas *r);
 
-//procura uma reserva
+/**
+ * @brief Procura uma reserva pelo seu identificador.
+ *
+ * @param g Ponteiro para o gestor.
+ * @param id Identificador da reserva.
+ * @return Ponteiro para a reserva ou NULL se não existir.
+ */
+
 Reservas *gestor_reservations_procura(GestorReservations *g, const char *id);
 
-//verifica se existe
+/** 
+ * @brief Verifica se uma reserva existe no gestor. 
+ * 
+ * @param g Ponteiro para o gestor. 
+ * @param id Identificador da reserva. 
+ * @return 1 se existir, 0 caso contrário. 
+ */
+
 int gestor_reservations_existe(GestorReservations *g, const char *id);
 
-//procurar reservas por passageiro (retorna GSList* que deve ser libertada com g_slist_free)
-//NOTA: Esta função viola encapsulamento mas mantém-se para compatibilidade
+/**
+ * @brief Obtém todas as reservas associadas a um passageiro.
+ *
+ * @warning Esta função viola encapsulamento ao devolver GSList*,
+ * mas é mantida por compatibilidade com código existente.
+ *
+ * @param g Ponteiro para o gestor.
+ * @param doc_number Identificador do passageiro.
+ * @return Lista GSList* contendo Reservas* (não libertar elementos).
+ */
+
 typedef struct _GSList GSList;
 GSList *gestor_reservations_get_by_passenger(GestorReservations *g, const char *doc_number);
 
-//liberta tudo
-void gestor_reservations_liberta(GestorReservations *g);
-
-/* ============================================
- * NOVA FUNÇÃO PARA FASE 2 (encapsulamento)
- * ============================================ */
+// ============================================
+// DESTRÓI GESTOR DE RESERVAS
+// ============================================ */
 
 /**
- * @brief Tipo de função callback para iteração sobre reservas
- * @param r Ponteiro para a reserva atual
- * @param user_data Dados do utilizador passados ao foreach
+ * @brief Liberta toda a memória associada ao gestor de reservas.
+ *
+ * Liberta todas as reservas armazenadas e a própria estrutura do gestor.
+ *
+ * @param g Ponteiro para o gestor.
  */
+
+void gestor_reservations_liberta(GestorReservations *g);
+
+// ============================================
+// NOVA FUNÇÃO PARA FASE 2 (encapsulamento)
+// ============================================ 
+
+/** 
+ * @brief Tipo de função callback usada na iteração sobre reservas. 
+ * 
+ * @param r Ponteiro para a reserva atual. 
+ * @param user_data Dados fornecidos pelo utilizador. 
+ */
+
 typedef void (*ReservationIterFunc)(Reservas *r, void *user_data);
 
 /**
- * @brief Itera sobre todas as reservas, chamando a função callback para cada uma
- * 
- * Esta função permite iterar sobre todas as reservas sem expor a estrutura
+ * @brief Itera sobre todas as reservas do gestor.
+ *
+ * Esta função permite percorrer todas as reservas sem expor a estrutura
  * interna (GHashTable), respeitando o encapsulamento.
- * 
- * @param g Ponteiro para o gestor de reservas
- * @param f Função callback a chamar para cada reserva
- * @param user_data Dados a passar para a função callback
+ *
+ * @param g Ponteiro para o gestor.
+ * @param f Função callback a aplicar a cada reserva.
+ * @param user_data Dados adicionais fornecidos ao callback.
  */
+
 void gestor_reservations_foreach(GestorReservations *g, ReservationIterFunc f, void *user_data);
 
-#endif
-// Conta quantas reservas têm este voo
+/**
+ * @brief Conta quantas reservas incluem um determinado voo.
+ *
+ * Percorre todas as reservas e verifica se o voo aparece na lista de voos
+ * reservados.
+ *
+ * @param g Ponteiro para o gestor.
+ * @param flight_id Identificador do voo.
+ * @return Número de reservas que incluem o voo.
+ */
+
 int gestor_reservations_conta_por_voo(GestorReservations *g, const char *flight_id);
+
+#endif
+

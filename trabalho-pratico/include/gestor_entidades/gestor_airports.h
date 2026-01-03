@@ -19,6 +19,8 @@
 // ===================================================
 
 /**
+ * @struct gestor_airports
+ * @brief Estrutura interna do gestor de aeroportos.
  * Estrutura que representa o gestor de aeroportos.
  * A implementação interna utiliza hash tables.
  */
@@ -71,7 +73,7 @@ Aeroporto *gestor_airports_procura(GestorAirports *g, const char *code_IATA);
 int gestor_airports_existe(GestorAirports *g, const char *code_IATA);
 
 // ===================================================
-// CONTAGENS DE PASSAGEIROS (Q1 OTIMIZADA)
+// CONTAGENS DE PASSAGEIROS 
 // ===================================================
 
 /**
