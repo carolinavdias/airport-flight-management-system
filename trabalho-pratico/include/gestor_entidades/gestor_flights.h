@@ -155,26 +155,14 @@ Voo **gestor_flights_get_array_ordenado(GestorFlights *g, int *num_voos);
 /* ============================================
  * CONTAGENS DE AIRCRAFT (Q2) 
  * ============================================ */
-
-typedef struct _GHashTable GHashTable;
-
 /**
- * @brief Define a tabela de contagens por aircraft_id.
+ * @brief Obtém o número de voos de um aircraft específico.
  *
  * @param g Ponteiro para o gestor.
- * @param contagens Hash table com contagens.
+ * @param aircraft_id Identificador do aircraft.
+ * @return Número de voos ou 0 se não encontrado.
  */
-
-void gestor_flights_set_contagens_aircraft(GestorFlights *g, GHashTable *contagens);
-
-/**
- * @brief Obtém a tabela de contagens por aircraft_id.
- *
- * @param g Ponteiro para o gestor.
- * @return Hash table ou NULL.
- */
-
-GHashTable *gestor_flights_get_contagens_aircraft(GestorFlights *g);
+int gestor_flights_get_contagem_aircraft(GestorFlights *g, const char *aircraft_id);
 
 /* ============================================
  * PROCURA

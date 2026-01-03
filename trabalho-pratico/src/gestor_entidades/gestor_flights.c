@@ -149,8 +149,10 @@ void gestor_flights_set_contagens_aircraft(GestorFlights *g, GHashTable *contage
     g->contagens_aircraft = contagens;
 }
 
-GHashTable *gestor_flights_get_contagens_aircraft(GestorFlights *g) {
-    return g ? g->contagens_aircraft : NULL;
+int gestor_flights_get_contagem_aircraft(GestorFlights *g, const char *aircraft_id) {
+    if (!g || !g->contagens_aircraft || !aircraft_id) return 0;
+    gpointer val = g_hash_table_lookup(g->contagens_aircraft, aircraft_id);
+    return val ? GPOINTER_TO_INT(val) : 0;
 }
 
 

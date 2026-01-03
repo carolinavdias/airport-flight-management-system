@@ -51,7 +51,7 @@ typedef struct {
     const char *fabricante_lower;
     int usar_filtro;
     GList *resultado;
-    GHashTable *contagens_aircraft;  //recebe do gestor
+    GestorFlights *gestorVoos;  //gestor para consultar contagens
 } DadosFiltro;
 
 static void processa_aeronave(Aeronave *a, void *user_data) {
@@ -74,9 +74,9 @@ static void processa_aeronave(Aeronave *a, void *user_data) {
     
     //busca contagem na tabela PRÉ-CONSTRUÍDA (não reconstrói!)
     int count = 0;
-    if (dados->contagens_aircraft) {
-        gpointer ptr = g_hash_table_lookup(dados->contagens_aircraft, id_str);
-        if (ptr) count = GPOINTER_TO_INT(ptr);
+    if (dados->gestorVoos) {
+        int count_val = gestor_flights_get_contagem_aircraft(dados->gestorVoos, id_str);
+        count = count_val;
     }
 
     Contagem *c = g_new(Contagem, 1);
@@ -122,14 +122,14 @@ char *query2(const char *linhaComando, GestorAircrafts *gestorAeronaves, GestorF
     gchar *fabricante_lower = usar_filtro ? g_ascii_strdown(fabricante_raw, -1) : NULL;
 
     //obtém tabela PRÉ-CONSTRUÍDA do gestor (não reconstrói!) -otimização
-    GHashTable *contagens_aircraft = gestor_flights_get_contagens_aircraft(gestorVoos);
+    //usa gestor diretamente (encapsulado)
 
     //prepara dados para o foreach
     DadosFiltro dados = {
         .fabricante_lower = fabricante_lower,
         .usar_filtro = usar_filtro,
         .resultado = NULL,
-        .contagens_aircraft = contagens_aircraft  //passa tabela
+        .gestorVoos = gestorVoos  //passa gestor encapsulado
     };
 
     //usa foreach em vez de iterar diretamente
