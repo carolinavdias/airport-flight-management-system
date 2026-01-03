@@ -81,19 +81,6 @@ Reservas *gestor_reservations_procura(GestorReservations *g, const char *id);
 
 int gestor_reservations_existe(GestorReservations *g, const char *id);
 
-/**
- * @brief Obtém todas as reservas associadas a um passageiro.
- *
- * @warning Esta função viola encapsulamento ao devolver GSList*,
- * mas é mantida por compatibilidade com código existente.
- *
- * @param g Ponteiro para o gestor.
- * @param doc_number Identificador do passageiro.
- * @return Lista GSList* contendo Reservas* (não libertar elementos).
- */
-
-typedef struct _GSList GSList;
-GSList *gestor_reservations_get_by_passenger(GestorReservations *g, const char *doc_number);
 
 /* ============================================
  * DESTRÓI GESTOR DE RESERVAS
@@ -126,7 +113,7 @@ typedef void (*ReservationIterFunc)(Reservas *r, void *user_data);
  * @brief Itera sobre todas as reservas do gestor.
  *
  * Esta função permite percorrer todas as reservas sem expor a estrutura
- * interna (GHashTable), respeitando o encapsulamento.
+ * interna, respeitando o encapsulamento.
  *
  * @param g Ponteiro para o gestor.
  * @param f Função callback a aplicar a cada reserva.

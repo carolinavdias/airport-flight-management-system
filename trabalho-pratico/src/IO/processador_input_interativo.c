@@ -27,6 +27,7 @@ static void trim_newline(char *s) {
  */
 
 static int processar_comando(GestorGeral *gestor, char *input) {
+    (void)gestor; // TODO: usar para chamar queries
     if (!input || !*input) return 1;
 
     /* comandos de saída */

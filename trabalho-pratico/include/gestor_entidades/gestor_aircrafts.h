@@ -20,7 +20,7 @@
  * @struct gestor_aircrafts
  * @brief Estrutura do gestor de aeronaves.
  *
- * Internamente, o gestor utiliza uma GHashTable onde
+ * Internamente, o gestor utiliza uma estrutura de dados onde
  * as aeronaves são indexadas pelo seu identificador.
  */
 
