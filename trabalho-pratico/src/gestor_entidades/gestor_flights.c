@@ -25,6 +25,7 @@ typedef struct gestor_flights {
     Voo **array_ordenado;             /**< Array ordenado por data (Q3) */ 
     int num_voos;                     /**< Número de voos no array ordenado */
     GHashTable *contagens_aircraft;   /**< Contagens por aircraft_id (Q2) */
+    GHashTable *cache_q5;             /**< airline -> {total_delay, count} para Q5 */
 } GestorFlights;
 
 /* ============================================
@@ -38,6 +39,7 @@ GestorFlights *gestor_flights_novo() {
     g->array_ordenado = NULL;
     g->num_voos = 0;
     g->contagens_aircraft = NULL;  // será criado no parsing
+    g->cache_q5 = NULL;  // será criado no parsing
 //    g->listaQ5 = init_lista();
     return g;
 }
@@ -51,6 +53,7 @@ void gestor_flights_destroy(GestorFlights *g) {
     g_hash_table_destroy(g->tabela_voos);
     if (g->array_ordenado) free(g->array_ordenado);
     if (g->contagens_aircraft) g_hash_table_destroy(g->contagens_aircraft);  
+    if (g->cache_q5) g_hash_table_destroy(g->cache_q5);
     free(g);
 }
 
@@ -149,4 +152,50 @@ GHashTable *gestor_flights_get_contagens_aircraft(GestorFlights *g) {
 Voo *gestor_flights_procura(GestorFlights *g, const char *flight_id) {
     if (!g || !flight_id) return NULL;
     return g_hash_table_lookup(g->tabela_voos, flight_id);
+}
+
+/* ============================================
+ * FUNÇÕES PARA CACHE Q5 (OTIMIZAÇÃO)
+ * ============================================ */
+
+static void liberta_dados_q5(gpointer data) {
+    g_free(data);
+}
+
+void gestor_flights_init_cache_q5(GestorFlights *g) {
+    if (!g) return;
+    g->cache_q5 = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, liberta_dados_q5);
+}
+
+void gestor_flights_add_atraso_q5(GestorFlights *g, const char *airline, int delay) {
+    if (!g || !g->cache_q5 || !airline) return;
+    
+    DadosAtrasoQ5 *dados = g_hash_table_lookup(g->cache_q5, airline);
+    if (!dados) {
+        dados = g_new(DadosAtrasoQ5, 1);
+        dados->total_delay = 0;
+        dados->count = 0;
+        g_hash_table_insert(g->cache_q5, g_strdup(airline), dados);
+    }
+    dados->total_delay += delay;
+    dados->count++;
+}
+
+DadosAtrasoQ5 *gestor_flights_get_atraso_q5(GestorFlights *g, const char *airline) {
+    if (!g || !g->cache_q5 || !airline) return NULL;
+    return g_hash_table_lookup(g->cache_q5, airline);
+}
+
+void gestor_flights_foreach_q5(GestorFlights *g, AirlineIterFunc func, void *user_data) {
+    if (!g || !g->cache_q5 || !func) return;
+    
+    GHashTableIter iter;
+    gpointer key, value;
+    g_hash_table_iter_init(&iter, g->cache_q5);
+    
+    while (g_hash_table_iter_next(&iter, &key, &value)) {
+        const char *airline = (const char *)key;
+        DadosAtrasoQ5 *dados = (DadosAtrasoQ5 *)value;
+        func(airline, dados->total_delay, dados->count, user_data);
+    }
 }
