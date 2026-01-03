@@ -22,6 +22,7 @@
 #include "gestor_entidades/gestor_aircrafts.h"
 #include "gestor_entidades/gestor_passengers.h"
 #include "gestor_entidades/gestor_reservations.h"
+#include "gestor_entidades/gestor.h"
 
 #include "utils/utils.h"
 

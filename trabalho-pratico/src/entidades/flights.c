@@ -21,7 +21,7 @@ typedef struct voo {
     char *code_destination;       // Código IATA do aeroporto de destino 
     char *id_aircraft;            // Identificador da aeronave 
     char *airline;                // Companhia aérea 
-}; Voo;
+} Voo;
 
 // ===================================================
 // GETTERS
