@@ -16,7 +16,8 @@
  */
 
 struct gestor_passengers {
-    GHashTable *tabela_passageiros;  /**< Hash table: id_passageiro -> Passageiros* */
+    GHashTable *tabela_passageiros;
+    GHashTable *cache_q6;  /**< nacionalidade -> (destino -> count) para Q6 */
 };
 
 /* ============================================
@@ -34,6 +35,7 @@ GestorPassengers *gestor_passengers_novo(void) {
         (GDestroyNotify)libertaPassageiro  // liberta Passageiros*
     );
 
+    g->cache_q6 = NULL;
     return g;
 }
 
@@ -44,6 +46,7 @@ GestorPassengers *gestor_passengers_novo(void) {
 void gestor_passengers_destroy(GestorPassengers *g) {
     if (!g) return;
     g_hash_table_destroy(g->tabela_passageiros);
+    if (g->cache_q6) g_hash_table_destroy(g->cache_q6);
     free(g);
 }
 
@@ -109,5 +112,48 @@ void gestor_passengers_foreach(GestorPassengers *g, PassengerIterFunc f, void *u
     g_hash_table_iter_init(&iter, g->tabela_passageiros);
     while (g_hash_table_iter_next(&iter, &key, &value)) {
         f((Passageiros *)value, user_data);
+    }
+}
+/* ============================================
+ * FUNÇÕES PARA CACHE Q6 (OTIMIZAÇÃO)
+ * ============================================ */
+
+static void liberta_destinos_q6(gpointer data) {
+    g_hash_table_destroy((GHashTable *)data);
+}
+
+void gestor_passengers_init_cache_q6(GestorPassengers *gp) {
+    if (!gp) return;
+    gp->cache_q6 = g_hash_table_new_full(
+        g_str_hash, g_str_equal,
+        g_free, liberta_destinos_q6
+    );
+}
+
+void gestor_passengers_add_destino_q6(GestorPassengers *gp, const char *nacionalidade, const char *destino) {
+    if (!gp || !gp->cache_q6 || !nacionalidade || !destino) return;
+    
+    GHashTable *destinos = g_hash_table_lookup(gp->cache_q6, nacionalidade);
+    if (!destinos) {
+        destinos = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+        g_hash_table_insert(gp->cache_q6, g_strdup(nacionalidade), destinos);
+    }
+    
+    int count = GPOINTER_TO_INT(g_hash_table_lookup(destinos, destino));
+    g_hash_table_insert(destinos, g_strdup(destino), GINT_TO_POINTER(count + 1));
+}
+
+void gestor_passengers_foreach_destinos_q6(GestorPassengers *gp, const char *nacionalidade, DestinoIterFunc func, void *user_data) {
+    if (!gp || !gp->cache_q6 || !nacionalidade || !func) return;
+    
+    GHashTable *destinos = g_hash_table_lookup(gp->cache_q6, nacionalidade);
+    if (!destinos) return;
+    
+    GHashTableIter iter;
+    gpointer key, value;
+    g_hash_table_iter_init(&iter, destinos);
+    
+    while (g_hash_table_iter_next(&iter, &key, &value)) {
+        func((const char *)key, GPOINTER_TO_INT(value), user_data);
     }
 }

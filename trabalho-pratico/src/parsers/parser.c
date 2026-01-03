@@ -289,6 +289,20 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                                         const char *destino = voo_get_code_destination(voo);
                                         if (origem) gestor_airports_incrementa_partidas(AP, origem);
                                         if (destino) gestor_airports_incrementa_chegadas(AP, destino);
+                                        // Popular cache Q6: destino por nacionalidade
+                                        if (destino) {
+                                            int doc_int = r_get_id_pessoa_reservou(reserva_atual);
+                                            char doc_str[16];
+                                            snprintf(doc_str, sizeof(doc_str), "%09d", doc_int);
+                                            Passageiros *pass = gestor_passengers_procura(P, doc_str);
+                                            if (pass) {
+                                                char *nat = passenger_get_nacionalidade(pass);
+                                                if (nat) {
+                                                    gestor_passengers_add_destino_q6(P, nat, destino);
+                                                    g_free(nat);
+                                                }
+                                            }
+                                        }
                                     }
                                     g_free(voo_id);
                                 }
