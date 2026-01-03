@@ -2,10 +2,18 @@
 #include <stdlib.h>
 #include <string.h>
 
+/**
+ * Estrutura interna do Writer.
+ */
+
 struct ErrorWriter {
     FILE *file;
     int header_escrito;
 };
+
+/**
+ * Cria ficheiro de erros.
+ */
 
 ErrorWriter* processador_output_create_error_file(const char *entity_name, 
                                                   const char *header) {
@@ -34,12 +42,20 @@ ErrorWriter* processador_output_create_error_file(const char *entity_name,
     return writer;
 }
 
+/**
+ * Escreve uma linha de erro no ficheiro.
+ */
+
 void processador_output_write_error(ErrorWriter *writer, const char *line) {
     if (!writer || !writer->file || !line) return;
     
     fputs(line, writer->file);
     fputc('\n', writer->file);
 }
+
+/**
+ * Fecha o ficheiro e liberta a estrutura.
+ */
 
 void processador_output_close_error_file(ErrorWriter *writer) {
     if (!writer) return;

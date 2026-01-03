@@ -1,10 +1,15 @@
 #define _POSIX_C_SOURCE 200809L
+
 #include "IO/parser_input.h"
 #include "utils/utils.h"
 #include <stdio.h>
 #include <string.h>
 
 #define MAX_LINHA 2000
+
+/**
+ * Lê o header do CSV.
+ */
 
 int parser_input_read_header(const char *dataset_dir, const char *filename, char *header_out, size_t size) {
     
@@ -30,6 +35,10 @@ int parser_input_read_header(const char *dataset_dir, const char *filename, char
     fclose(ficheiro);
     return 1;
 }
+
+/**
+ * Lê o CSV linha a linha e aplica um callback.
+ */
 
 int parser_input_read_csv(const char *dataset_dir, const char *filename, LineCallback callback, void *user_data) {
     
