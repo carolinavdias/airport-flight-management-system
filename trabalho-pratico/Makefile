@@ -27,7 +27,7 @@ OBJS_INTER := $(OBJ_DIR)/programas/programa-interativo.o $(OBJS_LIB)
 
 # Executáveis
 MAIN_BIN  = programa-principal
-TESTS_BIN = programa-testes
+TESTS_BIN = trabalho-pratico/programa-testes
 INTER_BIN = programa-interativo
 
 # ===================================================
