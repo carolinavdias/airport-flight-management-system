@@ -95,11 +95,9 @@ int main(int argc, char **argv) {
         if (gestorReservas) gestor_reservations_liberta(gestorReservas);
         return EXIT_FAILURE;
     }
-    printf ("Começa read");
     // Carregar dados (agora incluindo reservas)
     int *resultados_read = read_csv(ctx, gestorVoos, gestorAeroportos, gestorAeronaves,
          gestorPassageiros, gestorReservas);
-    printf("ACabou read");
     FILE *ficheiroComandos = fopen(argv[2], "r");
     if (!ficheiroComandos) {
         perror("Erro ao abrir o ficheiro de comandos");

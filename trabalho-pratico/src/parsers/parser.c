@@ -26,11 +26,13 @@ static int bissexto_parser(int ano) {
     return (ano % 4 == 0 && ano % 100 != 0) || (ano % 400 == 0);
 }
 static long dias_desde_epoca_parser(int ano, int mes, int dia) {
-    long total = 0;
-    for (int a = 1; a < ano; a++) total += bissexto_parser(a) ? 366 : 365;
-    int dias_mes[] = {31,28,31,30,31,30,31,31,30,31,30,31};
-    for (int m = 1; m < mes; m++) total += (m==2 && bissexto_parser(ano)) ? 29 : dias_mes[m-1];
-    return total + dia;
+    // Fórmula O(1) em vez de loop
+    int a = ano - 1;
+    long dias_anos = a * 365L + a/4 - a/100 + a/400;
+    int dias_mes_acum[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
+    long dias_meses = dias_mes_acum[mes - 1];
+    if (mes > 2 && ((ano % 4 == 0 && ano % 100 != 0) || ano % 400 == 0)) dias_meses++;
+    return dias_anos + dias_meses + dia;
 }
 static long calcula_id_semana_parser(long long datetime) {
     int ano = (int)(datetime / 100000000LL);
