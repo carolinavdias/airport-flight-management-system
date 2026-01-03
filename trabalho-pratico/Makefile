@@ -27,7 +27,7 @@ OBJS_INTER := $(OBJ_DIR)/programas/programa-interativo.o $(OBJS_LIB)
 
 # Executáveis
 MAIN_BIN  = programa-principal
-TESTS_BIN = trabalho-pratico/programa-testes
+TESTS_BIN = programa-testes
 INTER_BIN = programa-interativo
 
 # ===================================================
@@ -36,7 +36,7 @@ INTER_BIN = programa-interativo
 
 .PHONY: all testes clean
 
-all: $(MAIN_BIN) $(INTER_BIN)
+all: $(MAIN_BIN) $(TESTS_BIN) $(INTER_BIN)
 	echo "✔ Programas compilados com sucesso!"
 
 testes: $(TESTS_BIN)
