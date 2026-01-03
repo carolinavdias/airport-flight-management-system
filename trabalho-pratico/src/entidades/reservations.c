@@ -12,21 +12,21 @@
 // Estrutura que representa a lista de voos reservados 
 
 typedef struct voos_reservados { 
-    char **lista_voos_reservados;   // Array de IDs de voos 
-    int n_voos;                     // Número de voos 
+    char **lista_voos_reservados;   /**< Array de IDs de voos */ 
+    int n_voos;                     /**< Número de voos       */ 
 } Voos_reservados;
 
 // Estrutura que representa uma reserva
 
 typedef struct reservas {
-    char *id_reserva;               // Identificador único da reserva
-    Voos_reservados *reserva_lista;  // Lista de voos associados à reserva
-    int id_pessoa_reservou;         // Identificador da pessoa em nome de quem a reserva foi efetuada
-    char *lugar_reservado;          // Lugar atribuído ao passageiro no voo
-    double preco_reserva;           // Preço total da reserva
-    bool bagagem_extra;             // Indica se foi requisitada bagagem extra
-    bool prioridade;                // Indica se é necessária prioridade de embarque
-    char *qr_code;                  // Código QR associado à reserva
+    char *id_reserva;                /**< Identificador único da reserva */ 
+    Voos_reservados *reserva_lista;  /**< Lista de voos associados à reserva */ 
+    int id_pessoa_reservou;          /**< Identificador da pessoa em nome de quem a reserva foi efetuada */ 
+    char *lugar_reservado;           /**< Lugar atribuído ao passageiro no voo */ 
+    double preco_reserva;            /**< Preço total da reserva */ 
+    bool bagagem_extra;              /**< Indica se foi requisitada bagagem extra */ 
+    bool prioridade;                 /**< Indica se é necessária prioridade de embarque */ 
+    char *qr_code;                   /**< Código QR associado à reserva */ 
 } Reservas;
 
 // ===================================================

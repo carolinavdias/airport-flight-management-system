@@ -10,7 +10,7 @@
 // Estrutura interna do gestor de aeronaves.
 
 typedef struct gestor_aircrafts {
-    GHashTable *tabela;
+    GHashTable *tabela;   /**< Hash table: id_aeronave -> Aeronave* */
 } GestorAircrafts; 
 
 // ===================================================

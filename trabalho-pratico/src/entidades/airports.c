@@ -10,11 +10,11 @@
 // Estrutura interna que representa um aeroporto
 
 typedef struct aeroporto {
-    char *code_IATA;          // Código IATA do aeroporto 
-    char *name;               // Nome do aeroporto 
-    char *city;               // Cidade onde o aeroporto se localiza 
-    char *country;            // País do aeroporto 
-    Tipo_aeroporto type;      // Tipo de aeroporto 
+    char *code_IATA;          /**< Código IATA do aeroporto */
+    char *name;               /**< Nome do aeroporto */
+    char *city;               /**< Cidade onde o aeroporto se localiza */
+    char *country;            /**< País do aeroporto */
+    Tipo_aeroporto type;      /**< Tipo de aeroporto */
 } Aeroporto;
 
 // ===================================================

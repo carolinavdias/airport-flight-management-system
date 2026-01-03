@@ -18,10 +18,10 @@
 // Estrutura interna que representa uma aeronave 
 
 struct aeronave {
-    char *identifier;      // Identificador único da aeronave 
-    char *manufacturer;    // Fabricante 
-    char *model;           // Modelo 
-    int year;              // Ano de fabrico 
+    char *identifier;      /**< Identificador único da aeronave */
+    char *manufacturer;    /**< Fabricante */
+    char *model;           /**< Modelo */
+    int year;              /**< Ano de fabrico */
 };
 
 // ===================================================

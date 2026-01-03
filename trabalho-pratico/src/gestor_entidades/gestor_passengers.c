@@ -16,7 +16,7 @@
  */
 
 struct gestor_passengers {
-    GHashTable *tabela_passageiros;  // Hash table: id_passageiro → Passageiros*
+    GHashTable *tabela_passageiros;  /**< Hash table: id_passageiro -> Passageiros* */
 };
 
 // =================================================== 

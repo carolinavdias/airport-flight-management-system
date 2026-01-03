@@ -16,8 +16,8 @@
  */
 
 struct gestor_reservations {
-    GHashTable *cache_q4;  // semana -> (passageiro -> gasto total)
-    GHashTable *tabela;   // Hash table: id_reserva → Reservas*
+    GHashTable *cache_q4;  /**< semana -> (passageiro -> gasto total) */
+    GHashTable *tabela;    /**< Hash table: id_reserva -> Reservas* */
 };
 
 // ============================================

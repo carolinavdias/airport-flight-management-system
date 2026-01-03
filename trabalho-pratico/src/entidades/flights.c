@@ -11,16 +11,16 @@
 // Estrutura interna que representa um voo
 
 typedef struct voo {
-    char *flight_id;              // Identificador único do voo 
-    long long departure;          // Data/hora prevista de partida 
-    long long actual_departure;   // Data/hora efetiva de partida 
-    long long arrival;            // Data/hora prevista de chegada 
-    long long actual_arrival;     // Data/hora efetiva de chegada 
-    Estado status;                // Estado atual do voo 
-    char *code_origin;            // Código IATA do aeroporto de origem
-    char *code_destination;       // Código IATA do aeroporto de destino 
-    char *id_aircraft;            // Identificador da aeronave 
-    char *airline;                // Companhia aérea 
+    char *flight_id;              /**< Identificador único do voo */
+    long long departure;          /**< Data/hora prevista de partida */
+    long long actual_departure;   /**< Data/hora efetiva de partida */
+    long long arrival;            /**< Data/hora prevista de chegada */
+    long long actual_arrival;     /**< Data/hora efetiva de chegada */
+    Estado status;                /**< Estado atual do voo */
+    char *code_origin;            /**< Código IATA do aeroporto de origem */
+    char *code_destination;       /**< Código IATA do aeroporto de destino */
+    char *id_aircraft;            /**< Identificador da aeronave */
+    char *airline;                /**< Companhia aérea */
 } Voo;
 
 // ===================================================

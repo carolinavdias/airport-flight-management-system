@@ -17,9 +17,9 @@
  */
 
 typedef struct gestor_airports {
-    GHashTable *tabela;               // Aeroportos por código IATA
-    GHashTable *contagens_chegadas;   // Contagem de chegadas por aeroporto
-    GHashTable *contagens_partidas;   // Contagem de partidas por aeroporto
+    GHashTable *tabela;               /**< Aeroportos por código IATA */
+    GHashTable *contagens_chegadas;   /**< Contagem de chegadas por aeroporto */
+    GHashTable *contagens_partidas;   /**< Contagem de partidas por aeroporto */
 } GestorAirports;
 
 // ===================================================

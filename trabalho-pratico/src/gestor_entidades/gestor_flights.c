@@ -21,10 +21,10 @@
  */
 
 typedef struct gestor_flights { 
-    GHashTable *tabela_voos;          // Tabela principal de voos 
-    Voo **array_ordenado;             // Array ordenado por data (Q3) 
-    int num_voos;                     // Número de voos no array ordenado 
-    GHashTable *contagens_aircraft;   // Contagens por aircraft_id (Q2) 
+    GHashTable *tabela_voos;          /**< Tabela principal de voos */
+    Voo **array_ordenado;             /**< Array ordenado por data (Q3) */ 
+    int num_voos;                     /**< Número de voos no array ordenado */
+    GHashTable *contagens_aircraft;   /**< Contagens por aircraft_id (Q2) */
 } GestorFlights;
 
 // =================================================== 

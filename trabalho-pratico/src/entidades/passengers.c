@@ -8,14 +8,14 @@
  * aos passageiros lidos do ficheiro passengers.csv.
  */
 
-// Estrutura interna que representa um paddageiro
+// Estrutura interna que representa um passageiro
 
 typedef struct passageiros {
-    char *id_passageiro;     // Identificador único do passageiro 
-    char *primeiro_nome;     // Primeiro nome 
-    char *ultimo_nome;       // Último nome 
-    int data_nascimento;     // Data de nascimento (YYYYMMDD) 
-    char *nacionalidade;     // Nacionalidade 
+    char *id_passageiro;     /**< Identificador único do passageiro */
+    char *primeiro_nome;     /**< Primeiro nome */
+    char *ultimo_nome;       /**< Último nome */
+    int data_nascimento;     /**< Data de nascimento (YYYYMMDD) */
+    char *nacionalidade;     /**< Nacionalidade */
 } Passageiros;
 
 // ===================================================
