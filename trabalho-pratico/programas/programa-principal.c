@@ -81,6 +81,7 @@ int main(int argc, char **argv) {
     GestorAirports *gestorAeroportos = gestor_airports_cria();
     GestorPassengers *gestorPassageiros = gestor_passengers_novo();
     GestorReservations *gestorReservas = gestor_reservations_cria();   // <-- NECESSÁRIO
+    gestor_reservations_init_cache_q4(gestorReservas);  // Cache para Q4
 
     if (!gestorAeroportos || !gestorAeronaves || !gestorVoos ||
         !gestorPassageiros || !gestorReservas)

@@ -16,6 +16,31 @@
 #include <stdio.h>
 #include <glib.h>
 
+/* Função auxiliar para calcular ID da semana (para cache Q4) */
+static int dia_semana_parser(int ano, int mes, int dia) {
+    static int t[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
+    if (mes < 3) ano -= 1;
+    return (ano + ano/4 - ano/100 + ano/400 + t[mes-1] + dia) % 7;
+}
+static int bissexto_parser(int ano) {
+    return (ano % 4 == 0 && ano % 100 != 0) || (ano % 400 == 0);
+}
+static long dias_desde_epoca_parser(int ano, int mes, int dia) {
+    long total = 0;
+    for (int a = 1; a < ano; a++) total += bissexto_parser(a) ? 366 : 365;
+    int dias_mes[] = {31,28,31,30,31,30,31,31,30,31,30,31};
+    for (int m = 1; m < mes; m++) total += (m==2 && bissexto_parser(ano)) ? 29 : dias_mes[m-1];
+    return total + dia;
+}
+static long calcula_id_semana_parser(long long datetime) {
+    int ano = (int)(datetime / 100000000LL);
+    int mes = (int)((datetime / 1000000LL) % 100);
+    int dia = (int)((datetime / 10000LL) % 100);
+    long dias = dias_desde_epoca_parser(ano, mes, dia);
+    int dow = dia_semana_parser(ano, mes, dia);
+    return dias - dow;
+}
+
 
 int compara_voos_por_data(const void *a, const void *b) {
     Voo *v1 = *(Voo **)a;
@@ -225,6 +250,21 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                         Reservas *reserva_atual = validacoes_campos_reservations(campos,V,P);
                         if (reserva_atual) {
                             gestor_reservations_insere(R, reserva_atual);
+                            // Popular cache Q4: gasto por semana por passageiro
+                            char *primeiro_voo_id = r_get_voo_por_indice(reserva_atual, 0);
+                            if (primeiro_voo_id) {
+                                Voo *primeiro_voo = gestor_flights_procura(V, primeiro_voo_id);
+                                if (primeiro_voo) {
+                                    long long departure = voo_get_departure(primeiro_voo);
+                                    long id_semana = calcula_id_semana_parser(departure);
+                                    int doc_int = r_get_id_pessoa_reservou(reserva_atual);
+                                    char doc_str[16];
+                                    snprintf(doc_str, sizeof(doc_str), "%09d", doc_int);
+                                    double preco = r_get_preco(reserva_atual);
+                                    gestor_reservations_add_gasto_q4(R, id_semana, doc_str, preco);
+                                }
+                                g_free(primeiro_voo_id);
+                            }
                             int n_voos = r_get_lista_n_voos(reserva_atual);
                             for (int iv = 0; iv < n_voos; iv++) {
                                 char *voo_id = r_get_voo_por_indice(reserva_atual, iv);
@@ -468,6 +508,21 @@ int *le_tabela_Voos(Contexto *ctx, GestorFlights *V, GestorAircrafts *AC) {
                 case 5:
                    Reserva *reserva_atual = validacoes_campos_reservations(campos);
                    if (reserva_atual) gestor_reservations_insere(R, reserva_atual);
+                            // Popular cache Q4: gasto por semana por passageiro
+                            char *primeiro_voo_id = r_get_voo_por_indice(reserva_atual, 0);
+                            if (primeiro_voo_id) {
+                                Voo *primeiro_voo = gestor_flights_procura(V, primeiro_voo_id);
+                                if (primeiro_voo) {
+                                    long long departure = voo_get_departure(primeiro_voo);
+                                    long id_semana = calcula_id_semana_parser(departure);
+                                    int doc_int = r_get_id_pessoa_reservou(reserva_atual);
+                                    char doc_str[16];
+                                    snprintf(doc_str, sizeof(doc_str), "%09d", doc_int);
+                                    double preco = r_get_preco(reserva_atual);
+                                    gestor_reservations_add_gasto_q4(R, id_semana, doc_str, preco);
+                                }
+                                g_free(primeiro_voo_id);
+                            }
                    else linha_valida = 0;
                    csv_file_error_name = strdup("resultados/reservations_errors.csv");
                    break;

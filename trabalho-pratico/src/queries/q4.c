@@ -217,6 +217,32 @@ static void processa_reserva(Reservas *r, void *user_data) {
     *gasto += preco;
 }
 
+/* Callback para usar o cache Q4 pré-computado */
+static void processa_cache_q4(long id_semana, const char *doc_number, double gasto, void *user_data) {
+    DadosRecolha *dados = user_data;
+    
+    // Verificar filtro de datas
+    if (!semana_no_intervalo(id_semana, dados->inicio_dias, dados->fim_dias)) {
+        return;
+    }
+    
+    // Obter ou criar tabela de gastos para esta semana
+    GHashTable *gastos_semana = g_hash_table_lookup(dados->semanas, GINT_TO_POINTER(id_semana));
+    if (!gastos_semana) {
+        gastos_semana = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+        g_hash_table_insert(dados->semanas, GINT_TO_POINTER(id_semana), gastos_semana);
+    }
+    
+    // Acumular gasto
+    double *gasto_atual = g_hash_table_lookup(gastos_semana, doc_number);
+    if (!gasto_atual) {
+        gasto_atual = g_new(double, 1);
+        *gasto_atual = 0.0;
+        g_hash_table_insert(gastos_semana, g_strdup(doc_number), gasto_atual);
+    }
+    *gasto_atual = gasto;
+}
+
 
 static void processa_reserva2(Reservas *r, void *user_data) {
     DadosRecolha *dados = user_data;
@@ -307,7 +333,7 @@ char *query4(const char *linhaComando,
     };
     
     // Usar função ENCAPSULADA para iterar
-    gestor_reservations_foreach(gestorReservas, processa_reserva, &dados);
+    gestor_reservations_foreach_cache_q4(gestorReservas, processa_cache_q4, &dados);
     
     // =========================================================
     // FASE 2: Calcular top 10 de cada semana (no intervalo)

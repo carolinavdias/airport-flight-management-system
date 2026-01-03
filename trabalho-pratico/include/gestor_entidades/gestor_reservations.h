@@ -148,5 +148,39 @@ void gestor_reservations_foreach(GestorReservations *g, ReservationIterFunc f, v
 
 int gestor_reservations_conta_por_voo(GestorReservations *g, const char *flight_id);
 
+/* ============================================
+ * FUNÇÕES PARA CACHE Q4 (OTIMIZAÇÃO)
+ * ============================================ */
+
+/**
+ * @brief Inicializa o cache para a Q4.
+ *
+ * Cria a estrutura de dados interna para armazenar gastos semanais
+ * por passageiro, permitindo resposta rápida à Q4.
+ *
+ * @param g Ponteiro para o gestor de reservas.
+ */
+void gestor_reservations_init_cache_q4(GestorReservations *g);
+
+/**
+ * @brief Adiciona um gasto ao cache Q4.
+ *
+ * @param g Ponteiro para o gestor.
+ * @param id_semana Identificador da semana (dias desde época).
+ * @param doc_number Documento do passageiro.
+ * @param preco Preço a adicionar.
+ */
+void gestor_reservations_add_gasto_q4(GestorReservations *g, long id_semana, const char *doc_number, double preco);
+
+/**
+ * @brief Itera sobre os dados do cache Q4.
+ *
+ * @param g Ponteiro para o gestor.
+ * @param func Função callback chamada para cada (semana, passageiro, gasto).
+ * @param user_data Dados passados ao callback.
+ */
+typedef void (*CacheQ4IterFunc)(long id_semana, const char *doc_number, double gasto, void *user_data);
+void gestor_reservations_foreach_cache_q4(GestorReservations *g, CacheQ4IterFunc func, void *user_data);
+
 #endif
 

@@ -16,6 +16,7 @@
  */
 
 struct gestor_reservations {
+    GHashTable *cache_q4;  // semana -> (passageiro -> gasto total)
     GHashTable *tabela;   // Hash table: id_reserva → Reservas*
 };
 
@@ -64,6 +65,7 @@ Reservas *gestor_reservations_procura(GestorReservations *g, const char *id_rese
 
 void gestor_reservations_liberta(GestorReservations *g) {
     if (!g) return;
+    if (g->cache_q4) g_hash_table_destroy(g->cache_q4);
     if (g->tabela) {
         g_hash_table_destroy(g->tabela);
     }
@@ -149,4 +151,66 @@ int gestor_reservations_conta_por_voo(GestorReservations *g, const char *flight_
     }
     
     return count;
+}
+
+/* ============================================
+ * FUNÇÕES PARA CACHE Q4 (OTIMIZAÇÃO)
+ * ============================================ */
+
+// Função auxiliar para libertar hash table interna (passageiro -> gasto)
+static void liberta_gastos_semana(gpointer data) {
+    g_hash_table_destroy((GHashTable *)data);
+}
+
+void gestor_reservations_init_cache_q4(GestorReservations *g) {
+    if (!g) return;
+    // Estrutura: semana (GINT_TO_POINTER) -> hash table (doc_number -> double*)
+    g->cache_q4 = g_hash_table_new_full(
+        g_direct_hash, g_direct_equal,
+        NULL,  // chave é inteiro, não precisa free
+        liberta_gastos_semana
+    );
+}
+
+void gestor_reservations_add_gasto_q4(GestorReservations *g, long id_semana, const char *doc_number, double preco) {
+    if (!g || !g->cache_q4 || !doc_number) return;
+    
+    // Obter ou criar hash de gastos para esta semana
+    GHashTable *gastos_semana = g_hash_table_lookup(g->cache_q4, GINT_TO_POINTER(id_semana));
+    if (!gastos_semana) {
+        gastos_semana = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+        g_hash_table_insert(g->cache_q4, GINT_TO_POINTER(id_semana), gastos_semana);
+    }
+    
+    // Acumular gasto do passageiro
+    double *gasto_atual = g_hash_table_lookup(gastos_semana, doc_number);
+    if (!gasto_atual) {
+        gasto_atual = g_new(double, 1);
+        *gasto_atual = 0.0;
+        g_hash_table_insert(gastos_semana, g_strdup(doc_number), gasto_atual);
+    }
+    *gasto_atual += preco;
+}
+
+void gestor_reservations_foreach_cache_q4(GestorReservations *g, CacheQ4IterFunc func, void *user_data) {
+    if (!g || !g->cache_q4 || !func) return;
+    
+    GHashTableIter iter_semana;
+    gpointer key_semana, value_semana;
+    
+    g_hash_table_iter_init(&iter_semana, g->cache_q4);
+    while (g_hash_table_iter_next(&iter_semana, &key_semana, &value_semana)) {
+        long id_semana = GPOINTER_TO_INT(key_semana);
+        GHashTable *gastos = (GHashTable *)value_semana;
+        
+        GHashTableIter iter_pass;
+        gpointer key_pass, value_pass;
+        
+        g_hash_table_iter_init(&iter_pass, gastos);
+        while (g_hash_table_iter_next(&iter_pass, &key_pass, &value_pass)) {
+            const char *doc_number = (const char *)key_pass;
+            double gasto = *(double *)value_pass;
+            func(id_semana, doc_number, gasto, user_data);
+        }
+    }
 }
