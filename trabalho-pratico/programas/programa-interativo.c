@@ -1,4 +1,5 @@
 #define _POSIX_C_SOURCE 200809L
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,6 +28,8 @@
 #include "gestor_entidades/gestor.h"
 
 #include "utils/utils.h"
+
+#include "IO/processador_input_interativo.h"
 
 /**
  * Cores para o terminal.
@@ -266,7 +269,7 @@ static void executa_query3(EstadoPrograma *estado) {
 /**
  * /Executa Query 4.
  */
-//executa Query 4
+
 static void executa_query4(EstadoPrograma *estado) {
     printf(COLOR_CYAN "\n╔═══ Query 4: Passageiro que esteve mais tempo no Top 10 dos que gastaram mais em reservas num período de tempo\n" COLOR_RESET);
 
