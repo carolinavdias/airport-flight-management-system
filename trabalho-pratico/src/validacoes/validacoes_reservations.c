@@ -6,7 +6,9 @@
 #include <stdio.h>
 #include <glib.h>
 
-//RESERVAS -> VALIDAÇÃO SINTÁTICA
+/* ============================================
+ * RESERVAS -> VALIDAÇÃO SINTÁTICA
+ * ============================================ */
 
 //valida o id da reserva e faz o strdup
 int valida_id_reserva (const char *s) {
@@ -110,7 +112,9 @@ int valida_bool (const char *s) {
     return s && (strcmp (s, "true") == 0 || strcmp (s, "false") == 0);
 }
 
-//RESERVAS -> VALIDAÇÃO LÓGICA
+/* ============================================
+ * RESERVAS -> VALIDAÇÃO LÓGICA
+ * ============================================ */
 
 int valida_RESERVA(Reservas *reserva, GestorFlights *gestor_voos, GestorPassengers *gestor_passageiros) {
     int length_vr = r_get_lista_n_voos(reserva);
@@ -143,6 +147,9 @@ int valida_RESERVA(Reservas *reserva, GestorFlights *gestor_voos, GestorPassenge
     return 1;
 }
 
+/* ============================================================ 
+ * RESERVA -> VALIDAÇÃO COMPLETA DO PARSING 
+ * ============================================================ */ 
 
 Reservas *validacoes_campos_reservations(char **campos, GestorFlights *V, GestorPassengers *P) {
     Reservas *r = criaReserva();

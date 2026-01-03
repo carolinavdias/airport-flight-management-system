@@ -4,10 +4,13 @@
 #include "utils/utils.h"
 #include <string.h>
 
-//VOOS -> VALIDAÇÃO SINTÁTICA
+/* ============================================
+ * VOO -> VALIDAÇÕES SINTÁTICAS
+ * ============================================ */
+
 //valida o id do voo
 int valida_id_voo (const char *s) {
-    if (!s) return 0; //tirar ou nao o strlen?
+    if (!s) return 0; 
     for (int i = 0; i < 7; i++) {
         if (s[i] == '\0') return 0; //string demasiado curta
         if (i < 2) {
@@ -69,7 +72,10 @@ int valida_Estado(const char *s) {
     return (strcmp(s, "On Time") == 0 || strcmp(s, "Delayed") == 0 || strcmp(s, "Cancelled") == 0);
 }
 
-//VOOS -> VALIDAÇÃO LÓGICA
+/* ============================================
+ * VOO -> VALIDAÇÃO LÓGICA
+ * ============================================ */
+
 int valida_VOO (Voo *voo, GestorAircrafts *gestor_aeronaves) {
     
     //DESTINATION != ORIGIN

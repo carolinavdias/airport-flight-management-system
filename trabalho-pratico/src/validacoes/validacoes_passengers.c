@@ -5,7 +5,9 @@
 #include <string.h>
 #include <ctype.h>
 
-//PASSAGEIROS -> VALIDAÇÃO SINTÁTICA
+/* ============================================
+ * PASSAGEIROS -> VALIDAÇÃO SINTÁTICA
+ * ============================================ */
 
 //valida o id do passageiro e faz o atoi (int)
 int valida_id_passageiro(const char *s) {
