@@ -10,13 +10,18 @@
  */
 
 // Estrutura que representa a lista de voos reservados 
+/**
+ * Estrutura interna que representa um passageiro.
+ */
 
 typedef struct voos_reservados { 
     char **lista_voos_reservados;   /**< Array de IDs de voos */ 
     int n_voos;                     /**< Número de voos       */ 
 } Voos_reservados;
 
-// Estrutura que representa uma reserva
+/**
+ * Estrutura interna que representa uma reserva.
+ */
 
 typedef struct reservas {
     char *id_reserva;               // Identificador único da reserva
@@ -135,9 +140,9 @@ void r_set_preco (Reservas *r, char *s) {
     r->preco_reserva = atof(s);
 }
 
-// ===================================================
-// CRIA RESERVA
-// ===================================================
+/* ============================================
+ * CRIA RESERVA
+ * ============================================ */
 
 Reservas *criaReserva () {
     Reservas *r = calloc (1, sizeof *r);
@@ -150,7 +155,9 @@ Reservas *criaReserva () {
  * DESTRÓI RESERVA
  * ============================================ */
 
-// Liberta todos os campos internos e a própria estrutura
+/**
+ * Liberta todos os campos internos e a própria estrutura.
+ */
 
 void libertaReserva(void *data) {
     Reservas *a = data;

@@ -11,7 +11,10 @@
  * RESERVAS -> VALIDAÇÃO SINTÁTICA
  * ============================================ */
 
-//valida o id da reserva e faz o strdup
+/**
+ * Valida o id da reserva e faz o strdup
+ */
+
 int valida_id_reserva (const char *s) {
     if (!s || strlen(s) != 10 || s[0] != 'R') return 0;
     for (int i = 1; i < 10; i++) {
@@ -20,7 +23,10 @@ int valida_id_reserva (const char *s) {
     return 1;
 }
 
-//valida a lista dos voos reservados, passa para o formato de uma lista e atribui a "Reserva"
+/**
+ * Valida a lista dos voos reservados, passa para o formato de uma lista e atribui a "Reserva"
+ */
+
 int valida_set_voos_reservados(const char *s, Reservas *r) {
     if (!s || strlen(s) < 3) return 0; //[] invalido
     int len = strlen(s);

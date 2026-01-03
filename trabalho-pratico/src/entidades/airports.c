@@ -7,7 +7,9 @@
  * criação e libertação de memória associadas a aeroportos.
  */
 
-// Estrutura interna que representa um aeroporto
+/**
+ * Estrutura interna que representa um aeroporto
+ */
 
 typedef struct aeroporto {
     char *code_IATA;          /**< Código IATA do aeroporto */
@@ -114,7 +116,9 @@ Aeroporto *criaAeroporto () {
  * DESTRÓI AEROPORTO
  * ============================================ */
 
-// Liberta todos os campos internos e a própria estrutura
+/**
+ * Liberta todos os campos internos e a própria estrutura.
+ */
 
 void libertaAeroporto(void *data) {
     Aeroporto *a = data;

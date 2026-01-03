@@ -6,6 +6,14 @@
 #include <ctype.h>
 #include <glib.h>
 
+/* ============================================================
+ * CONTEXTO
+ * ============================================================ */
+
+/**
+ * Estrutura interna do contexto global.
+ */
+
 typedef struct contexto {
     char dataset_dir[256];
 } Contexto;
@@ -23,7 +31,10 @@ void set_contexto (Contexto *ctx, const char *d) {
     strncpy(ctx->dataset_dir, d , sizeof(ctx->dataset_dir)-1);
 }
 
-//abre um ficheiro no diretório do dataset
+/**
+ * Abre um ficheiro no diretório do dataset
+ */
+
 FILE *abrir_ficheiro(Contexto *ctx, const char *nome_ficheiro, const char *modo) {
     char path[1024];
     if (ctx->dataset_dir[0] == '\0') {
@@ -39,7 +50,10 @@ FILE *abrir_ficheiro(Contexto *ctx, const char *nome_ficheiro, const char *modo)
     return ficheiro;
 }
 
-//dia com mes e ano válidos ->auxiliar
+/**
+ * Dia com mes e ano válidos -> auxiliar
+ */
+
 int qual_mes (int ano, int mes) {
     if (mes == 2) {
         if (ano % 4 == 0) return 29;
@@ -80,18 +94,25 @@ int get_time_datah (char *s) {
            min;
 }
 */
-//===================================
-//ERRORS
-//===================================
 
-//estrutura interna de um erro
+/* ============================================================
+ * GESTÃO DE ERROS
+ * ============================================================ */
+
+/**
+ * Estrutura interna que representa um erro registado.
+ */
+
 typedef struct {
     char *ficheiro;
     int   linha;
     char *mensagem;
 } Erro;
 
-//lista global interna
+/**
+ * Lista global interna
+ */
+
 static GList *ERROS = NULL;
 
 void errors_begin(void) {
@@ -146,8 +167,12 @@ void errors_end(void) {
 //CSV
 //===================================
 
-//divide uma linha CSV em campos individuais
-//suporta campos com aspas e vírgulas dentro dos campos
+/**
+ * Divide uma linha CSV em campos individuais.
+ * 
+ * Suporta campos com aspas e vírgulas dentro dos campos.
+ */
+
 int csv_split(const char *line, char ***fields, size_t *count) {
     if (!line || !fields || !count) return -1;
     
@@ -216,7 +241,10 @@ int csv_split(const char *line, char ***fields, size_t *count) {
     return 0;
 }
 
-//liberta a memória dos campos
+/**
+ * Liberta a memória dos campos
+ */
+
 void csv_free_fields(char **fields, size_t count) {
     if (!fields) return;
     for (size_t i = 0; i < count; i++) {

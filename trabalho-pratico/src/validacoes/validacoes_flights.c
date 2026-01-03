@@ -10,7 +10,10 @@
  * VOO -> VALIDAÇÕES SINTÁTICAS
  * ============================================ */
 
-//valida o id do voo
+/**
+ * Valida o id do voo
+ */
+
 int valida_id_voo (const char *s) {
     if (!s) return 0; 
     for (int i = 0; i < 7; i++) {
@@ -26,7 +29,11 @@ int valida_id_voo (const char *s) {
 }
 
 //É NECESSARIA ESTA FUNCAO ????????
-//função valida_estado de um voo
+
+/**
+ * Função valida_estado de um voo
+ */
+
 int valida_Estado(const char *s) {
     if (!s || strlen(s) == 0) return 0;
     return (strcmp(s, "On Time") == 0 || strcmp(s, "Delayed") == 0 || strcmp(s, "Cancelled") == 0);

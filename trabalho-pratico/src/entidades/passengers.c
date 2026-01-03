@@ -8,8 +8,9 @@
  * aos passageiros lidos do ficheiro passengers.csv.
  */
 
-// Estrutura interna que representa um passageiro
-
+/**
+ * Estrutura interna que representa um passageiro.
+ */
 typedef struct passageiros {
     char *id_passageiro;     /**< Identificador único do passageiro */
     char *primeiro_nome;     /**< Primeiro nome */
@@ -120,7 +121,9 @@ Passageiros *criaPassageiro() {
  * DESTRÓI PASSAGEIRO
  * ============================================ */
 
-// Liberta todos os campos internos e a própria estrutura
+/**
+ * Liberta todos os campos internos e a própria estrutura
+ */
 
 void libertaPassageiro(void *data) {
     Passageiros *a = data;

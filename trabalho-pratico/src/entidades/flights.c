@@ -8,7 +8,9 @@
  * lidos do ficheiro flights.csv.
  */
 
-// Estrutura interna que representa um voo
+/**
+ * Estrutura interna que representa um voo
+ */
 
 typedef struct voo {
     char *flight_id;              /**< Identificador único do voo */
@@ -85,9 +87,9 @@ const char *voo_get_airline(const Voo *v) {
     return v->airline;
 }
 
-// ===================================================
-// SETTERS
-// ===================================================
+/* ============================================
+ * SETTERS
+ * ============================================ */
 
 /**
  * As funções de modificação atualizam os campos internos
@@ -143,8 +145,9 @@ void voo_set_airline (Voo *v, char *airl) {
    v->airline = g_strdup(airl);
 }
 
-// Conversão do estado textual do dataset para enum interno
 /**
+ * Conversão do estado textual do dataset para enum interno
+ * 
  * A decisão é feita com base no primeiro caractere:
  *  - 'O' → ON_TIME
  *  - 'D' → DELAYED
@@ -166,8 +169,9 @@ void voo_set_status (Voo *v, char *status) {
  * USADO PARA SET
  * ============================================ */
 
-// Converte uma data/hora textual para um valor inteiro ordenável
 /**
+ * Converte uma data/hora textual para um valor inteiro ordenável
+ * 
  * Formato esperado: YYYY-MM-DD HH:MM
  * O valor devolvido permite comparações diretas entre datas.
  */
@@ -235,6 +239,9 @@ Voo *criaVoo () {
  * ============================================ */
 
 // Liberta todos os campos internos e a própria estrutura
+/**
+ * Estrutura interna que representa uma aeronave 
+ */
 
 void libertaVoo(void *data) {
     Voo *v = data;

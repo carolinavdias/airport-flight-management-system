@@ -122,6 +122,7 @@ void gestor_reservations_foreach(GestorReservations *g, ReservationIterFunc f, v
         f((Reservas *)value, user_data);
     }
 }
+
 /**
  * Conta quantas reservas incluem um determinado voo.
  *
@@ -160,7 +161,10 @@ int gestor_reservations_conta_por_voo(GestorReservations *g, const char *flight_
  * FUNÇÕES PARA CACHE Q4 (OTIMIZAÇÃO)
  * ============================================ */
 
-// Função auxiliar para libertar hash table interna (passageiro -> gasto)
+/**
+ * Função auxiliar para libertar hash table interna (passageiro -> gasto)
+ */
+
 static void liberta_gastos_semana(gpointer data) {
     g_hash_table_destroy((GHashTable *)data);
 }
@@ -218,7 +222,10 @@ void gestor_reservations_foreach_cache_q4(GestorReservations *g, CacheQ4IterFunc
     }
 }
 
-/* Estrutura auxiliar para ordenação */
+/**
+ * Estrutura auxiliar para ordenação 
+ */
+
 typedef struct {
     char *doc_number;
     double gasto;

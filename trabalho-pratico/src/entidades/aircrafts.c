@@ -15,7 +15,9 @@
  * através da devolução de cópias nos getters.
  */
 
-// Estrutura interna que representa uma aeronave 
+/**
+ * Estrutura interna que representa uma aeronave 
+ */
 
 struct aeronave {
     char *identifier;      /**< Identificador único da aeronave */
@@ -82,18 +84,18 @@ void aircraft_set_year(Aeronave *a, char *year) {
     a->year = atoi(year);
 }
 
-// ===================================================
-// CRIA AERONAVE
-// ===================================================
+/* ============================================
+ * CRIA AERONAVE
+ * ============================================ */
 
 Aeronave *criaAeronave() {
    Aeronave *a = calloc (1, sizeof *a);
    return a;
 }
 
-// ===================================================
-// DESTRÓI AERONAVE
-// ===================================================
+/* ============================================
+ * DESTRÓI AERONAVE
+ * ============================================ */
 
 void libertaAeronave(void *data) {
     Aeronave *a = data;
