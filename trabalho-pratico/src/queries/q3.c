@@ -153,7 +153,7 @@ char *query3(const char *data_inicio, const char *data_fim,
             }
             
             //libertar strings
-            //g_free(iata);
+            g_free((char*)iata);
             //g_free(name);
             //g_free(city);
             //g_free(country);

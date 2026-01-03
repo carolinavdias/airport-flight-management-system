@@ -58,7 +58,7 @@ char *query1(const char *code, GestorAirports *gestorAeroportos,
                        chegadas, 
                        partidas); 
     
-    //g_free(iata);
+    g_free((char*)iata);
     //g_free(name);
     //g_free(city);
     //g_free(country);
