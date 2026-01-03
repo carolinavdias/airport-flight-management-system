@@ -59,7 +59,6 @@ static void processa_linha_comando(const char *linha_completa,
     interpreta_comando(comando, param, out, 
                        gestorAeroportos, gestorVoos, gestorAeronaves,
                        gestorPassageiros, gestorReservas);
-    gestor_reservations_finaliza_cache_q4(gestorReservas);  // Pre-calcular top 10 para Q4
 
     g_free(linha);
 }
