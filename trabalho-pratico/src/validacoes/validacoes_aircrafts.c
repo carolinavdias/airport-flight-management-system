@@ -50,10 +50,5 @@ Aeronave *validacoes_campos_aircrafts(char **campos) {
 	libertaAeronave(ac);
 	return NULL;
     }
-<<<<<<< HEAD
-    // Dados inválidos -> descartar aeronave
-    else return NULL;
-=======
->>>>>>> 5b07969 (limpeza e leaks)
 }
 

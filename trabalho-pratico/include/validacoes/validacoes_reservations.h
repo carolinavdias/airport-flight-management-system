@@ -55,8 +55,6 @@
  */
 
 
-<<<<<<< HEAD
-=======
 /**
  * @brief Valida campos booleanos de uma reserva.
  *
@@ -73,7 +71,6 @@
  */
 
 
->>>>>>> 840f49e (limpeza e leaks)
 /* ============================================
  * RESERVAS -> VALIDAÇÃO LÓGICA
  * ============================================ */
