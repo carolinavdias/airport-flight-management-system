@@ -5,7 +5,10 @@
 #include <time.h>
 #include <sys/resource.h>
 
-//compara dois ficheiros linha a linha
+/**
+ * Compara dois ficheiros linha a linha.
+ */
+
 static int compare_files(const char *expected, const char *output) {
     FILE *f1 = fopen(expected, "r");
     FILE *f2 = fopen(output, "r");
@@ -40,7 +43,10 @@ static int compare_files(const char *expected, const char *output) {
     }
 }
 
-// programa principal de testes
+/**
+ * Programa principal de testes
+ */
+
 int main(int argc, char *argv[]) {
     if (argc < 4) {
         printf("Uso: %s <dataset_dir> <input.txt> <resultados-esperados/>\n", argv[0]);

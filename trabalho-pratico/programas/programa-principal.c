@@ -4,13 +4,6 @@
 #include <string.h>
 #include <glib.h>
 
-#include "queries/q1.h"
-#include "queries/q2.h"
-#include "queries/q3.h"
-//#include "queries/q4.h"
-//#include "queries/q5.h"
-#include "queries/q6.h"
-
 #include "parsers/parser.h"
 #include "parsers/parser_flights.h"
 #include "parsers/parser_airports.h"
@@ -28,7 +21,10 @@
 #include "utils/utils.h"
 #include "queries/interpreter.h"
 
-// Função auxiliar para processar linha de comando
+/**
+ * Função auxiliar para processar linha de comando.
+ */
+
 static void processa_linha_comando(const char *linha_completa, 
                                    FILE *out,
                                    GestorAirports *gestorAeroportos,
@@ -60,6 +56,10 @@ static void processa_linha_comando(const char *linha_completa,
 
     g_free(linha);
 }
+
+/**
+ * Função main.
+ */
 
 int main(int argc, char **argv) {
 

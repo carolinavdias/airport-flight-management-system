@@ -28,7 +28,10 @@
 
 #include "utils/utils.h"
 
-//cores para o terminal (opcional)
+/**
+ * Cores para o terminal.
+ */
+
 #define COLOR_RESET   "\x1b[0m"
 #define COLOR_GREEN   "\x1b[32m"
 #define COLOR_YELLOW  "\x1b[33m"
@@ -37,7 +40,10 @@
 #define COLOR_CYAN    "\x1b[36m"
 #define COLOR_RED     "\x1b[31m"
 
-//estado global dos gestores
+/**
+ * Estado global dos gestores.
+ */
+
 typedef struct {
     GestorAirports *gestorAeroportos;
     GestorFlights *gestorVoos;
@@ -47,13 +53,19 @@ typedef struct {
     int dados_carregados;
 } EstadoPrograma;
 
-//limpa buffer de entrada
+/**
+ * Limpa buffer de entrada.
+ */
+
 static void limpa_buffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
-//lê linha de forma segura
+/**
+ * Lê linha de forma segura.
+ */
+
 static char *le_linha() {
     char *linha = NULL;
     size_t tam = 0;
@@ -66,7 +78,10 @@ static char *le_linha() {
     return linha;
 }
 
-//mostra banner inicial
+/**
+ * Mostra banner inicial.
+ */
+
 static void mostra_banner() {
     printf("\n");
     printf(COLOR_CYAN "╔═══════════════════════════════════════════╗\n" COLOR_RESET);
@@ -76,7 +91,10 @@ static void mostra_banner() {
     printf("\n");
 }
 
-//mostra menu principal
+/**
+ * Mostra menu principal.
+ */
+
 static void mostra_menu() {
     printf("\n" COLOR_BLUE "═══════════════════ MENU ═══════════════════\n" COLOR_RESET);
     printf(COLOR_GREEN "  1" COLOR_RESET " - Query 1: Resumo de aeroporto\n");
@@ -91,7 +109,10 @@ static void mostra_menu() {
     printf("\n" COLOR_CYAN "Escolha uma opção: " COLOR_RESET);
 }
 
-//carrega dataset
+/**
+ * Carrega dataset.
+ */
+
 static int carrega_dataset(EstadoPrograma *estado, const char *caminho) {
     printf(COLOR_YELLOW "\n⏳ A carregar dados de: %s\n" COLOR_RESET, caminho);
     
@@ -130,7 +151,10 @@ static int carrega_dataset(EstadoPrograma *estado, const char *caminho) {
     return 1;
 }
 
-//executa Query 1
+/**
+ * Executa Query 1.
+ */
+
 static void executa_query1(EstadoPrograma *estado) {
     printf(COLOR_CYAN "\n╔═══ Query 1: Resumo de Aeroporto ═══╗\n" COLOR_RESET);
     printf("Digite o código IATA do aeroporto: ");
@@ -156,7 +180,10 @@ static void executa_query1(EstadoPrograma *estado) {
     free(codigo);
 }
 
-//executa Query 2
+/**
+ * Executa Query 2.
+ */
+
 static void executa_query2(EstadoPrograma *estado) {
     printf(COLOR_CYAN "\n╔═══ Query 2: Top N Aeronaves ═══╗\n" COLOR_RESET);
     printf("Digite N (número de aeronaves): ");
@@ -192,7 +219,10 @@ static void executa_query2(EstadoPrograma *estado) {
     free(fabricante);
 }
 
-//executa Query 3
+/**
+ * Executa Query 3.
+ */
+
 static void executa_query3(EstadoPrograma *estado) {
     printf(COLOR_CYAN "\n╔═══ Query 3: Aeroporto com Mais Partidas ═══╗\n" COLOR_RESET);
     printf("Data início (YYYY-MM-DD): ");
@@ -233,6 +263,9 @@ static void executa_query3(EstadoPrograma *estado) {
     free(data_fim);
 }
 
+/**
+ * /Executa Query 4.
+ */
 //executa Query 4
 static void executa_query4(EstadoPrograma *estado) {
     printf(COLOR_CYAN "\n╔═══ Query 4: Passageiro que esteve mais tempo no Top 10 dos que gastaram mais em reservas num período de tempo\n" COLOR_RESET);
@@ -285,8 +318,10 @@ static void executa_query4(EstadoPrograma *estado) {
     if (data_fim) free(data_fim);
 }
 
+/**
+ * Executa Query 5.
+ */
 
-//executa Query 5
 static void executa_query5(EstadoPrograma *estado) {
     printf(COLOR_CYAN "\n╔═══ Query 5: Top N Companhias Aéreas ═══╗\n" COLOR_RESET);
     printf("Digite N (número de companhias aéreas): ");
@@ -313,8 +348,10 @@ static void executa_query5(EstadoPrograma *estado) {
     free(resultado);
 }
 
+/**
+ * Executa Query 6.
+ */
 
-//executa Query 6
 static void executa_query6(EstadoPrograma *estado) {
     printf(COLOR_CYAN "\n╔═══ Query 6: Destino Mais Comum ═══╗\n" COLOR_RESET);
     printf("Digite a nacionalidade: ");
@@ -339,7 +376,10 @@ static void executa_query6(EstadoPrograma *estado) {
     free(nacionalidade);
 }
 
-//liberta recursos
+/**
+ * Liberta recursos
+ */
+
 static void liberta_recursos(EstadoPrograma *estado) {
     if (!estado->dados_carregados) return;
     
@@ -352,13 +392,19 @@ static void liberta_recursos(EstadoPrograma *estado) {
     estado->dados_carregados = 0;
 }
 
-//limpa o terminal (após execução de cada query)
+/**
+ * Limpa o terminal após execução de cada query.
+ */
+
 static void limpa_terminal() {
     printf("\033[2J\033[H");
     fflush(stdout);
 }
 
-//main
+/**
+ * Função main
+ */
+
 int main() {
     EstadoPrograma estado = {0};
     
