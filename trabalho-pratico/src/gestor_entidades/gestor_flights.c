@@ -2,10 +2,8 @@
 #include "entidades/flights.h"
 #include "queries/q5.h"
 #include "utils/utils.h"
-#include <glib.h>
-#include <stdbool.h>
-#include <string.h>
-#include <stdio.h>
+//#include <string.h>
+//#include <stdio.h>
 
 /* ============================================
  * ESTRUTURA 

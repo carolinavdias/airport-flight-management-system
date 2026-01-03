@@ -1,6 +1,7 @@
 #ifndef GESTOR_FLIGHTS_H
 #define GESTOR_FLIGHTS_H
 
+#include <glib.h>
 #include <stdbool.h>
 #include "entidades/flights.h"
 
@@ -163,6 +164,7 @@ Voo **gestor_flights_get_array_ordenado(GestorFlights *g, int *num_voos);
  * @return Número de voos ou 0 se não encontrado.
  */
 int gestor_flights_get_contagem_aircraft(GestorFlights *g, const char *aircraft_id);
+void gestor_flights_set_contagens_aircraft(GestorFlights *g, GHashTable *contagens);
 
 /* ============================================
  * PROCURA

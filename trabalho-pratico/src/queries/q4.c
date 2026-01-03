@@ -30,29 +30,10 @@
  * ===================================================== */
 
 /**
- * @brief Fórmula de Sakamoto para dia da semana
- * @return 0=domingo, 1=segunda, ..., 6=sábado
- */
-static int dia_da_semana(int ano, int mes, int dia) {
-    static int t[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
-    if (mes < 3) ano -= 1;
-    return (ano + ano/4 - ano/100 + ano/400 + t[mes-1] + dia) % 7;
-}
-
-/**
  * @brief Verifica se ano é bissexto
  */
 static int eh_bissexto(int ano) {
     return (ano % 4 == 0 && ano % 100 != 0) || (ano % 400 == 0);
-}
-
-/**
- * @brief Dias no mês
- */
-static int dias_no_mes(int ano, int mes) {
-    int dias[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    if (mes == 2 && eh_bissexto(ano)) return 29;
-    return dias[mes - 1];
 }
 
 /**
@@ -69,29 +50,6 @@ static long data_para_dias(int ano, int mes, int dia) {
 }
 
 /**
- * @brief Extrai ano, mês, dia de um datetime (formato YYYYMMDDHHmm)
- */
-static void extrai_data(long long datetime, int *ano, int *mes, int *dia) {
-    *ano = (int)(datetime / 100000000LL);
-    *mes = (int)((datetime / 1000000LL) % 100);
-    *dia = (int)((datetime / 10000LL) % 100);
-}
-
-/**
- * @brief Calcula ID único da semana (dias desde época do domingo dessa semana)
- */
-static long obter_id_semana(long long datetime) {
-    int ano, mes, dia;
-    extrai_data(datetime, &ano, &mes, &dia);
-    
-    long dias = data_para_dias(ano, mes, dia);
-    int dow = dia_da_semana(ano, mes, dia);  // 0=domingo
-    
-    // Retroceder para o domingo dessa semana
-    return dias - dow;
-}
-
-/**
  * @brief Converte string "YYYY-MM-DD" para dias desde época
  * @return -1 se formato inválido
  */
@@ -103,21 +61,6 @@ static long parse_data_str(const char *str) {
     return data_para_dias(ano, mes, dia);
 }
 
-/**
- * @brief Verifica se uma semana intersecta com o intervalo de filtro
- * Semana = [id_semana (domingo), id_semana + 6 (sábado)]
- */
-static int semana_no_intervalo(long id_semana, long inicio_dias, long fim_dias) {
-    // Sem filtro = todas as semanas
-    if (inicio_dias < 0 || fim_dias < 0) return 1;
-    
-    long semana_domingo = id_semana;
-    long semana_sabado = id_semana + 6;
-    
-    // Intersecta se: domingo <= fim_filtro E sábado >= inicio_filtro
-    return (semana_domingo <= fim_dias && semana_sabado >= inicio_dias);
-}
-
 /* =====================================================
  * ESTRUTURAS AUXILIARES
  * ===================================================== */
@@ -127,170 +70,17 @@ typedef struct {
     double total_gasto;
 } GastoPassageiro;
 
-/**
- * @brief Comparador: maior gasto primeiro, empate por doc_number crescente
- */
-static int compara_gastos(const void *a, const void *b) {
-    const GastoPassageiro *g1 = a;
-    const GastoPassageiro *g2 = b;
-    
-    if (g1->total_gasto > g2->total_gasto) return -1;
-    if (g1->total_gasto < g2->total_gasto) return 1;
-    
-    // Empate: menor document_number primeiro
-    return strcmp(g1->doc_number, g2->doc_number);
-}
 
 /* =====================================================
  * DADOS PARA ITERAÇÃO
  * ===================================================== */
-/*
-typedef struct {
-    GHashTable *semanas;  // id_semana -> GHashTable(doc_number -> double*)
-    GestorFlights *gestorVoos;
-} DadosRecolha;
-*/
+
 typedef struct {
     GHashTable *semanas;
     GestorFlights *gestorVoos;
     long inicio_dias;
     long fim_dias;
 } DadosRecolha;
-/**
- * @brief Callback para processar cada reserva
- */
-static void processa_reserva(Reservas *r, void *user_data) {
-    DadosRecolha *dados = user_data;
-    
-    // Obter primeiro voo da reserva usando função ENCAPSULADA
-    char *voo_id = r_get_voo_por_indice(r, 0);
-    if (!voo_id) return;
-    
-    Voo *voo = gestor_flights_procura(dados->gestorVoos, voo_id);
-    g_free(voo_id);  // Libertar cópia!
-    
-    if (!voo) return;
-    
-    // NOTA: O enunciado da Q4 NÃO diz para excluir voos cancelados!
-    
-    // Obter departure (partida ESTIMADA)
-    long long departure = voo_get_departure(voo);
-    if (departure <= 0) return;
-    
-    // Calcular semana
-    long id_semana = obter_id_semana(departure);
-    
-    // FILTRO ANTECIPADO: ignorar semanas fora do intervalo
-    if (!semana_no_intervalo(id_semana, dados->inicio_dias, dados->fim_dias)) {
-        return;
-    }
-    
-    // Obter ou criar tabela de gastos para esta semana
-    GHashTable *gastos_semana =
-        g_hash_table_lookup(dados->semanas, GINT_TO_POINTER(id_semana));
-    
-    if (!gastos_semana) {
-        gastos_semana =
-            g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-        g_hash_table_insert(dados->semanas,
-                            GINT_TO_POINTER(id_semana),
-                            gastos_semana);
-    }
-    
-    // Obter document_number (int) e formatar como string com 9 dígitos
-    int doc_int = r_get_id_pessoa_reservou(r);
-    char doc_str[16];
-    snprintf(doc_str, sizeof(doc_str), "%09d", doc_int);
-    
-    // Obter preço da reserva
-    double preco = r_get_preco(r);
-    
-    // Acumular gasto
-    double *gasto = g_hash_table_lookup(gastos_semana, doc_str);
-    if (!gasto) {
-        gasto = g_new(double, 1);
-        *gasto = 0.0;
-        g_hash_table_insert(gastos_semana, g_strdup(doc_str), gasto);
-    }
-    *gasto += preco;
-}
-
-/* Callback para usar o cache Q4 pré-computado */
-static void processa_cache_q4(long id_semana, const char *doc_number, double gasto, void *user_data) {
-    DadosRecolha *dados = user_data;
-    
-    // Verificar filtro de datas
-    if (!semana_no_intervalo(id_semana, dados->inicio_dias, dados->fim_dias)) {
-        return;
-    }
-    
-    // Obter ou criar tabela de gastos para esta semana
-    GHashTable *gastos_semana = g_hash_table_lookup(dados->semanas, GINT_TO_POINTER(id_semana));
-    if (!gastos_semana) {
-        gastos_semana = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-        g_hash_table_insert(dados->semanas, GINT_TO_POINTER(id_semana), gastos_semana);
-    }
-    
-    // Acumular gasto
-    double *gasto_atual = g_hash_table_lookup(gastos_semana, doc_number);
-    if (!gasto_atual) {
-        gasto_atual = g_new(double, 1);
-        *gasto_atual = 0.0;
-        g_hash_table_insert(gastos_semana, g_strdup(doc_number), gasto_atual);
-    }
-    *gasto_atual = gasto;
-}
-
-
-static void processa_reserva2(Reservas *r, void *user_data) {
-    DadosRecolha *dados = user_data;
-    
-    // Obter primeiro voo da reserva usando função ENCAPSULADA
-    char *voo_id = r_get_voo_por_indice(r, 0);
-    if (!voo_id) return;
-    
-    Voo *voo = gestor_flights_procura(dados->gestorVoos, voo_id);
-    g_free(voo_id);  // Libertar cópia!
-    
-    if (!voo) return;
-    
-    // NOTA: O enunciado da Q4 NÃO diz para excluir voos cancelados!
-    // Diferente de Q1, Q3 e Q6 que dizem explicitamente.
-    // Portanto, consideramos TODAS as reservas.
-    
-    // Obter departure (partida ESTIMADA, conforme enunciado)
-    long long departure = voo_get_departure(voo);
-    if (departure <= 0) return;
-    
-    // Calcular semana
-    long id_semana = obter_id_semana(departure);
-    
-    // Obter ou criar tabela de gastos para esta semana
-    GHashTable *gastos_semana = g_hash_table_lookup(dados->semanas, GINT_TO_POINTER(id_semana));
-    if (!gastos_semana) {
-        gastos_semana = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-        g_hash_table_insert(dados->semanas, GINT_TO_POINTER(id_semana), gastos_semana);
-    }
-    
-    // Obter document_number (int) e formatar como string com 9 dígitos
-    // O CSV tem "055895169", que é guardado como int 55895169
-    // Para pesquisar no gestor_passengers, precisamos da string original
-    int doc_int = r_get_id_pessoa_reservou(r);
-    char doc_str[16];
-    snprintf(doc_str, sizeof(doc_str), "%09d", doc_int);
-    
-    // Obter preço da reserva usando função NOVA
-    double preco = r_get_preco(r);
-    
-    // Acumular gasto
-    double *gasto = g_hash_table_lookup(gastos_semana, doc_str);
-    if (!gasto) {
-        gasto = g_new(double, 1);
-        *gasto = 0.0;
-        g_hash_table_insert(gastos_semana, g_strdup(doc_str), gasto);
-    }
-    *gasto += preco;
-}
 
 /* =====================================================
  * QUERY 4 - IMPLEMENTAÇÃO PRINCIPAL
@@ -322,7 +112,7 @@ static void conta_top10(long id_semana, const char *doc_number, void *user_data)
 
 char *query4(const char *linhaComando,
              GestorPassengers *gestorPassageiros,
-             GestorFlights *gestorVoos,
+             //GestorFlights *gestorVoos,
              GestorReservations *gestorReservas) {
     
     // =========================================================

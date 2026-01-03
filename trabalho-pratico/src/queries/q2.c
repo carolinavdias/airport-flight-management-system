@@ -58,19 +58,19 @@ static void processa_aeronave(Aeronave *a, void *user_data) {
     DadosFiltro *dados = user_data;
 
     //guardar getter para libertar
-    char *manuf_str = aircraft_get_manufacturer(a);
+    const char *manuf_str = aircraft_get_manufacturer(a);
     
     // filtro
     if (dados->usar_filtro) {
         if (g_ascii_strcasecmp(manuf_str, dados->fabricante_lower) != 0) {
-            g_free(manuf_str);
+            //g_free(manuf_str);
             return;
         }
     }
 
     //guardar getters para libertar
     char *id_str = aircraft_get_identifier(a);
-    char *model_str = aircraft_get_model(a);
+    const char *model_str = aircraft_get_model(a);
     
     //busca contagem na tabela PRÉ-CONSTRUÍDA (não reconstrói!)
     int count = 0;
@@ -87,8 +87,8 @@ static void processa_aeronave(Aeronave *a, void *user_data) {
 
     //libertar os getters originais
     g_free(id_str);
-    g_free(manuf_str);
-    g_free(model_str);
+    //g_free(manuf_str);
+    //g_free(model_str);
 
     dados->resultado = g_list_prepend(dados->resultado, c);
 }

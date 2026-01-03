@@ -83,7 +83,7 @@ void interpreta_comando(const char *comando,
     int query_num = extrai_numero_query(comando, &formato_alternativo);
     // Q4 pode ser chamada sem parâmetros
     if (query_num == 4) {
-        char *resultado = query4(param ? param : "", gestorPassageiros, gestorVoos, gestorReservas);
+        char *resultado = query4(param ? param : "", gestorPassageiros,  gestorReservas);
         if (resultado && resultado[0] != '\n') {
             aplica_formato(resultado, formato_alternativo);
             fprintf(out, "%s", resultado);
@@ -116,7 +116,7 @@ void interpreta_comando(const char *comando,
                     resultado = query3(data_inicio, data_fim, gestorVoos, gestorAeroportos);
 		}
 		break;
-	  case 4: resultado = query4(param ? param : "", gestorPassageiros, gestorVoos, gestorReservas);
+	  case 4: resultado = query4(param ? param : "", gestorPassageiros, gestorReservas);
 		  break;
           case 5: resultado = query5(param, gestorVoos);
                   break;

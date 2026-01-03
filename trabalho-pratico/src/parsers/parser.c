@@ -17,9 +17,7 @@ static int dia_semana_parser(int ano, int mes, int dia) {
     if (mes < 3) ano -= 1;
     return (ano + ano/4 - ano/100 + ano/400 + t[mes-1] + dia) % 7;
 }
-static int bissexto_parser(int ano) {
-    return (ano % 4 == 0 && ano % 100 != 0) || (ano % 400 == 0);
-}
+
 static long dias_desde_epoca_parser(int ano, int mes, int dia) {
     // Fórmula O(1) em vez de loop
     int a = ano - 1;

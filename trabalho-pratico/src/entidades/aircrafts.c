@@ -36,20 +36,20 @@ struct aeronave {
  * utilizador.
 */
 
-char *aircraft_get_identifier(Aeronave *a) {
+char *aircraft_get_identifier(const Aeronave *a) {
     return a ? g_strdup(a->identifier) : NULL;
 }
 
-char *aircraft_get_manufacturer(Aeronave *a) {
-    return a ? g_strdup(a->manufacturer) : NULL;
+const char *aircraft_get_manufacturer(const Aeronave *a) {
+    return a->manufacturer;
 }
 
-char *aircraft_get_model(Aeronave *a) {
-    return a ? g_strdup(a->model) : NULL;
+const char *aircraft_get_model(const Aeronave *a) {
+    return a->model;
 }
 
-int aircraft_get_year(Aeronave *a) {
-    return a ? a->year : 0;
+int aircraft_get_year(const Aeronave *a) {
+    return a->year;
 }
 
 /* ============================================
@@ -65,6 +65,11 @@ void aircraft_set_id(Aeronave *a, char *s) {
     if (!a || !s) return;
     g_free(a->identifier);
     a->identifier = g_strdup(s);
+}
+void aircraft_set_id2(Aeronave *a, char *s) {
+    if (!a) return;
+    g_free(a->identifier);
+    a->identifier = s;
 }
 
 void aircraft_set_manuf(Aeronave *a, char *s) {

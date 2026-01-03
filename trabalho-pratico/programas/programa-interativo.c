@@ -307,7 +307,7 @@ static void executa_query4(EstadoPrograma *estado) {
 	//snprintf(comando, sizeof(comando), "");
     }
   */  
-    char *resultado = query4(comando, estado->gestorPassageiros, estado->gestorVoos, estado->gestorReservas);
+    char *resultado = query4(comando, estado->gestorPassageiros, estado->gestorReservas);
     
     if (resultado && resultado[0] != '\n') {
         printf(COLOR_GREEN "\n✓ Resultado:\n" COLOR_RESET);

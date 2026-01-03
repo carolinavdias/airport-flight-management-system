@@ -5,7 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define MAX_INPUT 1024
+#define MAX_FOR_INPUT 1024
 
 /* ============================================================
  * FUNÇÕES INTERNAS
@@ -63,7 +63,7 @@ static int processar_comando(GestorGeral *gestor, char *input) {
  * ============================================================ */
 
 void modo_interativo(GestorGeral *gestor) {
-    char buffer[MAX_INPUT];
+    char buffer[MAX_FOR_INPUT];
 
     printf("Modo interativo iniciado.\n");
     printf("Escreva 'quit' ou 'exit' para terminar.\n\n");

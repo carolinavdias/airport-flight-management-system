@@ -35,7 +35,7 @@ typedef struct aeronave Aeronave;
  * @return String com o identificador ou NULL se a aeronave for inválida.
  */
 
-char *aircraft_get_identifier (Aeronave *a);
+char *aircraft_get_identifier (const Aeronave *a);
 
 /**
  * @brief Obtém o fabricante da aeronave.
@@ -46,7 +46,7 @@ char *aircraft_get_identifier (Aeronave *a);
  * @return String com o fabricante ou NULL se a aeronave for inválida.
  */
 
-char *aircraft_get_manufacturer (Aeronave *a);
+const char *aircraft_get_manufacturer (const Aeronave *a);
 
 /**
  * @brief Obtém o modelo da aeronave.
@@ -57,7 +57,7 @@ char *aircraft_get_manufacturer (Aeronave *a);
  * @return String com o modelo ou NULL se a aeronave for inválida.
  */
 
-char *aircraft_get_model (Aeronave *a);
+const char *aircraft_get_model (const Aeronave *a);
 
 /**
  * @brief Obtém o ano de fabrico da aeronave.
@@ -66,7 +66,7 @@ char *aircraft_get_model (Aeronave *a);
  * @return Ano de fabrico ou 0 se a aeronave for inválida.
  */
 
-int aircraft_get_year(Aeronave *a);
+int aircraft_get_year(const Aeronave *a);
 
 // ===================================================
 // SETTERS

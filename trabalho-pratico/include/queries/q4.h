@@ -28,7 +28,7 @@
  */
 char *query4(const char *linhaComando,
              GestorPassengers *gestorPassageiros,
-             GestorFlights *gestorVoos,
+//             GestorFlights *gestorVoos,
              GestorReservations *gestorReservas);
 
 #endif
