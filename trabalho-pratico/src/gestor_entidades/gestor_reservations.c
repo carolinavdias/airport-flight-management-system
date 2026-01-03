@@ -17,6 +17,7 @@
 
 struct gestor_reservations {
     GHashTable *cache_q4;  // semana -> (passageiro -> gasto total)
+    GHashTable *cache_top10;  // semana -> GSList* de doc_numbers no top10
     GHashTable *tabela;   // Hash table: id_reserva → Reservas*
 };
 
@@ -66,6 +67,7 @@ Reservas *gestor_reservations_procura(GestorReservations *g, const char *id_rese
 void gestor_reservations_liberta(GestorReservations *g) {
     if (!g) return;
     if (g->cache_q4) g_hash_table_destroy(g->cache_q4);
+    if (g->cache_top10) g_hash_table_destroy(g->cache_top10);
     if (g->tabela) {
         g_hash_table_destroy(g->tabela);
     }
@@ -211,6 +213,87 @@ void gestor_reservations_foreach_cache_q4(GestorReservations *g, CacheQ4IterFunc
             const char *doc_number = (const char *)key_pass;
             double gasto = *(double *)value_pass;
             func(id_semana, doc_number, gasto, user_data);
+        }
+    }
+}
+
+/* Estrutura auxiliar para ordenação */
+typedef struct {
+    char *doc_number;
+    double gasto;
+} GastoOrdenado;
+
+static int compara_gastos_desc(const void *a, const void *b) {
+    const GastoOrdenado *g1 = a;
+    const GastoOrdenado *g2 = b;
+    if (g1->gasto > g2->gasto) return -1;
+    if (g1->gasto < g2->gasto) return 1;
+    return strcmp(g1->doc_number, g2->doc_number);
+}
+
+static void liberta_lista_top10(gpointer data) {
+    g_slist_free_full((GSList *)data, g_free);
+}
+
+void gestor_reservations_finaliza_cache_q4(GestorReservations *g) {
+    if (!g || !g->cache_q4) return;
+    
+    // Criar cache_top10
+    g->cache_top10 = g_hash_table_new_full(
+        g_direct_hash, g_direct_equal,
+        NULL, liberta_lista_top10
+    );
+    
+    GHashTableIter iter_sem;
+    gpointer key_sem, val_sem;
+    g_hash_table_iter_init(&iter_sem, g->cache_q4);
+    
+    while (g_hash_table_iter_next(&iter_sem, &key_sem, &val_sem)) {
+        long id_semana = GPOINTER_TO_INT(key_sem);
+        GHashTable *gastos = (GHashTable *)val_sem;
+        guint n = g_hash_table_size(gastos);
+        if (n == 0) continue;
+        
+        // Converter para array
+        GastoOrdenado *arr = g_new(GastoOrdenado, n);
+        GHashTableIter iter_g;
+        gpointer k, v;
+        guint i = 0;
+        g_hash_table_iter_init(&iter_g, gastos);
+        while (g_hash_table_iter_next(&iter_g, &k, &v)) {
+            arr[i].doc_number = (char *)k;
+            arr[i].gasto = *(double *)v;
+            i++;
+        }
+        
+        // Ordenar
+        qsort(arr, n, sizeof(GastoOrdenado), compara_gastos_desc);
+        
+        // Guardar top 10 como lista
+        GSList *top10 = NULL;
+        int limite = (n < 10) ? (int)n : 10;
+        for (int j = limite - 1; j >= 0; j--) {
+            top10 = g_slist_prepend(top10, g_strdup(arr[j].doc_number));
+        }
+        
+        g_hash_table_insert(g->cache_top10, GINT_TO_POINTER(id_semana), top10);
+        g_free(arr);
+    }
+}
+
+void gestor_reservations_foreach_top10(GestorReservations *g, Top10IterFunc func, void *user_data) {
+    if (!g || !g->cache_top10 || !func) return;
+    
+    GHashTableIter iter;
+    gpointer key, value;
+    g_hash_table_iter_init(&iter, g->cache_top10);
+    
+    while (g_hash_table_iter_next(&iter, &key, &value)) {
+        long id_semana = GPOINTER_TO_INT(key);
+        GSList *top10 = (GSList *)value;
+        
+        for (GSList *l = top10; l; l = l->next) {
+            func(id_semana, (const char *)l->data, user_data);
         }
     }
 }
