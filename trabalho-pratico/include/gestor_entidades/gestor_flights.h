@@ -190,4 +190,43 @@ GHashTable *gestor_flights_get_contagens_aircraft(GestorFlights *g);
 
 Voo *gestor_flights_procura(GestorFlights *gf, const char *flight_id);
 
+/**
+ * @brief Estrutura para dados de atraso por airline.
+ */
+typedef struct {
+    long total_delay;
+    int count;
+} DadosAtrasoQ5;
+
+/**
+ * @brief Inicializa o cache Q5 para atrasos por airline.
+ * @param g Ponteiro para o gestor.
+ */
+void gestor_flights_init_cache_q5(GestorFlights *g);
+
+/**
+ * @brief Adiciona atraso ao cache Q5.
+ * @param g Ponteiro para o gestor.
+ * @param airline Nome da companhia aerea.
+ * @param delay Atraso em minutos.
+ */
+void gestor_flights_add_atraso_q5(GestorFlights *g, const char *airline, int delay);
+
+/**
+ * @brief Obtem dados de atraso de uma airline.
+ * @param g Ponteiro para o gestor.
+ * @param airline Nome da companhia.
+ * @return Ponteiro para DadosAtrasoQ5 ou NULL.
+ */
+DadosAtrasoQ5 *gestor_flights_get_atraso_q5(GestorFlights *g, const char *airline);
+
+/**
+ * @brief Itera sobre todas as airlines no cache Q5.
+ * @param g Ponteiro para o gestor.
+ * @param func Callback para cada airline.
+ * @param user_data Dados do utilizador.
+ */
+typedef void (*AirlineIterFunc)(const char *airline, long total_delay, int count, void *user_data);
+void gestor_flights_foreach_q5(GestorFlights *g, AirlineIterFunc func, void *user_data);
+
 #endif

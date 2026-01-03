@@ -225,13 +225,24 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                             	}
                             	array_voos[num_voos_array++] = voo_atual;
                             }
-/*
-                            //ADICIONA ao array (válido para Q5)
+                            // Popular cache Q5: atrasos por airline (so voos Delayed)
                             if (voo_get_status(voo_atual) == ESTADO_DELAYED) {
-                            	int new_count = adiciona_voo_para_Q5(lista_airlines_atrasos,num_voos_Q5,campos[2],campos[1]);
-                            	num_voos_Q5 = new_count;
+                                char *airline = voo_get_airline(voo_atual);
+                                if (airline) {
+                                    long long dep = voo_get_departure(voo_atual);
+                                    long long act = voo_get_actual_departure(voo_atual);
+                                    int dep_hora = (dep % 10000) / 100;
+                                    int dep_min = dep % 100;
+                                    int act_hora = (act % 10000) / 100;
+                                    int act_min = act % 100;
+                                    int dep_total = dep_hora * 60 + dep_min;
+                                    int act_total = act_hora * 60 + act_min;
+                                    int delay = act_total - dep_total;
+                                    if (delay < 0) delay += 24 * 60;
+                                    gestor_flights_add_atraso_q5(V, airline, delay);
+                                    g_free(airline);
+                                }
                             }
-*/
                    	} else linha_valida = 0;
                    	//csv_file_error_name = strdup("resultados/flights_errors.csv");
                    	break;
