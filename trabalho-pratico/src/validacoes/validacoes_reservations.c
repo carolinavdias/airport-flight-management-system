@@ -44,17 +44,66 @@ int valida_set_voos_reservados(const char *s, Reservas *r) {
 
         if (!valida_id_voo(token)) { //flight id invalido
 	   g_free(string_voos);
-	   //free(novo)
+	   liberta_lista_reserva(novo);//free(novo)
            return 0; //liberta string_voos e novo?
 	}
 	set_lista_voos(novo,i,token);
     }
 
     r_set_lista(r, novo);
+    //liberta_lista_reserva(novo);
     //free(novo);  //libertar a estrutura Voos_reservados após copiar!
     g_free(string_voos);
     return 1;
 }
+/*
+//valida a lista dos voos reservados, passa para o formato de uma lista e atribui a "Reserva"
+int valida_set_voos_reservados(const char *s, Reservas *r) {
+    if (!s || strlen(s) < 3) return 0; //[] invalido
+    int len = strlen(s);
+    if (s[0] != '[' || s[len-1] != ']') return 0; //verifica se tem os parenteses retos no inicio e no final
+
+    //limpa a string
+    char *string_voos = g_strdup(s + 1); // pula '['
+    string_voos[strlen(string_voos)-1] = '\0';      // remove ']'
+
+    //conta voos
+    int n = 1;
+    for (int i = 0; string_voos[i]; i++) {
+        if (string_voos[i] == ',') n++;
+    }
+
+    Voos_reservados *novo = cria0_lista_reserva(n);
+
+    char *ptr = string_voos;
+    for (int i = 0; i < n; i++) {
+        char *token = strsep(&ptr, ",");
+	if (!token) {
+	   g_free(string_voos);
+	   liberta_lista_reserva(novo);
+	   return 0;
+	}
+        while (*token == ' ' || *token == '\'') token++;
+        char *end = token + strlen(token) - 1;
+        while (end >= token && (*end == ' ' || *end == '\'')) *end-- = '\0';
+	//printf ("%s\n", token);
+        if (!valida_id_voo(token)) { //flight id invalido
+	   g_free(string_voos);
+	   liberta_lista_reserva(novo);
+	   //free(novo)
+           return 0; //liberta string_voos e novo?
+	}
+	//else printf ("%s\n", token);
+	set_lista_voos(novo,i,token);
+    }
+
+    r_set_lista(r, novo);
+    //liberta_lista_reserva(novo,n);
+    //free(novo);  //libertar a estrutura Voos_reservados após copiar!
+    g_free(string_voos);
+    return 1;
+}
+*/
 
 //valida BAGAGEM/PRIORIDADE das Reservas e passa a string para um bool nos respetivos campos em Reserva
 int valida_bool (const char *s) {
@@ -97,7 +146,6 @@ int valida_RESERVA(Reservas *reserva, GestorFlights *gestor_voos, GestorPassenge
 
 Reservas *validacoes_campos_reservations(char **campos, GestorFlights *V, GestorPassengers *P) {
     Reservas *r = criaReserva();
-
     if (valida_id_reserva(campos[0]) 	        && //id_reserva
 	valida_set_voos_reservados(campos[1],r) && //lista voos reservados
 	valida_id_passageiro(campos[2]) 	&& //ide pessoa q reservou
@@ -113,9 +161,13 @@ Reservas *validacoes_campos_reservations(char **campos, GestorFlights *V, Gestor
 	r_set_bools(r,campos[6],2);
 	r_set_qr_code(r,campos[7]);
 
-	if (!valida_RESERVA(r, V, P)) return NULL;
+	if (!valida_RESERVA(r, V, P)) {
+	    return NULL;
+	}
 
         return r;
     }
-    else return NULL;
+    else {
+	return NULL;
+    }
 }

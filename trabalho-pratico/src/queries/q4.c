@@ -146,16 +146,79 @@ static int compara_gastos(const void *a, const void *b) {
 /* =====================================================
  * DADOS PARA ITERAÇÃO
  * ===================================================== */
-
+/*
 typedef struct {
     GHashTable *semanas;  // id_semana -> GHashTable(doc_number -> double*)
     GestorFlights *gestorVoos;
 } DadosRecolha;
-
+*/
+typedef struct {
+    GHashTable *semanas;
+    GestorFlights *gestorVoos;
+    long inicio_dias;
+    long fim_dias;
+} DadosRecolha;
 /**
  * @brief Callback para processar cada reserva
  */
 static void processa_reserva(Reservas *r, void *user_data) {
+    DadosRecolha *dados = user_data;
+    
+    // Obter primeiro voo da reserva usando função ENCAPSULADA
+    char *voo_id = r_get_voo_por_indice(r, 0);
+    if (!voo_id) return;
+    
+    Voo *voo = gestor_flights_procura(dados->gestorVoos, voo_id);
+    g_free(voo_id);  // Libertar cópia!
+    
+    if (!voo) return;
+    
+    // NOTA: O enunciado da Q4 NÃO diz para excluir voos cancelados!
+    
+    // Obter departure (partida ESTIMADA)
+    long long departure = voo_get_departure(voo);
+    if (departure <= 0) return;
+    
+    // Calcular semana
+    long id_semana = obter_id_semana(departure);
+    
+    // FILTRO ANTECIPADO: ignorar semanas fora do intervalo
+    if (!semana_no_intervalo(id_semana, dados->inicio_dias, dados->fim_dias)) {
+        return;
+    }
+    
+    // Obter ou criar tabela de gastos para esta semana
+    GHashTable *gastos_semana =
+        g_hash_table_lookup(dados->semanas, GINT_TO_POINTER(id_semana));
+    
+    if (!gastos_semana) {
+        gastos_semana =
+            g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+        g_hash_table_insert(dados->semanas,
+                            GINT_TO_POINTER(id_semana),
+                            gastos_semana);
+    }
+    
+    // Obter document_number (int) e formatar como string com 9 dígitos
+    int doc_int = r_get_id_pessoa_reservou(r);
+    char doc_str[16];
+    snprintf(doc_str, sizeof(doc_str), "%09d", doc_int);
+    
+    // Obter preço da reserva
+    double preco = r_get_preco(r);
+    
+    // Acumular gasto
+    double *gasto = g_hash_table_lookup(gastos_semana, doc_str);
+    if (!gasto) {
+        gasto = g_new(double, 1);
+        *gasto = 0.0;
+        g_hash_table_insert(gastos_semana, g_strdup(doc_str), gasto);
+    }
+    *gasto += preco;
+}
+
+
+static void processa_reserva2(Reservas *r, void *user_data) {
     DadosRecolha *dados = user_data;
     
     // Obter primeiro voo da reserva usando função ENCAPSULADA
@@ -238,7 +301,9 @@ char *query4(const char *linhaComando,
     
     DadosRecolha dados = {
         .semanas = semanas,
-        .gestorVoos = gestorVoos
+        .gestorVoos = gestorVoos,
+        .inicio_dias = inicio_dias,
+        .fim_dias = fim_dias
     };
     
     // Usar função ENCAPSULADA para iterar
