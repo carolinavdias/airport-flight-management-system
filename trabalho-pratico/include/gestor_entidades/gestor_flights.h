@@ -193,10 +193,7 @@ Voo *gestor_flights_procura(GestorFlights *gf, const char *flight_id);
 /**
  * @brief Estrutura para dados de atraso por airline.
  */
-typedef struct {
-    long total_delay;
-    int count;
-} DadosAtrasoQ5;
+typedef struct dadosAtrasoQ5 DadosAtrasoQ5;
 
 /**
  * @brief Inicializa o cache Q5 para atrasos por airline.
