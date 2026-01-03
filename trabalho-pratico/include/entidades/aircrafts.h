@@ -115,22 +115,6 @@ void aircraft_set_year2(Aeronave *a, int year);
 void aircraft_set_year(Aeronave *a, char *year);
 
 // ===================================================
-// VALIDAÇÃO
-// ===================================================
-
-/**
- * @brief Valida uma linha do ficheiro aircrafts.csv.
- *
- * Verifica se a linha contém os campos necessários e se os mesmos
- * respeitam as regras de validação (nomeadamente o ano).
- *
- * @param linha Linha do ficheiro CSV.
- * @return 1 se a linha for válida, 0 caso contrário.
- */
-
-int valida_aeronave(const char *linha);
-
-// ===================================================
 // CRIA AERONAVE
 // ===================================================
 
@@ -141,6 +125,12 @@ int valida_aeronave(const char *linha);
  *
  * @param linha Linha do ficheiro aircrafts.csv.
  * @return Ponteiro para a aeronave criada ou NULL em caso de erro.
+ */
+
+/**
+ * @brief Cria uma nova aeronave vazia.
+ *
+ * @return Ponteiro para a aeronave criada.
  */
 
 Aeronave *criaAeronave();

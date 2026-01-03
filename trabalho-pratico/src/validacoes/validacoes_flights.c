@@ -122,12 +122,21 @@ Voo *validacoes_campos_flights(char **campos, GestorAircrafts *AC) {
          } else if (valida_DataH(campos[2]) && valida_DataH(campos[4])) {
                   voo_set_dataH(v,campos[2],2);
                   voo_set_dataH(v,campos[4],4);
-              } else return NULL;
+                } else {
+		  libertaVoo(v);
+		  return NULL;
+	        }
 
+	if (!valida_VOO(v, AC)) {
+	      libertaVoo(v);
+	      return NULL;
+	}
+
+ 	return v;
     }
-    else return NULL;
+    else {
+	libertaVoo(v);
+	return NULL;
+    }
 
-    if (!valida_VOO(v, AC)) return NULL;
-
-    return v;
 }

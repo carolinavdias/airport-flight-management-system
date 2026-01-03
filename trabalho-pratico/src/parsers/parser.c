@@ -1,11 +1,5 @@
 #include "parsers/parser.h"
 
-#include "entidades/flights.h"
-#include "entidades/airports.h"
-#include "entidades/aircrafts.h"
-#include "entidades/passengers.h"
-#include "entidades/reservations.h"
-
 #include "validacoes/validacoes_flights.h"
 #include "validacoes/validacoes_airports.h"
 #include "validacoes/validacoes_aircrafts.h"
@@ -45,52 +39,6 @@ static long calcula_id_semana_parser(long long datetime) {
 }
 
 
-int compara_voos_por_data(const void *a, const void *b) {
-    Voo *v1 = *(Voo **)a;
-    Voo *v2 = *(Voo **)b;
-
-    long long t1 = voo_get_actual_departure(v1);
-    long long t2 = voo_get_actual_departure(v2);
-
-    if (t1 < t2) return -1;
-    if (t1 > t2) return 1;
-    return 0;
-}
-
-/*
-//Função auxiliar adiciona um voo ao array a ser usado na Q5
-int adiciona_voo_para_Q5 (Estrt_aux_q5 *lista, char *hora_efetiva, char *hora_prevista, char *airline) {
-    int i = 0;
-    ContagemQ5 *arr = get_array(lista);
-    int num_voos = get_numv(lista);
-
-    for (; i < n; i++) {
-        if (strcmp((*arr)[i].airline,airline) == 0) {
-            float d = (*arr)[i].delay_avg;
-            int current_count = (*arr)[i].delay_count;
-            int new_delay = get_time_datah(hora_efetiva) - get_time_datah(hora_prevista); // to float
-	    float new_avg = (d * current_count + new_delay) / (current_count + 1);
-            set_contagem_avg(arr[i],new_avg); //(*arr)[i].delay_avg
-	    set_contagem_count(arr[i],
-            (*arr)[i].delay_count++;
-            return n;
-        }
-    }
-    ContagemQ5 *tmp = realloc(*arr,(n+1) * sizeof(ContagemQ5));
-    if (!tmp) {
-        return -1;
-    }
-    *arr = tmp;
-
-    int new_delay = get_time_datah(hora_efetiva) - get_time_datah(hora_prevista);
-    (*arr)->airline = strdup(airline);
-    (*arr)->delay_avg = new_delay;
-    (*arr)->delay_count = 1;
-
-    return n + 1;
-}
-*/
-
 int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircrafts *AC, GestorPassengers *P, GestorReservations *R) {
     // Inicializar contagens de passageiros por aeroporto (para Q1 otimizada)
     gestor_airports_init_contagens(AP);
@@ -102,7 +50,6 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
     gchar *caminhoPassageiros= g_build_filename(get_contexto(ctx), "passengers.csv", NULL);
     gchar *caminhoReservas   = g_build_filename(get_contexto(ctx), "reservations.csv", NULL);
 
-    //int le_1 = 0, le_2 = 0, le_3 = 0, le_4 = 0, le_5 = 0 ;
     int *resultados_read = malloc (6 * sizeof(int));
     resultados_read[0] = 1;
     resultados_read[1] = 0;
@@ -379,6 +326,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
 
     return resultados_read;
 }
+<<<<<<< HEAD
 
 
 /*
@@ -594,3 +542,5 @@ int *le_tabela_Voos(Contexto *ctx, GestorFlights *V, GestorAircrafts *AC) {
 }
 
 */
+=======
+>>>>>>> 5b07969 (limpeza e leaks)

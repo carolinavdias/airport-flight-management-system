@@ -234,5 +234,6 @@ Voo *criaVoo ();
 
 void libertaVoo(void *data);
 
+int compara_voos_por_data(const void *a, const void *b);
 #endif
 

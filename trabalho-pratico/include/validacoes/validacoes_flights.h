@@ -37,6 +37,24 @@
 int valida_id_voo (const char *s);
 
 /**
+<<<<<<< HEAD
+=======
+ * @brief Valida uma data e hora no formato YYYY-MM-DD HH:MM.
+ *
+ * Verifica:
+ *  - tamanho correto (16 caracteres);
+ *  - posições fixas de '-', '-', ' ' e ':';
+ *  - todos os restantes caracteres são dígitos;
+ *  - limites válidos para ano, mês, dia, hora e minuto;
+ *  - data não superior à data atual (2025-09-30).
+ *
+ * @param s String contendo a data e hora.
+ * @return 1 se válido, 0 caso contrário.
+ */
+
+
+/**
+>>>>>>> 840f49e (limpeza e leaks)
  * @brief Valida o estado textual de um voo.
  *
  * Aceita apenas:
@@ -48,7 +66,6 @@ int valida_id_voo (const char *s);
  * @return 1 se válido, 0 caso contrário.
  */
 
-int valida_Estado(const char *s); 
 
 /* ============================================
  * VOO -> VALIDAÇÃO LÓGICA
@@ -70,7 +87,6 @@ int valida_Estado(const char *s);
  * @return 1 se válido, 0 caso contrário.
  */
 
-int valida_VOO(Voo *voo, GestorAircrafts *gestor_aeronaves);
 
 /**
  * @brief Valida todos os campos de um voo e cria a estrutura correspondente.

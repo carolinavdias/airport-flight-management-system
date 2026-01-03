@@ -82,6 +82,9 @@ Aeroporto *validacoes_campos_airports(char **campos) {
         airport_set_type(ap,campos[7]);
 
         return ap;
+
+    } else {
+	libertaAeroporto(ap);
+	return NULL;
     }
-    else return NULL;
 }

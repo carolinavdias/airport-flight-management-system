@@ -34,7 +34,6 @@
  * @return 1 se válido, 0 caso contrário.
  */
 
-int valida_id_reserva (const char *s);
 
 /**
  * @brief Valida a lista de voos reservados e atribui-a à reserva.
@@ -55,8 +54,26 @@ int valida_id_reserva (const char *s);
  * @return 1 se válido, 0 caso contrário.
  */
 
-int valida_set_voos_reservados(const char *s, Reservas *r);
 
+<<<<<<< HEAD
+=======
+/**
+ * @brief Valida campos booleanos de uma reserva.
+ *
+ * Aceita apenas:
+ *   - "true"
+ *   - "false"
+ *
+ * Usado para:
+ *   - bagagem extra
+ *   - prioridade
+ *
+ * @param s String contendo o valor booleano.
+ * @return 1 se válido, 0 caso contrário.
+ */
+
+
+>>>>>>> 840f49e (limpeza e leaks)
 /* ============================================
  * RESERVAS -> VALIDAÇÃO LÓGICA
  * ============================================ */
@@ -77,7 +94,6 @@ int valida_set_voos_reservados(const char *s, Reservas *r);
  * @return 1 se válido, 0 caso contrário.
  */
 
-int valida_RESERVA(Reservas *reserva, GestorFlights *gestor_voos, GestorPassengers *gestor_passageiros);
 
 /* ============================================================ 
  * RESERVA -> VALIDAÇÃO COMPLETA DO PARSING 

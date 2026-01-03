@@ -96,32 +96,6 @@ void airport_set_type (Aeroporto *a, char *tipo) {
    }
 }
 
-/*
-void airport_set_type(Aeroporto *a, char *tipo) {
-    if (!a || !tipo) return;
-
-    switch (tipo[0]) {
-        case 's':
-            if (tipo[1] == 'm')
-                a->type = TIPO_SMALL_AIRPORT;
-            else
-                a->type = TIPO_SEAPLANE_BASE;
-            break;
-        case 'm':
-            a->type = TIPO_MEDIUM_AIRPORT;
-            break;
-        case 'l':
-            a->type = TIPO_LARGE_AIRPORT;
-            break;
-        case 'h':
-            a->type = TIPO_HELIPORT;
-            break;
-        default:
-            a->type = TIPO_SMALL_AIRPORT;
-    }
-}
-*/
-
 /* ============================================
  * CRIA AEROPORTO
  * ============================================ */
@@ -145,10 +119,10 @@ Aeroporto *criaAeroporto () {
 void libertaAeroporto(void *data) {
     Aeroporto *a = data;
     if (!a) return;
-    g_free(a->name);
-    g_free(a->city);
-    g_free(a->country);
-    g_free(a->code_IATA);
+    if (a->name) g_free(a->name);
+    if (a->city) g_free(a->city);
+    if (a->country) g_free(a->country);
+    if (a->code_IATA) g_free(a->code_IATA);
     g_free(a);
 }
 

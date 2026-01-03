@@ -68,6 +68,8 @@ Passageiros *validacoes_campos_passengers(char **campos) {
         passenger_set_nc(p,campos[4]);
 
         return p;
+    } else {
+	libertaPassageiro(p);
+	return NULL;
     }
-    else return NULL;
 }

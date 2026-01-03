@@ -28,7 +28,6 @@
  * @return 1 se o ano for válido, 0 caso contrário.
  */
 
-int valida_year (const char *s);
 
 /**
  * @brief Valida todos os campos de uma aeronave e cria a estrutura correspondente.

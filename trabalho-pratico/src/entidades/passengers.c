@@ -80,10 +80,12 @@ void passenger_set_un (Passageiros *p, char *un) {
     p->ultimo_nome = g_strdup(un);
 }
 
+
 /**
  * A data textual no formato YYYY-MM-DD é convertida
  * para um inteiro ordenável no formato YYYYMMDD.
  */
+
 
 void passenger_set_dn (Passageiros *p, char *dn) {
 
@@ -123,10 +125,10 @@ Passageiros *criaPassageiro() {
 void libertaPassageiro(void *data) {
     Passageiros *a = data;
     if (!a) return;
-    g_free(a->id_passageiro);
-    g_free(a->primeiro_nome);
-    g_free(a->ultimo_nome);
-    g_free(a->nacionalidade);
+    if (a->id_passageiro) g_free(a->id_passageiro);
+    if (a->primeiro_nome) g_free(a->primeiro_nome);
+    if (a->ultimo_nome) g_free(a->ultimo_nome);
+    if (a->nacionalidade) g_free(a->nacionalidade);
     g_free(a);
 }
 

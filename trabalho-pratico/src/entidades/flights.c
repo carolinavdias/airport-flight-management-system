@@ -81,9 +81,14 @@ long long voo_get_actual_arrival (const Voo *v) {
     return v->actual_arrival;
 }
 
-/* ============================================
- * SETTERS
- * ============================================ */
+char *voo_get_airline(const Voo *v) {
+    if (!v || !v->airline) return NULL;
+    return g_strdup(v->airline);
+}
+
+// ===================================================
+// SETTERS
+// ===================================================
 
 /**
  * As funções de modificação atualizam os campos internos
@@ -235,20 +240,24 @@ Voo *criaVoo () {
 void libertaVoo(void *data) {
     Voo *v = data;
     if (!v) return;
-    g_free(v->flight_id);
-    //g_free(v->gate);
-    g_free(v->code_origin);
-    g_free(v->code_destination);
-    g_free(v->id_aircraft);
-    g_free(v->airline);
-    //g_free(v->tracking_url);
+    if (v->flight_id) g_free(v->flight_id);
+    if (v->code_origin) g_free(v->code_origin);
+    if (v->code_destination) g_free(v->code_destination);
+    if (v->id_aircraft) g_free(v->id_aircraft);
+    if (v->airline) g_free(v->airline);
     g_free(v);
 }
 
 
 
+int compara_voos_por_data(const void *a, const void *b) {
+    Voo *v1 = *(Voo **)a;
+    Voo *v2 = *(Voo **)b;
 
-char *voo_get_airline(const Voo *v) {
-    if (!v || !v->airline) return NULL;
-    return g_strdup(v->airline);
+    long long t1 = voo_get_actual_departure(v1);
+    long long t2 = voo_get_actual_departure(v2);
+
+    if (t1 < t2) return -1;
+    if (t1 > t2) return 1;
+    return 0;
 }

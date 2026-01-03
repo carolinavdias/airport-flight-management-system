@@ -45,7 +45,6 @@ int valida_id_passageiro(const char *s);
  * @return 1 se válido, 0 caso contrário.
  */
 
-int valida_genero(const char *s);
 
 /**
  * @brief Valida um email.
@@ -62,9 +61,25 @@ int valida_genero(const char *s);
  * @return 1 se válido, 0 caso contrário.
  */
 
-int valida_email(const char *s);
 
 /**
+<<<<<<< HEAD
+=======
+ * @brief Valida uma data no formato YYYY-MM-DD.
+ *
+ * Verifica:
+ *  - tamanho correto (10 caracteres)
+ *  - posições fixas de '-'
+ *  - todos os restantes caracteres são dígitos
+ *  - limites válidos para ano, mês e dia
+ *
+ * @param s String contendo a data.
+ * @return 1 se válido, 0 caso contrário.
+ */
+
+
+/**
+>>>>>>> 840f49e (limpeza e leaks)
  * @brief Valida todos os campos de um passageiro e cria a estrutura correspondente.
  *
  * Esta função valida:

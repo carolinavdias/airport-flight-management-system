@@ -19,14 +19,10 @@ typedef struct voos_reservados {
 // Estrutura que representa uma reserva
 
 typedef struct reservas {
-    char *id_reserva;                /**< Identificador único da reserva */ 
-    Voos_reservados *reserva_lista;  /**< Lista de voos associados à reserva */ 
-    int id_pessoa_reservou;          /**< Identificador da pessoa em nome de quem a reserva foi efetuada */ 
-    char *lugar_reservado;           /**< Lugar atribuído ao passageiro no voo */ 
-    double preco_reserva;            /**< Preço total da reserva */ 
-    bool bagagem_extra;              /**< Indica se foi requisitada bagagem extra */ 
-    bool prioridade;                 /**< Indica se é necessária prioridade de embarque */ 
-    char *qr_code;                   /**< Código QR associado à reserva */ 
+    char *id_reserva;               // Identificador único da reserva
+    Voos_reservados *reserva_lista;  // Lista de voos associados à reserva
+    int id_pessoa_reservou;         // Identificador da pessoa em nome de quem a reserva foi efetuada
+    double preco_reserva;           // Preço total da reserva
 } Reservas;
 
 /* ============================================
@@ -135,34 +131,13 @@ void r_set_id_pessoa_reservou (Reservas *r, char *s) {
     r->id_pessoa_reservou = atoi(s);
 }
 
-void r_set_lugar (Reservas *r, char *s) {
-    g_free(r->lugar_reservado);
-    r->lugar_reservado = g_strdup(s);
-}
-
 void r_set_preco (Reservas *r, char *s) {
     r->preco_reserva = atof(s);
 }
 
-void r_set_bools (Reservas *r, char *s, int versao) {
-     switch (s[0]) {
-	case 't' : if (versao == 1) r->bagagem_extra = true;
-		   else r->prioridade = true;
-		   break;
-	case 'f' : if (versao == 1) r->bagagem_extra = false;
-		   else r->prioridade = false;
-	    	   break;
-     }
-}
-
-void r_set_qr_code (Reservas *r, char *s) {
-     g_free(r->qr_code);
-     r->qr_code = g_strdup(s);
-}
-
-/* ============================================
- * CRIA RESERVA
- * ============================================ */
+// ===================================================
+// CRIA RESERVA
+// ===================================================
 
 Reservas *criaReserva () {
     Reservas *r = calloc (1, sizeof *r);
@@ -180,14 +155,7 @@ Reservas *criaReserva () {
 void libertaReserva(void *data) {
     Reservas *a = data;
     if (!a) return;
-    if (a->reserva_lista->lista_voos_reservados) {
-        for (int i = 0; i < a->reserva_lista->n_voos; i++) {
-            g_free(a->reserva_lista->lista_voos_reservados[i]);
-        }
-        free(a->reserva_lista->lista_voos_reservados);
-    }
-    g_free(a->id_reserva);
-    g_free(a->lugar_reservado);
-    g_free(a->qr_code);
+    if (a->reserva_lista) liberta_lista_reserva (a->reserva_lista); 
+    if (a->id_reserva) g_free(a->id_reserva);
     g_free(a);
 }

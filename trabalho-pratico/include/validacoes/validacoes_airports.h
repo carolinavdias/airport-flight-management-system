@@ -32,7 +32,6 @@
  * @return 1 se válido, 0 caso contrário.
  */
 
-int valida_coordenadas (const char* s, int versao);
 
 /**
  * @brief Valida o tipo de aeroporto.
@@ -48,7 +47,6 @@ int valida_coordenadas (const char* s, int versao);
  * @return 1 se válido, 0 caso contrário.
  */
 
-int valida_tipo_aer(const char *s);
 
  /** 
   * @brief Valida todos os campos de um aeroporto e cria a estrutura correspondente.
