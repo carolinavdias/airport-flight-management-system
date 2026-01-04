@@ -10,7 +10,7 @@
  * Compara dois ficheiros linha a linha.
  */
 
-static int compare_files(const char *expected, const char *output) {
+static int compare_files(const char *expected, const char *output, const char t) {
     FILE *f1 = fopen(expected, "r");
     FILE *f2 = fopen(output, "r");
     if (!f1 || !f2) {
@@ -30,13 +30,13 @@ static int compare_files(const char *expected, const char *output) {
                 fclose(f1); fclose(f2);
                 return 0;
             } else {
-                printf("✘ Diferenca no tamanho (linha %d)\n", line);
+                if (t == 'l') printf("✘ Diferenca no tamanho (linha %d)\n", line);
                 fclose(f1); fclose(f2);
                 return 1;
             }
         }
         if (strcmp(line1, line2) != 0) {
-            printf("✘ Diferenca na linha %d:\nEsperado: %sObtido  : %s\n", line, line1, line2);
+            if (t == 'l') printf("✘ Diferenca na linha %d:\nEsperado: %sObtido  : %s\n", line, line1, line2);
             fclose(f1); fclose(f2);
             return 1;
         }
@@ -58,6 +58,13 @@ int main(int argc, char *argv[]) {
     const char *input = argv[2];
     const char *expected_dir = argv[3];
     const char *type = argv[4];
+
+    if (type[1] != '\0' || (type[0] != 's' && type[0] != 'l')) {
+        printf ("Tipo de teste inválido.\n");
+        return 1;
+    }
+    const char t = type[0];
+
 
     printf("====================================\n");
     printf("✔ Programa de Testes LI3\n");
@@ -88,14 +95,18 @@ int main(int argc, char *argv[]) {
 
     // compara todos os ficheiros de saída
     char expected_path[512], output_path[512];
+    int errors = 0, all = 1;
     for (int i = 1; i <= 120; i++) {
         snprintf(expected_path, sizeof(expected_path), "%s/command%d_output.txt", expected_dir, i);
         snprintf(output_path, sizeof(output_path), "resultados/command%d_output.txt", i);
         printf("\n▶ Comparando comando %d...\n", i);
-        int status = compare_files(expected_path, output_path);
+        int status = compare_files(expected_path, output_path,t);
         if (status != 0) {
-            printf("✘ Diferença encontrada no comando %d\n", i);
-            return 1;
+	    all = 0;
+	    errors++;
+	    if (t == 'l') {
+            	printf("✘ Diferença encontrada no comando %d\n", i);
+	    }
         }
     }
 
@@ -103,7 +114,8 @@ int main(int argc, char *argv[]) {
     printf("\n====================================\n");
     printf("           ✔ Resumo dos Testes\n");
     printf("====================================\n");
-    printf("Todos os ficheiros coincidem com os resultados esperados.\n");
+    if (all) printf("Todos os ficheiros coincidem com os resultados esperados.\n");
+    else printf("%d ficheiros de 120 não coincidem com os resultados esperados.\n", errors);
     printf("Tempo total: %.4f s\n", elapsed);
     printf("Memória usada: %ld KB\n", usage.ru_maxrss);
     printf("====================================\n");
