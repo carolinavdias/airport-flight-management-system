@@ -44,12 +44,10 @@ GestorReservations *gestor_reservations_cria(void) {
 
 void gestor_reservations_insere(GestorReservations *g, Reservas *reserva) {
     if (!g || !reserva) return;
-    
-    // r_get_id_reserva agora retorna cópia com g_strdup()
-    char *id = r_get_id_reserva(reserva);
+    const char *id = r_get_id_reserva(reserva);
     if (!id) return;
-    
-    g_hash_table_insert(g->tabela, id, reserva);  // chave será libertada por g_free
+    char *key = strdup(id);
+    g_hash_table_insert(g->tabela, key, reserva);  // chave será libertada por g_free
 }
 
 int gestor_reservations_existe(GestorReservations *g, const char *id_reserva) {

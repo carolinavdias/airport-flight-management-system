@@ -104,7 +104,7 @@ typedef struct {
  * o intervalo de datas fornecido.
  */
 
-static int semana_no_intervalo_v2(long id_semana, long inicio, long fim) {
+static int semana_no_intervalo(long id_semana, long inicio, long fim) {
     if (inicio < 0 || fim < 0) return 1;
     long dom = id_semana, sab = id_semana + 6;
     
@@ -226,9 +226,9 @@ char *query4(const char *linhaComando,
         
         if (p) {
             // Obter dados (alguns getters retornam cópias!)
-            char *primeiro = passenger_get_primeiro(p);   // cópia - libertar!
-            char *ultimo = passenger_get_ultimo(p);       // cópia - libertar!
-            char *nacionalidade = passenger_get_nacionalidade(p);  // cópia - libertar!
+            const char *primeiro = passenger_get_primeiro(p);   // cópia - libertar!
+            const char *ultimo = passenger_get_ultimo(p);       // cópia - libertar!
+            const char *nacionalidade = passenger_get_nacionalidade(p);  // cópia - libertar!
             int dob_int = passenger_get_data(p);          // int - não libertar
             
             // Formatar dob: YYYYMMDD -> YYYY-MM-DD

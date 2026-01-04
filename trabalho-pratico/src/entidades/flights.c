@@ -47,8 +47,8 @@ typedef struct voo {
  * modifique acidentalmente os dados internos do voo.
  */
 
-char *voo_get_flight_id (const Voo *v) {
-    return g_strdup(v->flight_id); 
+const char *voo_get_flight_id (const Voo *v) {
+    return v->flight_id;
 }
 
 const char *voo_get_code_origin (const Voo *v) {

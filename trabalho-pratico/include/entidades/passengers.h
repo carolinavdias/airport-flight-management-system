@@ -40,7 +40,7 @@ typedef struct passageiros Passageiros;
  * @return Identificador ou NULL se inválido.
  */
 
-const char *passenger_get_id (Passageiros *p);
+const char *passenger_get_id (const Passageiros *p);
 
 /**
  * @brief Obtém o primeiro nome do passageiro.
@@ -51,7 +51,7 @@ const char *passenger_get_id (Passageiros *p);
  * @return String alocada dinamicamente (libertar com g_free).
  */
 
-char *passenger_get_primeiro (Passageiros *p);
+const char *passenger_get_primeiro (const Passageiros *p);
 
 /**
  * @brief Obtém o último nome do passageiro.
@@ -60,7 +60,7 @@ char *passenger_get_primeiro (Passageiros *p);
  * @return Cópia do último nome (libertar com g_free).
  */
 
-char *passenger_get_ultimo (Passageiros *p);
+const char *passenger_get_ultimo (const Passageiros *p);
 
 /**
  * @brief Obtém a data de nascimento do passageiro.
@@ -80,7 +80,7 @@ int passenger_get_data (Passageiros *p);
  * @return Cópia da nacionalidade (libertar com g_free).
  */
 
-char *passenger_get_nacionalidade (Passageiros *p);
+const char *passenger_get_nacionalidade (const Passageiros *p);
 
 /**
  * @brief Define o identificador do passageiro.

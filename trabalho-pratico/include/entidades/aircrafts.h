@@ -35,7 +35,7 @@ typedef struct aeronave Aeronave;
  * @return String com o identificador ou NULL se a aeronave for inválida.
  */
 
-char *aircraft_get_identifier (const Aeronave *a);
+const char *aircraft_get_identifier (const Aeronave *a);
 
 /**
  * @brief Obtém o fabricante da aeronave.

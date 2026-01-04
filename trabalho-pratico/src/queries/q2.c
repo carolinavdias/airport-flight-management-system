@@ -95,7 +95,7 @@ static void processa_aeronave(Aeronave *a, void *user_data) {
     }
 
     //guardar getters para libertar
-    char *id_str = aircraft_get_identifier(a);
+    const char *id_str = aircraft_get_identifier(a);
     const char *model_str = aircraft_get_model(a);
     
     //busca contagem na tabela PRÉ-CONSTRUÍDA (não reconstrói!)
@@ -110,11 +110,6 @@ static void processa_aeronave(Aeronave *a, void *user_data) {
     c->manufacturer = g_strdup(manuf_str);
     c->model        = g_strdup(model_str);
     c->count        = count;
-
-    //libertar os getters originais
-    g_free(id_str);
-    //g_free(manuf_str);
-    //g_free(model_str);
 
     dados->resultado = g_list_prepend(dados->resultado, c);
 }

@@ -59,7 +59,7 @@ typedef struct aeroporto Aeroporto;
  * @return Cópia do código IATA (3 letras).
  */
 
-char *airport_get_code_IATA (const Aeroporto *a);
+const char *airport_get_code_IATA (const Aeroporto *a);
 
 /**
  * @brief Obtém o nome do aeroporto.

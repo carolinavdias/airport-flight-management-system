@@ -36,8 +36,8 @@ struct aeronave {
  * utilizador.
 */
 
-char *aircraft_get_identifier(const Aeronave *a) {
-    return a ? g_strdup(a->identifier) : NULL;
+const char *aircraft_get_identifier(const Aeronave *a) {
+    return a->identifier;
 }
 
 const char *aircraft_get_manufacturer(const Aeronave *a) {

@@ -75,9 +75,10 @@ void gestor_airports_init_contagens(GestorAirports *g) {
 
 void gestor_airports_insere(GestorAirports *g, Aeroporto *a) {
     if (g == NULL || a == NULL) return;
-    char *code = airport_get_code_IATA(a);
+    const char *code = airport_get_code_IATA(a);
     if (code == NULL) return;
-    g_hash_table_insert(g->tabela, code, a);
+    char *key = strdup(code);
+    g_hash_table_insert(g->tabela, key, a);
 }
 
 /** 

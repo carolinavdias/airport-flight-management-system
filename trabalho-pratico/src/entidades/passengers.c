@@ -34,24 +34,24 @@ typedef struct passageiros {
  * campo é imutável após a criação.
  */
 
-const char *passenger_get_id (Passageiros *p) {
+const char *passenger_get_id (const Passageiros *p) {
     return p->id_passageiro; 
 }
 
-char *passenger_get_primeiro (Passageiros *p) {
-    return g_strdup(p->primeiro_nome);  
+const char *passenger_get_primeiro (const Passageiros *p) {
+    return p->primeiro_nome;
 }
 
-char *passenger_get_ultimo (Passageiros *p) {
-    return g_strdup(p->ultimo_nome);  
+const char *passenger_get_ultimo (const Passageiros *p) {
+    return p->ultimo_nome;
 }
 
 int passenger_get_data (Passageiros *p) {
     return p->data_nascimento;
 }
 
-char *passenger_get_nacionalidade (Passageiros *p) {
-    return g_strdup(p->nacionalidade);  
+const char *passenger_get_nacionalidade (const Passageiros *p) {
+    return p->nacionalidade;  
 }
 
 /* ============================================

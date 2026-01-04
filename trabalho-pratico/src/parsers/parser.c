@@ -243,10 +243,9 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                                             snprintf(doc_str, sizeof(doc_str), "%09d", doc_int);
                                             Passageiros *pass = gestor_passengers_procura(P, doc_str);
                                             if (pass) {
-                                                char *nat = passenger_get_nacionalidade(pass);
+                                                const char *nat = passenger_get_nacionalidade(pass);
                                                 if (nat) {
                                                     gestor_passengers_add_destino_q6(P, nat, destino);
-                                                    g_free(nat);
                                                 }
                                             }
                                         }

@@ -38,7 +38,7 @@ typedef struct reservas Reservas;
  * @return Cópia do ID da reserva (libertar com g_free).
  */
 
-char *r_get_id_reserva (Reservas *r);
+const char *r_get_id_reserva (const Reservas *r);
 
 /**
  * @brief Obtém o ID numérico da pessoa que fez a reserva.
@@ -46,7 +46,7 @@ char *r_get_id_reserva (Reservas *r);
  * @return ID da pessoa (int).
  */
 
-int r_get_id_pessoa_reservou (Reservas *r);  
+int r_get_id_pessoa_reservou (const Reservas *r);  
 
 /**
  * @brief Obtém o número de voos associados à reserva.
@@ -54,7 +54,7 @@ int r_get_id_pessoa_reservou (Reservas *r);
  * @return Número de voos.
  */
 
-int r_get_lista_n_voos (Reservas *r);
+int r_get_lista_n_voos (const Reservas *r);
 
 /**
  * @brief Obtém a lista interna de IDs de voos.
@@ -65,7 +65,7 @@ int r_get_lista_n_voos (Reservas *r);
  * @return Array de strings com IDs dos voos.
  */
 
-char **r_get_lista_voos_reserv (Reservas *r);
+char **r_get_lista_voos_reserv (const Reservas *r);
 
 /**
  * @brief Obtém o preço da reserva
@@ -73,7 +73,7 @@ char **r_get_lista_voos_reserv (Reservas *r);
  * @return Preço da reserva (double)
  */
 
-double r_get_preco(Reservas *r);
+double r_get_preco(const Reservas *r);
 
 /**
  * @brief Obtém o ID de um voo da reserva por índice (encapsulado)
@@ -82,7 +82,7 @@ double r_get_preco(Reservas *r);
  * @return Cópia do ID do voo (libertar com g_free!) ou NULL se inválido
  */
 
-char *r_get_voo_por_indice(Reservas *r, int indice);
+char *r_get_voo_por_indice(const Reservas *r, int indice);
 
 /**
  * @brief Cria uma estrutura de lista de voos com espaço para n voos.

@@ -50,28 +50,28 @@ int get_lista_n_voos (Voos_reservados *lvr) {
     return lvr->n_voos;
 }
 
-char *r_get_id_reserva (Reservas *r) {
-    return g_strdup(r->id_reserva);
+const char *r_get_id_reserva (const Reservas *r) {
+    return r->id_reserva;
 }
 
-int r_get_id_pessoa_reservou (Reservas *r) {
+int r_get_id_pessoa_reservou (const Reservas *r) {
     return r->id_pessoa_reservou;
 }
 
-int r_get_lista_n_voos (Reservas *r) {
+int r_get_lista_n_voos (const Reservas *r) {
     return r->reserva_lista->n_voos;
 }
 
-char **r_get_lista_voos_reserv (Reservas *r) {
+char **r_get_lista_voos_reserv (const Reservas *r) {
     return r->reserva_lista->lista_voos_reservados;
 }
 
-double r_get_preco(Reservas *r) {
+double r_get_preco(const Reservas *r) {
     if (!r) return 0.0;
     return r->preco_reserva;
 }
 
-char *r_get_voo_por_indice(Reservas *r, int indice) {
+char *r_get_voo_por_indice(const Reservas *r, int indice) {
     if (!r) return NULL;
     if (indice < 0 || indice >= r->reserva_lista->n_voos) return NULL;
     if (!r->reserva_lista->lista_voos_reservados) return NULL;

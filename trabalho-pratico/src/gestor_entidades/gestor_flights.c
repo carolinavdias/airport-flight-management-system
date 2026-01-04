@@ -70,9 +70,10 @@ void gestor_flights_destroy(GestorFlights *g) {
 
 void gestor_flights_inserir(GestorFlights *g, Voo *voo) {
     if (!g || !voo) return;
-    char *flight_id = voo_get_flight_id(voo);
+    const char *flight_id = voo_get_flight_id(voo);
     if (!flight_id) return;
-    g_hash_table_insert(g->tabela_voos, flight_id, voo);
+    char *key = strdup(flight_id);
+    g_hash_table_insert(g->tabela_voos, key, voo);
 }
 
 bool gestor_flights_existe(GestorFlights *g, const char *flight_id) {
@@ -100,9 +101,8 @@ void gestor_flights_print(GestorFlights *g) {
     
     while (g_hash_table_iter_next(&iter, &key, &value)) {
         Voo *v = value;
-        char *fid = voo_get_flight_id(v);
+        const char *fid = voo_get_flight_id(v);
         printf("%s %s %s\n", fid, voo_get_code_origin(v), voo_get_code_destination(v));
-        g_free(fid);
     }
 }
 

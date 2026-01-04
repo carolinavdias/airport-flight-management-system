@@ -39,12 +39,10 @@ GestorAircrafts *gestor_aircrafts_cria(void) {
 
 void gestor_aircrafts_insere(GestorAircrafts *g, Aeronave *a) { 
     if (!g || !a) return; 
-    
     const char *id_int = aircraft_get_identifier(a); 
     if (!id_int) return; 
-    
-    // id_int já é cópia (g_strdup no getter) 
-    g_hash_table_insert(g->tabela, (char*)id_int, a); 
+    char *key = strdup(id_int);
+    g_hash_table_insert(g->tabela, key, a); 
 }
 
 /**

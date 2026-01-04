@@ -51,7 +51,7 @@ typedef struct voo Voo;
  * @return Cópia do identificador do voo.
  */
 
-char *voo_get_flight_id (const Voo *v);
+const char *voo_get_flight_id (const Voo *v);
 
 /**
  * @brief Obtém o código IATA do aeroporto de origem.
