@@ -49,14 +49,15 @@ static int compare_files(const char *expected, const char *output) {
  */
 
 int main(int argc, char *argv[]) {
-    if (argc < 4) {
-        printf("Uso: %s <dataset_dir> <input.txt> <resultados-esperados/>\n", argv[0]);
+    if (argc != 5) {
+        printf("Uso: %s <dataset_dir> <input.txt> <resultados-esperados/> <tipo_de_teste> \n", argv[0]);
         return 1;
     }
 
     const char *dataset = argv[1];
     const char *input = argv[2];
     const char *expected_dir = argv[3];
+    const char *type = argv[4];
 
     printf("====================================\n");
     printf("✔ Programa de Testes LI3\n");

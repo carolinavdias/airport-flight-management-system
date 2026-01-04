@@ -314,7 +314,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
       }
 
    }
-
+   else printf ("Dataset errado ou vazio.\n");
 
     g_free(caminhoAeroportos);
     g_free(caminhoAeronaves);

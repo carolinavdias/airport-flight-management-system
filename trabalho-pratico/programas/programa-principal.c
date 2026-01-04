@@ -5,20 +5,6 @@
 #include <string.h>
 #include <glib.h>
 
-#include "queries/q1.h"
-#include "queries/q2.h"
-#include "queries/q3.h"
-//#include "queries/q4.h"
-//#include "queries/q5.h"
-#include "queries/q6.h"
-
-#include "parsers/parser.h"
-#include "parsers/parser_flights.h"
-#include "parsers/parser_airports.h"
-#include "parsers/parser_aircrafts.h"
-#include "parsers/parser_passengers.h"
-#include "parsers/parser_reservations.h"
-
 #include "gestor_entidades/gestor_flights.h"
 #include "gestor_entidades/gestor_airports.h"
 #include "gestor_entidades/gestor_aircrafts.h"
@@ -26,6 +12,7 @@
 #include "gestor_entidades/gestor_reservations.h"
 #include "gestor_entidades/gestor.h"
 
+#include "parsers/parser.h"
 #include "utils/utils.h"
 #include "queries/interpreter.h"
 
