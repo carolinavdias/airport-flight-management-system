@@ -231,7 +231,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                    	//csv_file_error_name = strdup("resultados/flights_errors.csv");
                    	break;
                    case 4:
-                   	Passageiros *passageiro_atual = validacoes_campos_passengers(campos);
+                   	Passageiros *passageiro_atual = validacoes_campos_passengers(campos,lista_strings);
                    	if (passageiro_atual) gestor_passengers_inserir(P, passageiro_atual);
                    	else linha_valida = 0;
                    	//csv_file_error_name = strdup("resultados/passengers_errors.csv");

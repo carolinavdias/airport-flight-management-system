@@ -2,6 +2,7 @@
 #define PASSENGERS_H
 
 #include <stdint.h>
+#include <glib.h>
 
 /** 
     * @file passengers.h 
@@ -93,7 +94,7 @@ const char *passenger_get_nacionalidade (const Passageiros *p);
  * SETTERS
  * ============================================ */
 
-void passenger_set_id (Passageiros *p, char *id);
+void passenger_set_id (Passageiros *p, char *id, GHashTable *lista_strings);
 
  /** 
     * @brief Define o primeiro nome do passageiro.
@@ -102,7 +103,7 @@ void passenger_set_id (Passageiros *p, char *id);
     * @param pn Primeiro nome. 
     */
 
-void passenger_set_pn (Passageiros *p, char *pn);
+void passenger_set_pn (Passageiros *p, char *pn, GHashTable *lista_strings);
 
 /**
  * @brief Define o último nome do passageiro.
@@ -111,7 +112,7 @@ void passenger_set_pn (Passageiros *p, char *pn);
  * @param un Último nome.
  */
 
-void passenger_set_un (Passageiros *p, char *un);
+void passenger_set_un (Passageiros *p, char *un, GHashTable *lista_strings);
 
 /**
  * @brief Define a data de nascimento do passageiro.
@@ -131,7 +132,7 @@ void passenger_set_dn (Passageiros *p, char *dn);
  * @param nc Nacionalidade.
  */
 
-void passenger_set_nc (Passageiros *p, char *nc);
+void passenger_set_nc (Passageiros *p, char *nc, GHashTable *lista_strings);
 
 /* ============================================
  * CRIA PASSAGEIRO

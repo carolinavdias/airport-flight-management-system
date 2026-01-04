@@ -1,5 +1,5 @@
 #include "entidades/passengers.h"
-#include <glib.h>
+#include "utils/utils.h"
 
 /**
  * Este ficheiro contém a definição da estrutura interna Passageiros
@@ -13,11 +13,11 @@
  */
 
 typedef struct passageiros {
-    char *id_passageiro;     /**< Identificador único do passageiro */
-    char *primeiro_nome;     /**< Primeiro nome */
-    char *ultimo_nome;       /**< Último nome */
+    const char *id_passageiro;     /**< Identificador único do passageiro */
+    const char *primeiro_nome;     /**< Primeiro nome */
+    const char *ultimo_nome;       /**< Último nome */
     int data_nascimento;     /**< Data de nascimento (YYYYMMDD) */
-    char *nacionalidade;     /**< Nacionalidade */
+    const char *nacionalidade;     /**< Nacionalidade */
 } Passageiros;
 
 /* ============================================
@@ -68,18 +68,18 @@ const char *passenger_get_nacionalidade (const Passageiros *p) {
  * ordenável "YYYYMMDD".
  */
 
-void passenger_set_id (Passageiros *p, char *id) {
-    p->id_passageiro =  g_strdup(id);
+void passenger_set_id (Passageiros *p, char *id, GHashTable *lista_strings) {
+    p->id_passageiro =  procura_string(lista_strings,id); //g_strdup(id);
 }
 
-void passenger_set_pn (Passageiros *p, char *pn) {
-    g_free(p->primeiro_nome);
-    p->primeiro_nome = g_strdup(pn);
+void passenger_set_pn (Passageiros *p, char *pn, GHashTable *lista_strings) {
+//    g_free(p->primeiro_nome);
+    p->primeiro_nome = procura_string(lista_strings,pn); //g_strdup(pn);
 }
 
-void passenger_set_un (Passageiros *p, char *un) {
-    g_free(p->ultimo_nome);
-    p->ultimo_nome = g_strdup(un);
+void passenger_set_un (Passageiros *p, char *un, GHashTable *lista_strings) {
+   // g_free(p->ultimo_nome);
+    p->ultimo_nome = procura_string(lista_strings,un); //g_strdup(un);
 }
 
 
@@ -104,9 +104,9 @@ void passenger_set_dn (Passageiros *p, char *dn) {
     p->data_nascimento = data;
 }
 
-void passenger_set_nc (Passageiros *p, char *nc) {
-    g_free(p->nacionalidade);
-    p->nacionalidade = g_strdup(nc);
+void passenger_set_nc (Passageiros *p, char *nc, GHashTable *lista_strings) {
+    //g_free(p->nacionalidade);
+    p->nacionalidade = procura_string(lista_strings,nc); //g_strdup(nc);
 }
 
 /* ============================================
@@ -129,10 +129,10 @@ Passageiros *criaPassageiro() {
 void libertaPassageiro(void *data) {
     Passageiros *a = data;
     if (!a) return;
-    if (a->id_passageiro) g_free(a->id_passageiro);
-    if (a->primeiro_nome) g_free(a->primeiro_nome);
-    if (a->ultimo_nome) g_free(a->ultimo_nome);
-    if (a->nacionalidade) g_free(a->nacionalidade);
+//    if (a->id_passageiro) g_free(a->id_passageiro);
+//    if (a->primeiro_nome) g_free(a->primeiro_nome);
+//    if (a->ultimo_nome) g_free(a->ultimo_nome);
+//    if (a->nacionalidade) g_free(a->nacionalidade);
     g_free(a);
 }
 

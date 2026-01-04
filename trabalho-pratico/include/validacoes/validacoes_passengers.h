@@ -63,6 +63,6 @@ int valida_id_passageiro(const char *s);
  * @return Ponteiro para Passageiros válido, ou NULL se algum campo for inválido.
  */
 
-Passageiros *validacoes_campos_passengers(char **campos);
+Passageiros *validacoes_campos_passengers(char **campos, GHashTable *lista_strings);
 
 #endif

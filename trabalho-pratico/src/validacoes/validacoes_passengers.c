@@ -61,7 +61,7 @@ int valida_email(const char *s) {
      return 1;
 }
 
-Passageiros *validacoes_campos_passengers(char **campos) {
+Passageiros *validacoes_campos_passengers(char **campos, GHashTable *lista_strings) {
     Passageiros *p = criaPassageiro();
 
     if (valida_id_passageiro(campos[0]) && //id_passageiro
@@ -70,11 +70,11 @@ Passageiros *validacoes_campos_passengers(char **campos) {
         valida_email(campos[6])         )  //email
     {
 
-        passenger_set_id(p,campos[0]);
-        passenger_set_pn(p,campos[1]);
-        passenger_set_un(p,campos[2]);
+        passenger_set_id(p,campos[0],lista_strings);
+        passenger_set_pn(p,campos[1],lista_strings);
+        passenger_set_un(p,campos[2],lista_strings);
         passenger_set_dn(p,campos[3]);
-        passenger_set_nc(p,campos[4]);
+        passenger_set_nc(p,campos[4],lista_strings);
 
         return p;
     } else {
