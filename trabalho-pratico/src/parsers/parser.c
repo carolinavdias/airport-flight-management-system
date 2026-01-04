@@ -95,18 +95,18 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
 	g_file_test(caminhoReservas, G_FILE_TEST_EXISTS)    )
     {
 
-        const char *csv_file_names[] = {"","aircrafts.csv","flights.csv","airports.csv","passengers.csv","reservations.csv"};
+        const char *csv_file_names[] = {"","aircrafts.csv","airports.csv","flights.csv","passengers.csv","reservations.csv"};
 	const char *csv_error_names[] = {"",
 					 "resultados/aircrafts_errors.csv",
-					 "resultados/flights_errors.csv",
 					 "resultados/airports_errors.csv",
+					 "resultados/flights_errors.csv",
 					 "resultados/passengers_errors.csv",
 					 "resultados/reservations_errors.csv"};
 
         for (int c = 1; c < 6; c++) {
 
-	    if (c == 2 && !resultados_read[1]) continue;
-	    if (c == 5 && (!resultados_read[2] || !resultados_read[4])) continue;
+	    if (c == 3 && !resultados_read[1]) continue;
+	    if (c == 5 && (!resultados_read[3] || !resultados_read[4])) continue;
 
             int MAX_LINHA = 512;
             gchar buffer[MAX_LINHA];
@@ -139,7 +139,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
 	    //tabela de contagens para Q2
 	    GHashTable *contagens = NULL;
 
-	    if (c == 2) {
+	    if (c == 3) {
 	 	array_voos = malloc(capacidade_array * sizeof(Voo *));
                 contagens = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
@@ -171,6 +171,12 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                    	//csv_file_error_name = strdup("resultados/aircrafts_errors.csv");
                    	break;
                    case 2:
+                        Aeroporto *aeroporto_atual = validacoes_campos_airports(campos,lista_strings);
+                        if (aeroporto_atual) gestor_airports_insere(AP, aeroporto_atual);
+                        else linha_valida = 0;
+                        //csv_file_error_name = strdup("resultados/airports_errors.csv");
+                        break;
+                   case 3:
 
                    	Voo *voo_atual = validacoes_campos_flights(campos, AC,lista_strings);
                    	if (voo_atual) {
@@ -223,13 +229,6 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                             }
                    	} else linha_valida = 0;
                    	//csv_file_error_name = strdup("resultados/flights_errors.csv");
-                   	break;
-
-                   case 3:
-                   	Aeroporto *aeroporto_atual = validacoes_campos_airports(campos,lista_strings);
-                   	if (aeroporto_atual) gestor_airports_insere(AP, aeroporto_atual);
-                   	else linha_valida = 0;
-                   	//csv_file_error_name = strdup("resultados/airports_errors.csv");
                    	break;
                    case 4:
                    	Passageiros *passageiro_atual = validacoes_campos_passengers(campos);
@@ -316,7 +315,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
            }
 
     	   if (erro_fatal) {
-    		if (c == 2) {
+    		if (c == 3) {
         	    free(array_voos);
         	    g_hash_table_destroy(contagens);
     		}
@@ -324,7 +323,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
 		continue;
 	   }
 	   else {
-		if (c == 2) {
+		if (c == 3) {
                     //ORDENA array 1 ÚNICA VEZ (no parser!)
                     qsort(array_voos, num_voos_array, sizeof(Voo *), compara_voos_por_data);
 
