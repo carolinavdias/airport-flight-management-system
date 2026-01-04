@@ -13,14 +13,29 @@
 #include <stdio.h>
 #include <glib.h>
 
-typedef struct contagens_aeroporto {
-    int partidas;
-    int chegadas;
+/** 
+ * Estrutura auxiliar para armazenar o número de partidas
+ * e chegadas associadas a um aeroporto.
+ */
+
+typedef struct contagens_aeroporto { 
+    int partidas;   /**< Número total de voos que partiram do aeroporto. */ 
+    int chegadas;   /**< Número total de voos que chegaram ao aeroporto. */ 
 } ContagensAeroporto;
 
-// =====================================================
-// INÍCIO DO INTERVALO - encontra primeiro voo >= data
-// =====================================================
+/** 
+ * =====================================================
+ * FUNÇÃO AUXILIAR
+ * ===================================================== */
+ 
+/** 
+ * Encontra, através de pesquisa binária, o índice do primeiro voo
+ * cuja data de partida real é maior ou igual a t_inicio.
+ *
+ * O array de voos deve estar previamente ordenado por data
+ * de partida real.
+ */
+
 static int intervalo_inicio(Voo **voos_ordenados, int num_voos, long long t_inicio) {
     int esq = 0, dir = num_voos - 1;
     int resultado = num_voos;
@@ -40,12 +55,21 @@ static int intervalo_inicio(Voo **voos_ordenados, int num_voos, long long t_inic
     return resultado;
 }
 
-// =====================================================
-// QUERY 3 - USA ARRAY DO GESTOR (JÁ ORDENADO)
-// =====================================================
+/** 
+ * =====================================================
+ * QUERY 3 — IMPLEMENTAÇÃO OTIMIZADA
+ * ===================================================== */
+
+ /** 
+ * Utiliza o array de voos ordenado fornecido pelo gestor,
+ * evitando iterações desnecessárias sobre todo o conjunto
+ * de voos.
+ */
+
 char *query3(const char *data_inicio, const char *data_fim, 
              GestorFlights *gestorVoos, GestorAirports *gestorAeroportos) {
 
+    // Validações iniciais
     if (!gestorVoos || !gestorAeroportos) {
         return strdup("\n");
     }
@@ -133,6 +157,7 @@ char *query3(const char *data_inicio, const char *data_fim,
     char *resultado = NULL;
 
     if (melhor && max_total > 0) {
+
         //usa função do gestor (encapsulamento)
         Aeroporto *a = gestor_airports_procura(gestorAeroportos, melhor);
 
@@ -151,12 +176,9 @@ char *query3(const char *data_inicio, const char *data_fim,
                         melhor_partidas) == -1) {
                 resultado = strdup("\n");
             }
-            
-            //libertar strings
+
             g_free((char*)iata);
-            //g_free(name);
-            //g_free(city);
-            //g_free(country);
+
         } else {
             resultado = strdup("\n");
         }

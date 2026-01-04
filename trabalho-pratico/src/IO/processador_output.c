@@ -6,10 +6,10 @@
  * Estrutura interna do Writer.
  */
 
-struct ErrorWriter {
-    FILE *file;
-    int header_escrito;
-};
+typedef struct ErrorWriter { 
+    FILE *file;           /**< Apontador para o ficheiro onde os erros serão escritos. */ 
+    int header_escrito;   /**< Flag que indica se o cabeçalho já foi escrito (1) ou não (0). */ 
+} ErrorWriter;
 
 /**
  * Cria ficheiro de erros.

@@ -1,4 +1,3 @@
-#include "entidades/aircrafts.h"
 #define _POSIX_C_SOURCE 200809L
 
 #include "queries/q2.h"
@@ -12,17 +11,26 @@
 #include "gestor_entidades/gestor_aircrafts.h" 
 #include "gestor_entidades/gestor_flights.h" 
 
-//contagem
-typedef struct contagem {
-    char *identifier;
-    char *manufacturer;
-    char *model;
-    int count;
+/** 
+ * Estrutura auxiliar que guarda a informação de cada aeronave
+ * e o número de voos associados.
+ */
+
+typedef struct contagem { 
+    char *identifier;    /**< Identificador único do equipamento. */ 
+    char *manufacturer;  /**< Nome do fabricante do equipamento. */ 
+    char *model;         /**< Modelo específico do equipamento. */ 
+    int count;           /**< Número de ocorrências registadas. */ 
 } Contagem;
 
-// =====================================================
-// FUNÇÕES AUXILIARES
-// =====================================================
+/**
+ * =====================================================
+ * FUNÇÕES AUXILIARES
+ * ===================================================== */
+
+/**
+ * Remove espaços em branco no início e no fim de uma string 
+ */
 
 static void trim(char *s) {
     if (!s) return;
@@ -37,22 +45,40 @@ static void trim(char *s) {
     }
 }
 
+/** 
+ * Função de comparação usada na ordenação:
+ * - Primeiro pelo número de voos (ordem decrescente)
+ * - Em caso de empate, pelo identificador da aeronave
+ */
+
 int comparaContagens(const Contagem *a, const Contagem *b) {
     if (a->count != b->count)
         return b->count - a->count;
     return g_strcmp0(a->identifier, b->identifier);
 }
 
-// =====================================================
-// CALLBACK PARA PROCESSAR CADA AERONAVE
-// =====================================================
+/**
+ * =====================================================
+ * CALLBACK PARA PROCESSAR CADA AERONAVE
+ * ===================================================== */
 
-typedef struct {
-    const char *fabricante_lower;
-    int usar_filtro;
-    GList *resultado;
-    GestorFlights *gestorVoos;  //gestor para consultar contagens
+/**
+ * Estrutura que agrega os dados necessários durante a iteração
+ * pelas aeronaves.
+ */
+
+typedef struct { 
+    const char *fabricante_lower;  /**< Nome do fabricante em minúsculas, usado para comparação case-insensitive. */ 
+    int usar_filtro;               /**< Flag que indica se o filtro deve ser aplicado (1) ou ignorado (0). */ 
+    GList *resultado;              /**< Lista ligada (GLib) onde serão acumulados os resultados filtrados. */ 
+    GestorFlights *gestorVoos;     /**< Apontador para o gestor de voos, usado para consultar contagens e metadados. */ 
 } DadosFiltro;
+
+/**
+ * Callback chamada para cada aeronave existente no gestor.
+ * Aplica o filtro por fabricante (se existir) e cria uma
+ * estrutura Contagem com a informação relevante.
+ */
 
 static void processa_aeronave(Aeronave *a, void *user_data) {
     DadosFiltro *dados = user_data;
@@ -93,6 +119,10 @@ static void processa_aeronave(Aeronave *a, void *user_data) {
     dados->resultado = g_list_prepend(dados->resultado, c);
 }
 
+/** 
+ * Liberta a memória associada a uma estrutura Contagem 
+ */
+
 static void free_contagem(void *data) {
     Contagem *c = data;
     g_free(c->identifier);
@@ -101,10 +131,15 @@ static void free_contagem(void *data) {
     g_free(c);
 }
 
-// =====================================================
-// QUERY 2 OTIMIZADA - USA TABELA DO PARSING (Prof. Pedro ficará feliz!)
-// =====================================================
+/**
+ * =====================================================
+ * QUERY 2 — IMPLEMENTAÇÃO OTIMIZADA
+ * ===================================================== */
 
+/** 
+ * Utiliza contagens de voos pré-calculadas durante o parsing,
+ * evitando percorrer todos os voos para cada aeronave.
+ */
 char *query2(const char *linhaComando, GestorAircrafts *gestorAeronaves, GestorFlights *gestorVoos) {
     
     int N;
@@ -188,3 +223,4 @@ char *query2(const char *linhaComando, GestorAircrafts *gestorAeronaves, GestorF
     
     return output;
 }
+
