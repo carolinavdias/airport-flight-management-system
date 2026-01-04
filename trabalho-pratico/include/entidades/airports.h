@@ -136,7 +136,7 @@ void airport_set_country (Aeroporto *a, char *country_, GHashTable *lista_string
  * @param code_ Código IATA (3 letras).
  */
 
-void airport_set_code_IATA (Aeroporto *a, char *code_);
+void airport_set_code_IATA (Aeroporto *a, char *code_, GHashTable *lista_strings);
 
 /**
  * @brief Define o tipo do aeroporto.

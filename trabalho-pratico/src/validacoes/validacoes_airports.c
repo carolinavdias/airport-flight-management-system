@@ -75,7 +75,7 @@ Aeroporto *validacoes_campos_airports(char **campos, GHashTable *lista_strings) 
         valida_tipo_aer(campos[7])   )     // tipo_aeroporto
     {
 
-        airport_set_code_IATA(ap,campos[0]);
+        airport_set_code_IATA(ap,campos[0],lista_strings);
         airport_set_name(ap,campos[1],lista_strings);
         airport_set_city(ap,campos[2],lista_strings);
         airport_set_country(ap,campos[3],lista_strings);

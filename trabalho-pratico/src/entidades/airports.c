@@ -13,7 +13,7 @@
  */
 
 typedef struct aeroporto {
-    char *code_IATA;          /**< Código IATA do aeroporto */
+    const char *code_IATA;          /**< Código IATA do aeroporto */
     const char *name;               /**< Nome do aeroporto */
     const char *city;               /**< Cidade onde o aeroporto se localiza */
     const char *country;            /**< País do aeroporto */
@@ -75,9 +75,9 @@ void airport_set_country (Aeroporto *a, char *country_, GHashTable *lista_string
    a->country = procura_string(lista_strings,country_); //g_strdup(country_);
 }
 
-void airport_set_code_IATA (Aeroporto *a, char *code_) {
+void airport_set_code_IATA (Aeroporto *a, char *code_, GHashTable *lista_strings) {
 //    g_free(a->code_IATA);
-   a->code_IATA = g_strdup(code_);  //estava a->country (bug)
+   a->code_IATA = procura_string(lista_strings,code_); //g_strdup(code_);  //estava a->country (bug)
 }
 
 /**
@@ -127,7 +127,7 @@ void libertaAeroporto(void *data) {
 //    if (a->name) g_free(a->name);
 //    if (a->city) g_free(a->city);
 //    if (a->country) g_free(a->country);
-    if (a->code_IATA) g_free(a->code_IATA);
+//    if (a->code_IATA) g_free(a->code_IATA);
     g_free(a);
 }
 
