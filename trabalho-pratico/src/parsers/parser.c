@@ -66,7 +66,8 @@ static long calcula_id_semana_parser(long long datetime) {
  *  - Constrói caches para queries otimizadas
  */
 
-int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircrafts *AC, GestorPassengers *P, GestorReservations *R) {
+int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircrafts *AC, GestorPassengers *P, GestorReservations *R, GHashTable *lista_strings) {
+
     // Inicializar contagens de passageiros por aeroporto (para Q1 otimizada)
     gestor_airports_init_contagens(AP);
 
@@ -164,7 +165,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
 
                switch (c) {
                    case 1:
-                   	Aeronave *aeronave_atual = validacoes_campos_aircrafts(campos);
+                   	Aeronave *aeronave_atual = validacoes_campos_aircrafts(campos, lista_strings);
                    	if (aeronave_atual) gestor_aircrafts_insere(AC, aeronave_atual);
                    	else linha_valida = 0;
                    	//csv_file_error_name = strdup("resultados/aircrafts_errors.csv");
@@ -350,7 +351,6 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
     g_free(caminhoVoos);
     g_free(caminhoPassageiros);
     g_free(caminhoReservas);
-
 
     return resultados_read;
 }

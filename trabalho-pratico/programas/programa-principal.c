@@ -70,6 +70,9 @@ int main(int argc, char **argv) {
     errors_begin();
     g_mkdir_with_parents("resultados", 0755);
 
+    GHashTable *lista_strings = cria_string_list();
+    if (!lista_strings) return EXIT_FAILURE;
+
     // Criar GESTORES
     GestorAircrafts *gestorAeronaves = gestor_aircrafts_cria();
     GestorFlights *gestorVoos = gestor_flights_novo();
@@ -94,7 +97,7 @@ int main(int argc, char **argv) {
     }
     // Carregar dados (agora incluindo reservas)
     int *resultados_read = read_csv(ctx, gestorVoos, gestorAeroportos, gestorAeronaves,
-         gestorPassageiros, gestorReservas);
+         gestorPassageiros, gestorReservas, lista_strings);
     gestor_reservations_finaliza_cache_q4(gestorReservas);  // Pre-calcular top 10 para Q4
     FILE *ficheiroComandos = fopen(argv[2], "r");
     if (!ficheiroComandos) {
@@ -153,6 +156,7 @@ int main(int argc, char **argv) {
     gestor_reservations_liberta(gestorReservas);
     
     free(ctx);
+    destroi_lista_strings(lista_strings);
 
     return EXIT_SUCCESS;
 }

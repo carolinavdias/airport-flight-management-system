@@ -21,7 +21,7 @@
 
 struct aeronave {
     char *identifier;      /**< Identificador único da aeronave */
-    char *manufacturer;    /**< Fabricante */
+    const char *manufacturer;    /**< Fabricante */
     char *model;           /**< Modelo */
     int year;              /**< Ano de fabrico */
 };
@@ -66,16 +66,11 @@ void aircraft_set_id(Aeronave *a, char *s) {
     g_free(a->identifier);
     a->identifier = g_strdup(s);
 }
-void aircraft_set_id2(Aeronave *a, char *s) {
-    if (!a) return;
-    g_free(a->identifier);
-    a->identifier = s;
-}
 
-void aircraft_set_manuf(Aeronave *a, char *s) {
+void aircraft_set_manuf(Aeronave *a, char *s, GHashTable *lista_strings) {
     if (!a || !s) return;
-    g_free(a->manufacturer);
-    a->manufacturer = g_strdup(s);
+    //g_free(a->manufacturer);
+    a->manufacturer = procura_string(lista_strings,s); //g_strdup(s);
 }
 
 void aircraft_set_model(Aeronave *a, char *model_) {
@@ -106,7 +101,7 @@ void libertaAeronave(void *data) {
     Aeronave *a = data;
     if (!a) return;
     if (a->identifier) g_free(a->identifier);
-    if (a->manufacturer) g_free(a->manufacturer);
+//    if (a->manufacturer) g_free(a->manufacturer);
     if (a->model) g_free(a->model);
     g_free(a);
 }

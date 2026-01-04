@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
-#include <glib.h>
+//#include <glib.h>
 
 /* ============================================================
  * CONTEXTO
@@ -80,6 +80,10 @@ const char *procura_string(GHashTable *lista, const char *s) {
     char *nova = g_strdup(s);
     g_hash_table_insert(lista,nova,nova);
     return nova;
+}
+
+void esvazia_lista_strings (GHashTable *lista) {
+    g_hash_table_remove_all(lista);
 }
 
 void destroi_lista_strings (GHashTable *lista) {

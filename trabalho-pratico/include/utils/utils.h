@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stddef.h>
+#include <glib.h>
 
 /**
  * @file utils.h
@@ -81,28 +82,13 @@ FILE* abrir_ficheiro(Contexto *ctx, const char *nome_ficheiro, const char *modo)
 
 int qual_mes (int ano, int mes);
 
-// APAGAR SE NAO FOR NECESSARIO
-/* ============================================================
- * AUXILIARES
- * ============================================================ */
+GHashTable *cria_string_list (void);
 
-/**
- * @brief Converte uma data/hora no formato YYYY-MM-DD HH:MM
- *        para minutos desde as 00:00.
- *
- * Função auxiliar usada em queries temporais.
- *
- * @param s String da data/hora.
- * @return Minutos desde o início do dia.
- */
+const char *procura_string(GHashTable *lista, const char *s);
 
-/*
-typedef struct contagemQ5 ContagemQ5;
+void esvazia_lista_strings (GHashTable *lista);
 
-typedef struct estrt_aux_q5 Estrt_aux_q5;
-
-int get_time_datah (char *s);
-*/
+void destroi_lista_strings (GHashTable *lista);
 
 /* ============================================================
  * GESTÃO DE ERROS

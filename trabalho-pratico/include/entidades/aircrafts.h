@@ -1,6 +1,8 @@
 #ifndef AIRCRAFTS_H
 #define AIRCRAFTS_H
 
+#include <glib.h>
+
 /**
  * @file aircrafts.h
  * @brief Interface da entidade Aeronave.
@@ -99,12 +101,8 @@ void aircraft_set_model (Aeronave *a, char *model_);
  * @param manuf Fabricante da aeronave.
  */
 
-void aircraft_set_manuf (Aeronave *a, char *manuf);
-
-//DOCUMENTAR SE SE MANTIVER
-
-void aircraft_set_year2(Aeronave *a, int year);
-
+//void aircraft_set_manuf (Aeronave *a, char *manuf);
+void aircraft_set_manuf(Aeronave *a, char *s, GHashTable *lista_strings);
 /**
  * @brief Define o ano de fabrico da aeronave.
  *

@@ -2,6 +2,7 @@
 #define VALIDACOES_AIRCRAFTS_H
 
 #include "entidades/aircrafts.h"
+#include <glib.h>
 
  /** 
   * @file validacoes_aircrafts.h 
@@ -30,6 +31,6 @@
  * @return Ponteiro para Aeronave válida, ou NULL se algum campo for inválido.
  */
 
-Aeronave *validacoes_campos_aircrafts(char **campos);
+Aeronave *validacoes_campos_aircrafts(char **campos, GHashTable *lista_strings);
 
 #endif
