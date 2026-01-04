@@ -226,7 +226,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                    	break;
 
                    case 3:
-                   	Aeroporto *aeroporto_atual = validacoes_campos_airports(campos);
+                   	Aeroporto *aeroporto_atual = validacoes_campos_airports(campos,lista_strings);
                    	if (aeroporto_atual) gestor_airports_insere(AP, aeroporto_atual);
                    	else linha_valida = 0;
                    	//csv_file_error_name = strdup("resultados/airports_errors.csv");

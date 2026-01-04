@@ -66,7 +66,7 @@ int valida_tipo_aer(const char *s) {
  * Caso contrário, devolve NULL.
  */
 
-Aeroporto *validacoes_campos_airports(char **campos) {
+Aeroporto *validacoes_campos_airports(char **campos, GHashTable *lista_strings) {
     Aeroporto *ap = criaAeroporto();
 
     if (valida_codigoIATA(campos[0])    && // codigo_IATA
@@ -76,9 +76,9 @@ Aeroporto *validacoes_campos_airports(char **campos) {
     {
 
         airport_set_code_IATA(ap,campos[0]);
-        airport_set_name(ap,campos[1]);
-        airport_set_city(ap,campos[2]);
-        airport_set_country(ap,campos[3]);
+        airport_set_name(ap,campos[1],lista_strings);
+        airport_set_city(ap,campos[2],lista_strings);
+        airport_set_country(ap,campos[3],lista_strings);
         airport_set_type(ap,campos[7]);
 
         return ap;

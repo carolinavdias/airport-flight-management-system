@@ -2,6 +2,7 @@
 #define AIRPORTS_H
 
 #include <stdint.h>
+#include <glib.h>
 
 /**
  * @file airports.h
@@ -108,7 +109,7 @@ Tipo_aeroporto airport_get_type (Aeroporto *a);
  * @param name_ Nome do aeroporto.
  */
 
-void airport_set_name (Aeroporto *a, char *name_);
+void airport_set_name (Aeroporto *a, char *name_, GHashTable *lista_strings);
 
 /**
  * @brief Define a cidade do aeroporto.
@@ -117,7 +118,7 @@ void airport_set_name (Aeroporto *a, char *name_);
  * @param city_ Cidade do aeroporto.
  */
 
-void airport_set_city (Aeroporto *a, char *city_);
+void airport_set_city (Aeroporto *a, char *city_, GHashTable *lista_strings);
 
 /**
  * @brief Define o país do aeroporto.
@@ -126,7 +127,7 @@ void airport_set_city (Aeroporto *a, char *city_);
  * @param country_ País do aeroporto.
  */
 
-void airport_set_country (Aeroporto *a, char *country_);
+void airport_set_country (Aeroporto *a, char *country_, GHashTable *lista_strings);
 
 /**
  * @brief Define o código IATA do aeroporto.

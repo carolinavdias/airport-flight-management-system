@@ -1,4 +1,5 @@
 #include "entidades/airports.h"
+#include "utils/utils.h"
 #include <glib.h>
 
 /**
@@ -13,9 +14,9 @@
 
 typedef struct aeroporto {
     char *code_IATA;          /**< Código IATA do aeroporto */
-    char *name;               /**< Nome do aeroporto */
-    char *city;               /**< Cidade onde o aeroporto se localiza */
-    char *country;            /**< País do aeroporto */
+    const char *name;               /**< Nome do aeroporto */
+    const char *city;               /**< Cidade onde o aeroporto se localiza */
+    const char *country;            /**< País do aeroporto */
     Tipo_aeroporto type;      /**< Tipo de aeroporto */
 } Aeroporto;
 
@@ -59,23 +60,23 @@ Tipo_aeroporto airport_get_type (Aeroporto *a) {
   * a memória associada para evitar fugas de memória.
   */
 
-void airport_set_name (Aeroporto *a, char *name_) {
-   g_free(a->name);
-   a->name = g_strdup(name_);
+void airport_set_name (Aeroporto *a, char *name_, GHashTable *lista_strings) {
+//   g_free(a->name);
+   a->name = procura_string(lista_strings,name_); //g_strdup(name_);
 }
 
-void airport_set_city (Aeroporto *a, char *city_) {
-   g_free(a->city);
-   a->city = g_strdup(city_);
+void airport_set_city (Aeroporto *a, char *city_, GHashTable *lista_strings) {
+//   g_free(a->city);
+   a->city = procura_string(lista_strings,city_); //g_strdup(city_);
 }
 
-void airport_set_country (Aeroporto *a, char *country_) {
-   g_free(a->country);
-   a->country = g_strdup(country_);
+void airport_set_country (Aeroporto *a, char *country_, GHashTable *lista_strings) {
+//   g_free(a->country);
+   a->country = procura_string(lista_strings,country_); //g_strdup(country_);
 }
 
 void airport_set_code_IATA (Aeroporto *a, char *code_) {
-    g_free(a->code_IATA);
+//    g_free(a->code_IATA);
    a->code_IATA = g_strdup(code_);  //estava a->country (bug)
 }
 
@@ -123,9 +124,9 @@ Aeroporto *criaAeroporto () {
 void libertaAeroporto(void *data) {
     Aeroporto *a = data;
     if (!a) return;
-    if (a->name) g_free(a->name);
-    if (a->city) g_free(a->city);
-    if (a->country) g_free(a->country);
+//    if (a->name) g_free(a->name);
+//    if (a->city) g_free(a->city);
+//    if (a->country) g_free(a->country);
     if (a->code_IATA) g_free(a->code_IATA);
     g_free(a);
 }

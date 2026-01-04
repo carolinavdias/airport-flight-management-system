@@ -2,7 +2,7 @@
 #define VALIDACOES_AIRPORTS_H
 
 #include "entidades/airports.h"
-
+#include <glib.h>
 /**
  * @file validacoes_airports.h
  * @brief Validações sintáticas e semânticas para aeroportos.
@@ -35,6 +35,6 @@
   * @return Ponteiro para Aeroporto válido, ou NULL se algum campo for inválido. 
   */
 
-Aeroporto *validacoes_campos_airports(char **campos);
+Aeroporto *validacoes_campos_airports(char **campos, GHashTable *lista_strings);
 
 #endif
