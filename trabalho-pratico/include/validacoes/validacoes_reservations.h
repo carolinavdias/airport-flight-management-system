@@ -5,6 +5,8 @@
 #include "gestor_entidades/gestor_flights.h"
 #include "gestor_entidades/gestor_passengers.h"
 
+#include <glib.h>
+
 /**
  * @file validacoes_reservations.h
  * @brief Validações sintáticas e lógicas para reservas.
@@ -44,6 +46,6 @@
  * @return Ponteiro para Reservas válido, ou NULL se algum campo for inválido. 
  */
 
- Reservas *validacoes_campos_reservations(char **campos, GestorFlights *V, GestorPassengers *P);
+ Reservas *validacoes_campos_reservations(char **campos, GestorFlights *V, GestorPassengers *P, GHashTable *lista_strings);
 
 #endif

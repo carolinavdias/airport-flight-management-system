@@ -1,5 +1,5 @@
 #include "entidades/reservations.h"
-#include <glib.h>
+#include "utils/utils.h"
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -15,7 +15,7 @@
  */
 
 typedef struct voos_reservados { 
-    char **lista_voos_reservados;   /**< Array de IDs de voos */ 
+    const char **lista_voos_reservados;   /**< Array de IDs de voos */ 
     int n_voos;                     /**< Número de voos       */ 
 } Voos_reservados;
 
@@ -24,7 +24,7 @@ typedef struct voos_reservados {
  */
 
 typedef struct reservas {
-    char *id_reserva;               // Identificador único da reserva
+    const char *id_reserva;               // Identificador único da reserva
     Voos_reservados *reserva_lista;  // Lista de voos associados à reserva
     int id_pessoa_reservou;         // Identificador da pessoa em nome de quem a reserva foi efetuada
     double preco_reserva;           // Preço total da reserva
@@ -62,7 +62,7 @@ int r_get_lista_n_voos (const Reservas *r) {
     return r->reserva_lista->n_voos;
 }
 
-char **r_get_lista_voos_reserv (const Reservas *r) {
+const char **r_get_lista_voos_reserv (const Reservas *r) {
     return r->reserva_lista->lista_voos_reservados;
 }
 
@@ -110,26 +110,27 @@ Voos_reservados *cria0_lista_reserva (int n) {
 void liberta_lista_reserva(void *data) {
     Voos_reservados *v = data;
     if (!v) return;
-    if (v->lista_voos_reservados) {
+/*    if (v->lista_voos_reservados) {
         for (int i = 0; i < v->n_voos; i++) {
             if (v->lista_voos_reservados[i]) g_free(v->lista_voos_reservados[i]);
         }
         free(v->lista_voos_reservados);
-    }
+    }*/
+    free(v->lista_voos_reservados);
     g_free(v);
 }
 
-void set_lista_voos (Voos_reservados *vr, int i, char *s) {
-    vr->lista_voos_reservados[i] = g_strdup(s);
+void set_lista_voos (Voos_reservados *vr, int i, char *s, GHashTable *lista_strings) {
+    vr->lista_voos_reservados[i] = procura_string(lista_strings,s); //g_strdup(s);
 }
 
 void r_set_lista (Reservas *r, Voos_reservados *novo) {
     r->reserva_lista = novo;
 }
 
-void r_set_id_reserva (Reservas *r, char *s) {
-    g_free(r->id_reserva);
-    r->id_reserva = g_strdup(s);
+void r_set_id_reserva (Reservas *r, char *s, GHashTable *lista_strings) {
+    //g_free(r->id_reserva);
+    r->id_reserva = procura_string(lista_strings,s); //g_strdup(s);
 }
 
 void r_set_id_pessoa_reservou (Reservas *r, char *s) {
@@ -163,6 +164,6 @@ void libertaReserva(void *data) {
     Reservas *a = data;
     if (!a) return;
     if (a->reserva_lista) liberta_lista_reserva (a->reserva_lista); 
-    if (a->id_reserva) g_free(a->id_reserva);
+    //if (a->id_reserva) g_free(a->id_reserva);
     g_free(a);
 }

@@ -237,7 +237,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                    	//csv_file_error_name = strdup("resultados/passengers_errors.csv");
                    	break;
                    case 5:
-                        Reservas *reserva_atual = validacoes_campos_reservations(campos,V,P);
+                        Reservas *reserva_atual = validacoes_campos_reservations(campos,V,P,lista_strings);
                         if (reserva_atual) {
                             gestor_reservations_insere(R, reserva_atual);
                             // Popular cache Q4: gasto por semana por passageiro

@@ -5,7 +5,6 @@
 
 #include <string.h>
 #include <stdio.h>
-#include <glib.h>
 
 /* ============================================
  * RESERVAS -> VALIDAÇÃO SINTÁTICA
@@ -27,7 +26,7 @@ int valida_id_reserva (const char *s) {
  * Valida a lista dos voos reservados, passa para o formato de uma lista e atribui a "Reserva"
  */
 
-int valida_set_voos_reservados(const char *s, Reservas *r) {
+int valida_set_voos_reservados(const char *s, Reservas *r, GHashTable *lista_strings) {
     if (!s || strlen(s) < 3) return 0; //[] invalido
     int len = strlen(s);
     if (s[0] != '[' || s[len-1] != ']') return 0; //verifica se tem os parenteses retos no inicio e no final
@@ -56,7 +55,7 @@ int valida_set_voos_reservados(const char *s, Reservas *r) {
 	   liberta_lista_reserva(novo);//free(novo)
            return 0; //liberta string_voos e novo?
 	}
-	set_lista_voos(novo,i,token);
+	set_lista_voos(novo,i,token,lista_strings);
     }
 
     r_set_lista(r, novo);
@@ -76,7 +75,7 @@ int valida_RESERVA(Reservas *reserva, GestorFlights *gestor_voos, GestorPassenge
 
     //verifica se voos existem (USA O GESTOR!)
     for (int i = 0; i < length_vr; i++) {
-        char *voo_id = (r_get_lista_voos_reserv(reserva))[i];
+        const char *voo_id = (r_get_lista_voos_reserv(reserva))[i];
         if (!gestor_flights_existe(gestor_voos, voo_id))
             return 0;
     }
@@ -105,14 +104,14 @@ int valida_RESERVA(Reservas *reserva, GestorFlights *gestor_voos, GestorPassenge
  * RESERVA -> VALIDAÇÃO COMPLETA DO PARSING 
  * ============================================================ */ 
 
-Reservas *validacoes_campos_reservations(char **campos, GestorFlights *V, GestorPassengers *P) {
+Reservas *validacoes_campos_reservations(char **campos, GestorFlights *V, GestorPassengers *P, GHashTable *lista_strings) {
     Reservas *r = criaReserva();
     if (valida_id_reserva(campos[0]) 	        && //id_reserva
-	valida_set_voos_reservados(campos[1],r) && //lista voos reservados
+	valida_set_voos_reservados(campos[1],r,lista_strings) && //lista voos reservados
 	valida_id_passageiro(campos[2]) 	) //id da pessoa q reservou
     {
 
-	r_set_id_reserva(r,campos[0]);
+	r_set_id_reserva(r,campos[0],lista_strings);
 	r_set_id_pessoa_reservou(r,campos[2]);
 	r_set_preco(r,campos[4]);
 
