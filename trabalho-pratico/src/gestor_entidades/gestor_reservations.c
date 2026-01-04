@@ -27,6 +27,7 @@ struct gestor_reservations {
  * ============================================ */
 
 GestorReservations *gestor_reservations_cria(void) {
+    //GestorReservations *g = calloc(1, sizeof *g);
     GestorReservations *g = malloc(sizeof(struct gestor_reservations));
     if (!g) return NULL;
     g->tabela = g_hash_table_new_full(

@@ -119,7 +119,7 @@ char *query6(const char *linhaComando,
     );
 
     if (!dados.melhor_destino || dados.max_count == 0) {
-        return strdup("\n");
+	return strdup("\n");
     }
 
     /**  

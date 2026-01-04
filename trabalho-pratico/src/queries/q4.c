@@ -189,7 +189,6 @@ char *query4(const char *linhaComando,
 
     if (g_hash_table_size(contagem_top10) == 0) {
         g_hash_table_destroy(contagem_top10);
-        
         return strdup("\n");
     }
     

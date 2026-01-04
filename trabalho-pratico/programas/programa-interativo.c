@@ -68,7 +68,12 @@ static char *le_linha() {
     char *linha = NULL;
     size_t tam = 0;
     ssize_t len = getline(&linha, &tam, stdin);
-    
+
+    if (len == -1) {
+	free(linha);
+	return NULL;
+    }
+ 
     if (len > 0 && linha[len-1] == '\n') {
         linha[len-1] = '\0';
     }
@@ -129,7 +134,10 @@ static int carrega_dataset(EstadoPrograma *estado, const char *caminho) {
     estado->gestorAeroportos = gestor_airports_cria();
     estado->gestorPassageiros = gestor_passengers_novo();
     estado->gestorReservas = gestor_reservations_cria();
-    
+    gestor_reservations_init_cache_q4(estado->gestorReservas);
+    gestor_flights_init_cache_q5(estado->gestorVoos);  // Cache para Q5
+    gestor_passengers_init_cache_q6(estado->gestorPassageiros);
+
     if (!estado->gestorAeroportos || !estado->gestorAeronaves || 
         !estado->gestorVoos || !estado->gestorPassageiros || !estado->gestorReservas) {
         printf(COLOR_RED "❌ Erro ao criar gestores!\n" COLOR_RESET);
@@ -138,10 +146,12 @@ static int carrega_dataset(EstadoPrograma *estado, const char *caminho) {
     }
     
     //carrega dados
-    read_csv(ctx, estado->gestorVoos, estado->gestorAeroportos, 
+    int *lidos = read_csv(ctx, estado->gestorVoos, estado->gestorAeroportos, 
           estado->gestorAeronaves, estado->gestorPassageiros, estado->gestorReservas);
-    
+    gestor_reservations_finaliza_cache_q4(estado->gestorReservas);
+    //printf ("%d %d %d %d %d\n", lidos[1], lidos[2], lidos[3], lidos[4], lidos[5]); NÃO APAGAR, ÚTIL para debugs
     errors_end();
+    free(lidos);
     free(ctx);
     
     printf(COLOR_GREEN "✓ Dados carregados com sucesso!\n" COLOR_RESET);
@@ -266,9 +276,9 @@ static void executa_query3(EstadoPrograma *estado) {
  */
 
 static void executa_query4(EstadoPrograma *estado) {
-    printf(COLOR_CYAN "\n╔═══ Query 4: Passageiro que esteve mais tempo no Top 10 dos que gastaram mais em reservas num período de tempo\n" COLOR_RESET);
+    printf(COLOR_CYAN "\n╔═══ Query 4: Passageiro que esteve mais tempo no Top 10 dos que gastaram mais em reservas\n" COLOR_RESET);
 
-    printf("Data início (YYYY-MM-DD)\n(opcional, Enter para todos): ");
+    printf("Data início Opcional (YYYY-MM-DD), Enter para todos): ");
     
     char *data_inicio = le_linha();
     //limpa_buffer();
