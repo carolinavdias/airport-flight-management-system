@@ -11,12 +11,24 @@
 #include <stdio.h>
 #include <glib.h>
 
-/* Função auxiliar para calcular ID da semana (para cache Q4) */
+/**
+ * Calcula o dia da semana (0 = domingo, 6 = sábado).
+ *
+ * Usado para determinar o início da semana (domingo)
+ * durante a construção do cache da Query 4.
+ */
+
 static int dia_semana_parser(int ano, int mes, int dia) {
     static int t[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
     if (mes < 3) ano -= 1;
     return (ano + ano/4 - ano/100 + ano/400 + t[mes-1] + dia) % 7;
 }
+
+/**
+ * Converte uma data para número de dias desde 01/01/0001.
+ *
+ * Implementação em O(1), usada para cálculo de semanas.
+ */
 
 static long dias_desde_epoca_parser(int ano, int mes, int dia) {
     // Fórmula O(1) em vez de loop
@@ -27,6 +39,14 @@ static long dias_desde_epoca_parser(int ano, int mes, int dia) {
     if (mes > 2 && ((ano % 4 == 0 && ano % 100 != 0) || ano % 400 == 0)) dias_meses++;
     return dias_anos + dias_meses + dia;
 }
+
+/**
+ * Calcula o identificador da semana (domingo).
+ *
+ * A semana é representada pelo número de dias correspondente
+ * ao domingo dessa semana.
+ */
+
 static long calcula_id_semana_parser(long long datetime) {
     int ano = (int)(datetime / 100000000LL);
     int mes = (int)((datetime / 1000000LL) % 100);
@@ -36,6 +56,15 @@ static long calcula_id_semana_parser(long long datetime) {
     return dias - dow;
 }
 
+/**
+ * Função principal de parsing do dataset.
+ *
+ * Esta função:
+ *  - Verifica a existência de todos os ficheiros CSV
+ *  - Processa cada ficheiro por ordem de dependência
+ *  - Regista erros em ficheiros separados
+ *  - Constrói caches para queries otimizadas
+ */
 
 int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircrafts *AC, GestorPassengers *P, GestorReservations *R) {
     // Inicializar contagens de passageiros por aeroporto (para Q1 otimizada)
