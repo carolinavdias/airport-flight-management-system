@@ -81,9 +81,6 @@ char *query1(const char *code,
                        chegadas,
                        partidas);
 
-    /** Libertação de memória associada a getters que alocam */
-    g_free((char*)iata);
-
     if (len == -1)
         return strdup("\n");
 

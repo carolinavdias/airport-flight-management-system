@@ -30,8 +30,8 @@ typedef struct aeroporto {
   * A memória devolvida deve ser libertada pelo utilizador.
   */
 
-char *airport_get_code_IATA (const Aeroporto *a) {
-    return g_strdup(a->code_IATA);
+const char *airport_get_code_IATA (const Aeroporto *a) {
+    return a->code_IATA;
 }
 
 const char *airport_get_name (const Aeroporto *a) {

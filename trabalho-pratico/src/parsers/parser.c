@@ -22,7 +22,7 @@ static long dias_desde_epoca_parser(int ano, int mes, int dia) {
     // Fórmula O(1) em vez de loop
     int a = ano - 1;
     long dias_anos = a * 365L + a/4 - a/100 + a/400;
-    int dias_mes_acum[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
+    static const int dias_mes_acum[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
     long dias_meses = dias_mes_acum[mes - 1];
     if (mes > 2 && ((ano % 4 == 0 && ano % 100 != 0) || ano % 400 == 0)) dias_meses++;
     return dias_anos + dias_meses + dia;
@@ -102,7 +102,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
             int header_escrito = 0;
 
             //array local
-            int capacidade_array = 10000;
+            int capacidade_array = 500000;
             int num_voos_array = 0;
 	    Voo **array_voos = NULL;
 
@@ -150,7 +150,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                             //CONTA voos por aircraft (para Q2) - só voos não cancelados
                             if (voo_get_status(voo_atual) != ESTADO_CANCELLED) {
                             	const char *aircraft_id = voo_get_id_aircraft(voo_atual);
-                            	if (aircraft_id) {
+				if (aircraft_id) {
                                     gpointer ptr = g_hash_table_lookup(contagens, aircraft_id);
                                     int count = ptr ? GPOINTER_TO_INT(ptr) : 0;
                                     g_hash_table_insert(contagens, g_strdup(aircraft_id), GINT_TO_POINTER(count + 1));

@@ -249,11 +249,7 @@ char *query4(const char *linhaComando,
                         max_count) == -1) {
                 resultado = strdup("\n");
             }
-            
-            // Libertar cópias!
-            g_free(primeiro);
-            g_free(ultimo);
-            g_free(nacionalidade);
+
         } else {
             resultado = strdup("\n");
         }

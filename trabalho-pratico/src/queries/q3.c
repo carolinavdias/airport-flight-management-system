@@ -177,8 +177,6 @@ char *query3(const char *data_inicio, const char *data_fim,
                 resultado = strdup("\n");
             }
 
-            g_free((char*)iata);
-
         } else {
             resultado = strdup("\n");
         }
