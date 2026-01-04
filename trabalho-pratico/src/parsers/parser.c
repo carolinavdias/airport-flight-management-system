@@ -172,7 +172,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                    	break;
                    case 2:
 
-                   	Voo *voo_atual = validacoes_campos_flights(campos, AC);
+                   	Voo *voo_atual = validacoes_campos_flights(campos, AC,lista_strings);
                    	if (voo_atual) {
                             //insere no gestor (hash table)
                             gestor_flights_inserir(V, voo_atual);

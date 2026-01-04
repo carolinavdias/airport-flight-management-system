@@ -1,5 +1,5 @@
 #include "entidades/flights.h"
-#include <glib.h>
+#include "utils/utils.h"
 
 /**
  * Contém a definição da estrutura interna Voo e a implementação
@@ -13,16 +13,16 @@
  */
 
 typedef struct voo {
-    char *flight_id;              /**< Identificador único do voo */
+    const char *flight_id;              /**< Identificador único do voo */
     long long departure;          /**< Data/hora prevista de partida */
     long long actual_departure;   /**< Data/hora efetiva de partida */
     long long arrival;            /**< Data/hora prevista de chegada */
     long long actual_arrival;     /**< Data/hora efetiva de chegada */
     Estado status;                /**< Estado atual do voo */
-    char *code_origin;            /**< Código IATA do aeroporto de origem */
-    char *code_destination;       /**< Código IATA do aeroporto de destino */
-    char *id_aircraft;            /**< Identificador da aeronave */
-    char *airline;                /**< Companhia aérea */
+    const char *code_origin;            /**< Código IATA do aeroporto de origem */
+    const char *code_destination;       /**< Código IATA do aeroporto de destino */
+    const char *id_aircraft;            /**< Identificador da aeronave */
+    const char *airline;                /**< Companhia aérea */
 } Voo;
 
 /* ============================================
@@ -119,30 +119,30 @@ const char *voo_get_airline(const Voo *v) {
  *  - 'd' → aeroporto de destino
  */
 
-void voo_set_code (Voo *v, char *code, char versao) {
+void voo_set_code (Voo *v, char *code, char versao, GHashTable *lista_strings) {
    switch (versao) {
-	case 'o' : g_free(v->code_origin);
-		   v->code_origin = g_strdup(code);
+	case 'o' : //g_free(v->code_origin);
+		   v->code_origin = procura_string(lista_strings,code); //g_strdup(code);
 		   break;
- 	case 'd' : g_free(v->code_destination);
-		   v->code_destination = g_strdup(code);
+ 	case 'd' : //g_free(v->code_destination);
+		   v->code_destination = procura_string(lista_strings,code); //g_strdup(code);
 		   break;
    }
 }
 
-void voo_set_flight_id (Voo *v, char *id) {
-   g_free(v->flight_id);
-   v->flight_id = g_strdup(id);
+void voo_set_flight_id (Voo *v, char *id, GHashTable *lista_strings) {
+   //g_free(v->flight_id);
+   v->flight_id = procura_string(lista_strings,id); //g_strdup(id);
 }
 
-void voo_set_id_aircraft (Voo *v, char *id_airc) {
-   g_free(v->id_aircraft);
-   v->id_aircraft = g_strdup(id_airc);
+void voo_set_id_aircraft (Voo *v, char *id_airc, GHashTable *lista_strings) {
+//   g_free(v->id_aircraft);
+   v->id_aircraft = procura_string(lista_strings,id_airc); //g_strdup(id_airc);
 }
 
-void voo_set_airline (Voo *v, char *airl) {
-   g_free(v->airline);
-   v->airline = g_strdup(airl);
+void voo_set_airline (Voo *v, char *airl, GHashTable *lista_strings) {
+//   g_free(v->airline);
+   v->airline = procura_string(lista_strings,airl); //g_strdup(airl);
 }
 
 /**
@@ -245,11 +245,11 @@ Voo *criaVoo () {
 void libertaVoo(void *data) {
     Voo *v = data;
     if (!v) return;
-    if (v->flight_id) g_free(v->flight_id);
-    if (v->code_origin) g_free(v->code_origin);
-    if (v->code_destination) g_free(v->code_destination);
-    if (v->id_aircraft) g_free(v->id_aircraft);
-    if (v->airline) g_free(v->airline);
+//    if (v->flight_id) g_free(v->flight_id);
+//    if (v->code_origin) g_free(v->code_origin);
+//    if (v->code_destination) g_free(v->code_destination);
+//    if (v->id_aircraft) g_free(v->id_aircraft);
+//    if (v->airline) g_free(v->airline);
     g_free(v);
 }
 

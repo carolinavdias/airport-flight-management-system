@@ -98,7 +98,7 @@ int valida_VOO (Voo *voo, GestorAircrafts *gestor_aeronaves) {
 }
 
 
-Voo *validacoes_campos_flights(char **campos, GestorAircrafts *AC) {
+Voo *validacoes_campos_flights(char **campos, GestorAircrafts *AC, GHashTable *lista_strings) {
     Voo *v = criaVoo();
 
     if (valida_id_voo(campos[0])     && // id_flight
@@ -110,14 +110,14 @@ Voo *validacoes_campos_flights(char **campos, GestorAircrafts *AC) {
     {
 
 
-        voo_set_flight_id (v,campos[0]);
+        voo_set_flight_id (v,campos[0],lista_strings);
         voo_set_dataH(v,campos[1],1);
         voo_set_dataH(v,campos[3],3);
         voo_set_status(v,campos[6]);
-        voo_set_code(v,campos[7],'o');
-        voo_set_code(v,campos[8],'d');
-        voo_set_id_aircraft(v,campos[9]);
-        voo_set_airline(v,campos[10]);
+        voo_set_code(v,campos[7],'o',lista_strings);
+        voo_set_code(v,campos[8],'d',lista_strings);
+        voo_set_id_aircraft(v,campos[9],lista_strings);
+        voo_set_airline(v,campos[10],lista_strings);
 
          //actual departure/arrival
          if (voo_get_status(v) == ESTADO_CANCELLED) {
