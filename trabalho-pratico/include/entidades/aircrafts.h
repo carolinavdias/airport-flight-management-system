@@ -83,7 +83,7 @@ int aircraft_get_year(const Aeronave *a);
  * @param id Novo identificador.
  */
 
-void aircraft_set_id (Aeronave *a, char *id);
+void aircraft_set_id (Aeronave *a, char *id, GHashTable *lista_strings);
 
 /**
  * @brief Define o modelo da aeronave.
