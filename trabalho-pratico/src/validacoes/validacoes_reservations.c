@@ -1,6 +1,4 @@
 #include "validacoes/validacoes_reservations.h"
-#include "validacoes/validacoes_flights.h"
-#include "validacoes/validacoes_passengers.h"
 #include "validacoes/validacoes.h"
 
 #include <string.h>

@@ -19,37 +19,6 @@
  *  - criação da estrutura Voo apenas quando os dados são válidos.
  */
 
-/* ============================================
- * VOO -> VALIDAÇÕES SINTÁTICAS
- * ============================================ */
-
-/**
- * @brief Valida o identificador de um voo.
- *
- * O ID deve ter o formato:
- *  - 2 letras maiúsculas (A–Z)
- *  - seguidas de 5 dígitos (0–9)
- *
- * @param s String contendo o ID do voo.
- * @return 1 se válido, 0 caso contrário.
- */
-
-int valida_id_voo (const char *s);
-
-/**
- * @brief Valida uma data e hora no formato YYYY-MM-DD HH:MM.
- *
- * Verifica:
- *  - tamanho correto (16 caracteres);
- *  - posições fixas de '-', '-', ' ' e ':';
- *  - todos os restantes caracteres são dígitos;
- *  - limites válidos para ano, mês, dia, hora e minuto;
- *  - data não superior à data atual (2025-09-30).
- *
- * @param s String contendo a data e hora.
- * @return 1 se válido, 0 caso contrário.
- */
-
 
 /**
  * @brief Valida todos os campos de um voo e cria a estrutura correspondente.

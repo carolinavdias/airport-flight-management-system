@@ -18,34 +18,6 @@
  * - criação da estrutura Passageiros apenas quando os dados são válidos. 
  */
 
-/* ============================================
- * PASSAGEIROS -> VALIDAÇÃO SINTÁTICA
- * ============================================ */
-
-/**
- * @brief Valida o identificador do passageiro.
- *
- * O ID deve ter exatamente 9 dígitos numéricos.
- *
- * @param s String contendo o ID.
- * @return 1 se válido, 0 caso contrário.
- */
-
-int valida_id_passageiro(const char *s);
-
-/**
- * @brief Valida uma data no formato YYYY-MM-DD.
- *
- * Verifica:
- *  - tamanho correto (10 caracteres)
- *  - posições fixas de '-'
- *  - todos os restantes caracteres são dígitos
- *  - limites válidos para ano, mês e dia
- *
- * @param s String contendo a data.
- * @return 1 se válido, 0 caso contrário.
- */
-
 
 /**
  * @brief Valida todos os campos de um passageiro e cria a estrutura correspondente.

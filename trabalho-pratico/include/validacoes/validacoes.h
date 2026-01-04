@@ -56,14 +56,27 @@ int valida_DataH(const char *s);
 int valida_codigoIATA(const char *s);
 
 /**
- * @brief Valida uma string booleana.
+ * @brief Valida o identificador de um voo.
  *
- * Apenas as strings "true" e "false" são aceites.
+ * O ID deve ter o formato:
+ *  - 2 letras maiúsculas (A–Z)
+ *  - seguidas de 5 dígitos (0–9)
  *
- * @param s String a validar.
- * @return 1 se válida, 0 caso contrário.
+ * @param s String contendo o ID do voo.
+ * @return 1 se válido, 0 caso contrário.
  */
 
-int valida_bool(const char *s);
+int valida_id_voo (const char *s);
+
+/**
+ * @brief Valida o identificador do passageiro.
+ *
+ * O ID deve ter exatamente 9 dígitos numéricos.
+ *
+ * @param s String contendo o ID.
+ * @return 1 se válido, 0 caso contrário.
+ */
+
+int valida_id_passageiro(const char *s);
 
 #endif

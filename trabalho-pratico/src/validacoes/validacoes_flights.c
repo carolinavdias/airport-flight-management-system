@@ -1,6 +1,5 @@
 #define _XOPEN_SOURCE 700
 
-#include "validacoes/validacoes_airports.h"
 #include "validacoes/validacoes_flights.h"
 #include "validacoes/validacoes.h"
 #include "utils/utils.h"
@@ -10,25 +9,6 @@
  * VOO -> VALIDAÇÕES SINTÁTICAS
  * ============================================ */
 
-/**
- * Valida o id do voo
- */
-
-int valida_id_voo (const char *s) {
-    if (!s) return 0; 
-    for (int i = 0; i < 7; i++) {
-        if (s[i] == '\0') return 0; //string demasiado curta
-        if (i < 2) {
-            if (s[i] < 'A' || s[i] > 'Z') return 0; //caracter invalido
-        }
-        else {
-            if (s[i] < '0' || s[i] > '9') return 0; //caracter invalido
-        }
-    }
-    return (s[7] == '\0' || s[8] == '\0');
-}
-
-//É NECESSARIA ESTA FUNCAO ????????
 
 /**
  * Função valida_estado de um voo

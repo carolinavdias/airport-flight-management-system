@@ -10,19 +10,6 @@
  * ============================================ */
 
 /**
- * Valida o id do passageiro e faz o atoi (int)
- */
-
-int valida_id_passageiro(const char *s) {
-
-    if (!s) return 0;
-    for (int i = 0; i < 9; i++) {
-        if (s[i] < '0' || s[i] > '9') return 0;
-    }
-    return s[9] == '\0'; //string muito grande
-}
-
-/**
  * Valida o Genero(passageiro) e passa para a estrutura previamente definida para o genero
  */
 
