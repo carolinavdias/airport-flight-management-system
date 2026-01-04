@@ -92,7 +92,7 @@ void aircraft_set_id (Aeronave *a, char *id);
  * @param model_ Modelo da aeronave.
  */
 
-void aircraft_set_model (Aeronave *a, char *model_);
+void aircraft_set_model (Aeronave *a, char *model_, GHashTable *lista_strings);
 
 /**
  * @brief Define o fabricante da aeronave.

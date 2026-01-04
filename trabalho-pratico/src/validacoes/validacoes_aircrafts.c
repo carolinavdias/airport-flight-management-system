@@ -41,8 +41,8 @@ Aeronave *validacoes_campos_aircrafts(char **campos, GHashTable *lista_strings) 
 
         // Preenchimento dos campos
         aircraft_set_id(ac,campos[0]);
-	    aircraft_set_manuf(ac,campos[1],lista_strings);
-	    aircraft_set_model(ac,campos[2]);
+	aircraft_set_manuf(ac,campos[1],lista_strings);
+	aircraft_set_model(ac,campos[2],lista_strings);
         aircraft_set_year(ac,campos[3]);
         return ac;
 
