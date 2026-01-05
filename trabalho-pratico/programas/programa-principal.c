@@ -12,8 +12,9 @@
 #include "gestor_entidades/gestor_reservations.h"
 #include "gestor_entidades/gestor.h"
 
-#include "parsers/parser.h"
 #include "utils/utils.h"
+#include "errors/errors.h"
+#include "parsers/parser.h"
 #include "queries/interpreter.h"
 
 /**

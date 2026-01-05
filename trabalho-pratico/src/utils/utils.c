@@ -98,17 +98,17 @@ void destroi_lista_strings (GHashTable *lista) {
 /**
  * Estrutura interna que representa um erro registado.
  */
-
+/*
 typedef struct {
     char *ficheiro;
     int   linha;
     char *mensagem;
 } Erro;
-
+*/
 /**
  * Lista global interna
  */
-
+/*
 static GList *ERROS = NULL;
 
 void errors_begin(void) {
@@ -158,7 +158,7 @@ void errors_end(void) {
     g_list_free(ERROS);
     ERROS = NULL;
 }
-
+*/
 //===================================
 //CSV
 //===================================
