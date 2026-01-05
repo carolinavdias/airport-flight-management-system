@@ -141,7 +141,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
 
 	    if (c == 3) {
 	 	array_voos = malloc(capacidade_array * sizeof(Voo *));
-                contagens = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+                contagens = g_hash_table_new(g_str_hash, g_str_equal); //, g_free, NULL);
 
 		if (!array_voos || !contagens) {
 		    fclose(ficheiro);
@@ -183,16 +183,34 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                             //insere no gestor (hash table)
                             gestor_flights_inserir(V, voo_atual);
 
-                            //CONTA voos por aircraft (para Q2) - só voos não cancelados
                             if (voo_get_status(voo_atual) != ESTADO_CANCELLED) {
+
+				//CONTA voos por aircraft (para Q2) - só voos não cancelados
                             	const char *aircraft_id = voo_get_id_aircraft(voo_atual);
 				if (aircraft_id) {
                                     gpointer ptr = g_hash_table_lookup(contagens, aircraft_id);
                                     int count = ptr ? GPOINTER_TO_INT(ptr) : 0;
-                                    g_hash_table_insert(contagens, g_strdup(aircraft_id), GINT_TO_POINTER(count + 1));
+                                    g_hash_table_insert(contagens, (gpointer)aircraft_id, GINT_TO_POINTER(count + 1));
                             	}
-                            }
 
+				//ADICIONA ao array local (se válido para query3)
+				if (voo_get_code_origin(voo_atual)) {
+                                    if (num_voos_array >= capacidade_array) {
+                                    	capacidade_array *= 2;
+                                    	Voo **temp = realloc(array_voos, capacidade_array * sizeof(Voo *));
+                                    	if (!temp) {
+                                            erro_fatal = 1;
+                                            break;
+                                    	} else {
+                                            array_voos = temp;
+                                    	}
+                                    }
+                                    array_voos[num_voos_array++] = voo_atual;
+
+                                }
+			    }
+
+/*
                             //ADICIONA ao array local (se válido para query3)
                             if (voo_get_status(voo_atual) != ESTADO_CANCELLED && voo_get_code_origin(voo_atual)) {
                             	if (num_voos_array >= capacidade_array) {
@@ -207,6 +225,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                             	}
                             	array_voos[num_voos_array++] = voo_atual;
                             }
+*/
                             // Popular cache Q5: atrasos por airline (so voos Delayed)
                             if (voo_get_status(voo_atual) == ESTADO_DELAYED) {
                                 const char *airline = voo_get_airline(voo_atual);

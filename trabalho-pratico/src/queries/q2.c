@@ -17,9 +17,9 @@
  */
 
 typedef struct contagem { 
-    char *identifier;    /**< Identificador único do equipamento. */ 
-    char *manufacturer;  /**< Nome do fabricante do equipamento. */ 
-    char *model;         /**< Modelo específico do equipamento. */ 
+    const char *identifier;    /**< Identificador único do equipamento. */ 
+    const char *manufacturer;  /**< Nome do fabricante do equipamento. */ 
+    const char *model;         /**< Modelo específico do equipamento. */ 
     int count;           /**< Número de ocorrências registadas. */ 
 } Contagem;
 
@@ -106,9 +106,9 @@ static void processa_aeronave(Aeronave *a, void *user_data) {
     }
 
     Contagem *c = g_new(Contagem, 1);
-    c->identifier   = g_strdup(id_str);
-    c->manufacturer = g_strdup(manuf_str);
-    c->model        = g_strdup(model_str);
+    c->identifier   = id_str;
+    c->manufacturer = manuf_str;
+    c->model        = model_str;
     c->count        = count;
 
     dados->resultado = g_list_prepend(dados->resultado, c);
@@ -120,9 +120,9 @@ static void processa_aeronave(Aeronave *a, void *user_data) {
 
 static void free_contagem(void *data) {
     Contagem *c = data;
-    g_free(c->identifier);
-    g_free(c->manufacturer);
-    g_free(c->model);
+//    g_free(c->identifier);
+//    g_free(c->manufacturer);
+//    g_free(c->model);
     g_free(c);
 }
 
