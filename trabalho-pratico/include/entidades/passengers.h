@@ -158,7 +158,7 @@ Passageiros *criaPassageiro();
 /**
  * @brief Liberta toda a memória associada a um passageiro.
  *
- * Esta função é compatível com g_hash_table_new_full().
+ * Esta função é compatível com gestores de memória().
  *
  * @param data Ponteiro genérico para Passageiros.
  */

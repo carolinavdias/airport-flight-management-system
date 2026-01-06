@@ -195,7 +195,7 @@ Reservas *criaReserva ();
 /**
  * @brief Liberta toda a memória associada a uma reserva.
  *
- * Compatível com g_hash_table_new_full().
+ * Compatível com gestores de memória().
  *
  * @param data Ponteiro genérico para Reservas.
  */

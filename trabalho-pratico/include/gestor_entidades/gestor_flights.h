@@ -12,7 +12,7 @@
  * Este módulo define o gestor responsável por armazenar, consultar e
  * manipular todos os voos do sistema.  
  *
- * O gestor utiliza uma hash table para indexar voos pelo seu flight_id,
+ * O gestor utiliza uma estrutura de dados para indexar voos pelo seu flight_id,
  * permitindo inserção, pesquisa, verificação de existência e iteração.
  *
  * Inclui ainda:
@@ -28,7 +28,7 @@
  * @struct gestor_flights
  * @brief Estrutura interna do gestor de voos.
  * Estrutura que representa o gestor de voos.
- * A implementação interna utiliza hash tables.
+ * A implementação interna utiliza estrutura de dadoss.
  */
 
 typedef struct gestor_flights GestorFlights;
@@ -40,7 +40,7 @@ typedef struct gestor_flights GestorFlights;
 /**
  * @brief Cria um novo gestor de voos.
  *
- * Inicializa a hash table interna e define os campos auxiliares.
+ * Inicializa a estrutura de dados interna e define os campos auxiliares.
  *
  * @return Ponteiro para o gestor criado, ou NULL em caso de erro.
  */

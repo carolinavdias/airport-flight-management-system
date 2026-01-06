@@ -11,7 +11,7 @@
  * Este módulo define o gestor responsável por armazenar e gerir todos os
  * passageiros do sistema.  
  *
- * O gestor utiliza uma hash table para indexar passageiros pelo seu
+ * O gestor utiliza uma estrutura de dados para indexar passageiros pelo seu
  * identificador, permitindo inserção, pesquisa, verificação de existência,
  * contagem de passageiros por voo e iteração sobre todos os passageiros.
  */
@@ -24,7 +24,7 @@
  * @struct gestor_passengers
  * @brief Estrutura interna do gestor de passageiros.
  * Estrutura que representa o gestor de passageiros.
- * A implementação interna utiliza hash tables.
+ * A implementação interna utiliza estrutura de dadoss.
  */
 
 typedef struct gestor_passengers GestorPassengers;
@@ -36,7 +36,7 @@ typedef struct gestor_passengers GestorPassengers;
 /** 
  * @brief Cria um novo gestor de passageiros. 
  * 
- * Inicializa a hash table interna responsável por armazenar os passageiros. 
+ * Inicializa a estrutura de dados interna responsável por armazenar os passageiros. 
  * 
  * @return Ponteiro para o gestor criado, ou NULL em caso de erro. 
  */

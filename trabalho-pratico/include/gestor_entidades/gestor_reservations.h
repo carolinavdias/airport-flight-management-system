@@ -10,7 +10,7 @@
  * Este módulo define o gestor responsável por armazenar e gerir todas as
  * reservas do sistema.  
  *
- * O gestor utiliza uma hash table para indexar reservas pelo seu ID,
+ * O gestor utiliza uma estrutura de dados para indexar reservas pelo seu ID,
  * permitindo inserção, pesquisa, verificação de existência e iteração.
  *
  * Inclui ainda uma função auxiliar para obter todas as reservas associadas
@@ -25,7 +25,7 @@
  * @struct gestor_reservations
  * @brief Estrutura do gestor de reservas.
  *
- * Armazena todas as reservas numa hash table indexada pelo seu ID.
+ * Armazena todas as reservas numa estrutura de dados indexada pelo seu ID.
  * A tabela liberta automaticamente as chaves e as reservas armazenadas.
  */
 
@@ -38,7 +38,7 @@ typedef struct gestor_reservations GestorReservations;
 /**
  * @brief Cria um novo gestor de reservas.
  *
- * Inicializa a hash table interna responsável por armazenar as reservas.
+ * Inicializa a estrutura de dados interna responsável por armazenar as reservas.
  *
  * @return Ponteiro para o gestor criado, ou NULL em caso de erro.
  */

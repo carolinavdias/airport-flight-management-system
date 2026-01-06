@@ -27,7 +27,7 @@ typedef struct passageiros {
 /**
  * As funções de acesso devolvem os valores dos campos internos.
  * 
- * Os getters que retornam strings devolvem cópias (g_strdup),
+ * Os getters retornam ponteiros const para strings geridas pela StringPool,
  * cabendo ao utilizador libertar a memória retornada.
  * 
  * O getter do identificador devolve um ponteiro interno, pois este

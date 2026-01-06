@@ -22,7 +22,7 @@
  * @struct gestor_airports
  * @brief Estrutura interna do gestor de aeroportos.
  * Estrutura que representa o gestor de aeroportos.
- * A implementação interna utiliza hash tables.
+ * A implementação interna utiliza estrutura de dadoss.
  */
 
 typedef struct gestor_airports GestorAirports;
@@ -34,7 +34,7 @@ typedef struct gestor_airports GestorAirports;
 /**
  * @brief Cria um novo gestor de aeroportos.
  *
- * Inicializa a hash table responsável por armazenar os aeroportos.
+ * Inicializa a estrutura de dados responsável por armazenar os aeroportos.
  *
  * @return Ponteiro para o gestor criado, ou NULL em caso de erro.
  */
