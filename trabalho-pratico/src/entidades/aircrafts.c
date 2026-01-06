@@ -61,22 +61,22 @@ int aircraft_get_year(const Aeronave *a) {
  * a memória existente para evitar fugas de memória.
 */
 
-void aircraft_set_id(Aeronave *a, char *s, GHashTable *lista_strings) {
+void aircraft_set_id(Aeronave *a, char *s, StringPool *pool) {
     if (!a || !s) return;
   //  g_free(a->identifier);
-    a->identifier = procura_string(lista_strings,s); //g_strdup(s);
+    a->identifier = string_pool_get(pool,s); //g_strdup(s);
 }
 
-void aircraft_set_manuf(Aeronave *a, char *s, GHashTable *lista_strings) {
+void aircraft_set_manuf(Aeronave *a, char *s, StringPool *pool) {
     if (!a || !s) return;
     //g_free(a->manufacturer);
-    a->manufacturer = procura_string(lista_strings,s); //g_strdup(s);
+    a->manufacturer = string_pool_get(pool,s); //g_strdup(s);
 }
 
-void aircraft_set_model(Aeronave *a, char *model_, GHashTable *lista_strings) {
+void aircraft_set_model(Aeronave *a, char *model_, StringPool *pool) {
     if (!a || !model_) return;
     // g_free(a->model);
-    a->model = procura_string(lista_strings,model_); //g_strdup(model_);
+    a->model = string_pool_get(pool,model_); //g_strdup(model_);
 }
 
 void aircraft_set_year(Aeronave *a, char *year) {

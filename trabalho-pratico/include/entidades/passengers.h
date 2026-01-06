@@ -1,6 +1,9 @@
 #ifndef PASSENGERS_H
 #define PASSENGERS_H
 
+/* Forward declaration */
+typedef struct _StringPool StringPool;
+
 #include <stdint.h>
 #include <glib.h>
 
@@ -94,7 +97,7 @@ const char *passenger_get_nacionalidade (const Passageiros *p);
  * SETTERS
  * ============================================ */
 
-void passenger_set_id (Passageiros *p, char *id, GHashTable *lista_strings);
+void passenger_set_id (Passageiros *p, char *id, StringPool *pool);
 
  /** 
     * @brief Define o primeiro nome do passageiro.
@@ -103,7 +106,7 @@ void passenger_set_id (Passageiros *p, char *id, GHashTable *lista_strings);
     * @param pn Primeiro nome. 
     */
 
-void passenger_set_pn (Passageiros *p, char *pn, GHashTable *lista_strings);
+void passenger_set_pn (Passageiros *p, char *pn, StringPool *pool);
 
 /**
  * @brief Define o último nome do passageiro.
@@ -112,7 +115,7 @@ void passenger_set_pn (Passageiros *p, char *pn, GHashTable *lista_strings);
  * @param un Último nome.
  */
 
-void passenger_set_un (Passageiros *p, char *un, GHashTable *lista_strings);
+void passenger_set_un (Passageiros *p, char *un, StringPool *pool);
 
 /**
  * @brief Define a data de nascimento do passageiro.
@@ -132,7 +135,7 @@ void passenger_set_dn (Passageiros *p, char *dn);
  * @param nc Nacionalidade.
  */
 
-void passenger_set_nc (Passageiros *p, char *nc, GHashTable *lista_strings);
+void passenger_set_nc (Passageiros *p, char *nc, StringPool *pool);
 
 /* ============================================
  * CRIA PASSAGEIRO

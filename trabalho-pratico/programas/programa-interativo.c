@@ -117,7 +117,7 @@ static void mostra_menu() {
  * Carrega dataset.
  */
 
-static int carrega_dataset(EstadoPrograma *estado, const char *caminho, GHashTable *lista_strings) {
+static int carrega_dataset(EstadoPrograma *estado, const char *caminho, StringPool *pool) {
     printf(COLOR_YELLOW "\n⏳ A carregar dados de: %s\n" COLOR_RESET, caminho);
     
     Contexto *ctx = cria_contexto();
@@ -148,7 +148,7 @@ static int carrega_dataset(EstadoPrograma *estado, const char *caminho, GHashTab
     
     //carrega dados
     int *lidos = read_csv(ctx, estado->gestorVoos, estado->gestorAeroportos, 
-          estado->gestorAeronaves, estado->gestorPassageiros, estado->gestorReservas,lista_strings);
+          estado->gestorAeronaves, estado->gestorPassageiros, estado->gestorReservas,pool);
     gestor_reservations_finaliza_cache_q4(estado->gestorReservas);
     //printf ("%d %d %d %d %d\n", lidos[1], lidos[2], lidos[3], lidos[4], lidos[5]); NÃO APAGAR, ÚTIL para debugs
     errors_end();
@@ -418,7 +418,7 @@ int main() {
     EstadoPrograma estado = {0};
     
     mostra_banner();
-    GHashTable *lista_strings = cria_string_list();
+    StringPool *pool = cria_string_pool();
     
     //pede caminho do dataset
     printf(COLOR_CYAN "Digite o caminho do dataset " COLOR_RESET);
@@ -432,7 +432,7 @@ int main() {
     }
     
     //carrega dados
-    if (!carrega_dataset(&estado, caminho,lista_strings)) {
+    if (!carrega_dataset(&estado, caminho,pool)) {
         printf(COLOR_RED "\n❌ Falha ao carregar dataset. A encerrar...\n" COLOR_RESET);
         free(caminho);
         return EXIT_FAILURE;
@@ -484,8 +484,8 @@ int main() {
                 caminho = le_linha();
                 if (caminho && caminho[0] != '\0') {
                     liberta_recursos(&estado);
-		    esvazia_lista_strings(lista_strings);
-                    carrega_dataset(&estado, caminho,lista_strings);
+		    string_pool_clear(pool);
+                    carrega_dataset(&estado, caminho,pool);
                 }
                 free(caminho);
                 break;
@@ -510,7 +510,7 @@ int main() {
     //limpa
     printf(COLOR_YELLOW "\n👋 A encerrar programa...\n" COLOR_RESET);
     liberta_recursos(&estado);
-    destroi_lista_strings(lista_strings);
+    string_pool_destroy(pool);
     printf(COLOR_GREEN "✓ Recursos libertados. Até à próxima!\n" COLOR_RESET);
 
     return EXIT_SUCCESS;

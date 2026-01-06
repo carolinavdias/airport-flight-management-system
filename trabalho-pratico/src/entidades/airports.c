@@ -60,24 +60,24 @@ Tipo_aeroporto airport_get_type (Aeroporto *a) {
   * a memória associada para evitar fugas de memória.
   */
 
-void airport_set_name (Aeroporto *a, char *name_, GHashTable *lista_strings) {
+void airport_set_name (Aeroporto *a, char *name_, StringPool *pool) {
 //   g_free(a->name);
-   a->name = procura_string(lista_strings,name_); //g_strdup(name_);
+   a->name = string_pool_get(pool,name_); //g_strdup(name_);
 }
 
-void airport_set_city (Aeroporto *a, char *city_, GHashTable *lista_strings) {
+void airport_set_city (Aeroporto *a, char *city_, StringPool *pool) {
 //   g_free(a->city);
-   a->city = procura_string(lista_strings,city_); //g_strdup(city_);
+   a->city = string_pool_get(pool,city_); //g_strdup(city_);
 }
 
-void airport_set_country (Aeroporto *a, char *country_, GHashTable *lista_strings) {
+void airport_set_country (Aeroporto *a, char *country_, StringPool *pool) {
 //   g_free(a->country);
-   a->country = procura_string(lista_strings,country_); //g_strdup(country_);
+   a->country = string_pool_get(pool,country_); //g_strdup(country_);
 }
 
-void airport_set_code_IATA (Aeroporto *a, char *code_, GHashTable *lista_strings) {
+void airport_set_code_IATA (Aeroporto *a, char *code_, StringPool *pool) {
 //    g_free(a->code_IATA);
-   a->code_IATA = procura_string(lista_strings,code_); //g_strdup(code_);  //estava a->country (bug)
+   a->code_IATA = string_pool_get(pool,code_); //g_strdup(code_);  //estava a->country (bug)
 }
 
 /**

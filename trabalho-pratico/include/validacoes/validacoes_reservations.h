@@ -46,6 +46,6 @@
  * @return Ponteiro para Reservas válido, ou NULL se algum campo for inválido. 
  */
 
- Reservas *validacoes_campos_reservations(char **campos, GestorFlights *V, GestorPassengers *P, GHashTable *lista_strings);
+ Reservas *validacoes_campos_reservations(char **campos, GestorFlights *V, GestorPassengers *P, StringPool *pool);
 
 #endif

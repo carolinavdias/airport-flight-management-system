@@ -1,6 +1,9 @@
 #ifndef FLIGHTS_H
 #define FLIGHTS_H
 
+/* Forward declaration */
+typedef struct _StringPool StringPool;
+
 #include <stdint.h>
 #include <glib.h>
 
@@ -154,7 +157,7 @@ void voo_set_status (Voo *v, char *status);
  * @param versao 'o' para origem, 'd' para destino.
  */
 
-void voo_set_code (Voo *v, char *code, char versao, GHashTable *lista_strings);
+void voo_set_code (Voo *v, char *code, char versao, StringPool *pool);
 
 /**
  * @brief Define o identificador do voo.
@@ -163,7 +166,7 @@ void voo_set_code (Voo *v, char *code, char versao, GHashTable *lista_strings);
  * @param id Identificador do voo.
  */
 
-void voo_set_flight_id (Voo *v, char *id, GHashTable *lista_strings);
+void voo_set_flight_id (Voo *v, char *id, StringPool *pool);
 
 /**
  * @brief Define a companhia aérea.
@@ -172,7 +175,7 @@ void voo_set_flight_id (Voo *v, char *id, GHashTable *lista_strings);
  * @param airl Nome da companhia aérea.
  */
 
-void voo_set_airline (Voo *v, char *airl, GHashTable *lista_strings);
+void voo_set_airline (Voo *v, char *airl, StringPool *pool);
 
 /**
  * @brief Define o identificador da aeronave.
@@ -182,7 +185,7 @@ void voo_set_airline (Voo *v, char *airl, GHashTable *lista_strings);
  */
 
 
-void voo_set_id_aircraft (Voo *v, char *id_airc, GHashTable *lista_strings);
+void voo_set_id_aircraft (Voo *v, char *id_airc, StringPool *pool);
 
 /**
  * @brief Converte uma data/hora em formato textual para inteiro.

@@ -62,32 +62,42 @@ int qual_mes (int ano, int mes) {
     if (mes == 4 || mes == 6 || mes == 9 || mes == 11) return 30;
     return 31;
 }
+/* ============================================================
+ * STRING POOL (tipo opaco - implementação)
+ * ============================================================ */
+struct _StringPool {
+    GHashTable *table;
+};
 
-
-GHashTable *cria_string_list (void) {
-    return g_hash_table_new_full(
-    	g_str_hash,
-    	g_str_equal,
-    	g_free,   // liberta a string única
-    	NULL
+StringPool *cria_string_pool(void) {
+    StringPool *pool = g_new(StringPool, 1);
+    pool->table = g_hash_table_new_full(
+        g_str_hash,
+        g_str_equal,
+        g_free,
+        NULL
     );
+    return pool;
 }
 
-const char *procura_string(GHashTable *lista, const char *s) {
-    char *existente = g_hash_table_lookup(lista,s);
+const char *string_pool_get(StringPool *pool, const char *s) {
+    if (!pool || !s) return NULL;
+    char *existente = g_hash_table_lookup(pool->table, s);
     if (existente) return existente;
-
     char *nova = g_strdup(s);
-    g_hash_table_insert(lista,nova,nova);
+    g_hash_table_insert(pool->table, nova, nova);
     return nova;
 }
 
-void esvazia_lista_strings (GHashTable *lista) {
-    g_hash_table_remove_all(lista);
+void string_pool_clear(StringPool *pool) {
+    if (pool) g_hash_table_remove_all(pool->table);
 }
 
-void destroi_lista_strings (GHashTable *lista) {
-    g_hash_table_destroy(lista);
+void string_pool_destroy(StringPool *pool) {
+    if (pool) {
+        g_hash_table_destroy(pool->table);
+        g_free(pool);
+    }
 }
 
 

@@ -31,6 +31,6 @@
  * @return Ponteiro para Aeronave válida, ou NULL se algum campo for inválido.
  */
 
-Aeronave *validacoes_campos_aircrafts(char **campos, GHashTable *lista_strings);
+Aeronave *validacoes_campos_aircrafts(char **campos, StringPool *pool);
 
 #endif

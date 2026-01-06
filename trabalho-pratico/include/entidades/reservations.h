@@ -1,5 +1,8 @@
 #ifndef RESERVATIONS_H
 #define RESERVATIONS_H
+
+/* Forward declaration */
+typedef struct _StringPool StringPool;
 #include <glib.h>
 
 /** 
@@ -115,7 +118,7 @@ void liberta_lista_reserva(void *data);
  * @param s ID do voo.
  */
 
-void set_lista_voos (Voos_reservados *vr, int i, char *s, GHashTable *lista_strings);
+void set_lista_voos (Voos_reservados *vr, int i, char *s, StringPool *pool);
 
 /**
  * @brief Substitui a lista de voos da reserva.
@@ -131,7 +134,7 @@ void r_set_lista (Reservas *r, Voos_reservados *novo);
  * @param s Novo ID.
  */
 
-void r_set_id_reserva (Reservas *r, char *s, GHashTable *lista_strings);
+void r_set_id_reserva (Reservas *r, char *s, StringPool *pool);
 
  /** 
     * @brief Define o ID da pessoa que fez a reserva. 

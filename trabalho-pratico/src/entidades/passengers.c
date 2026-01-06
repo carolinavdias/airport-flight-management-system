@@ -68,18 +68,18 @@ const char *passenger_get_nacionalidade (const Passageiros *p) {
  * ordenável "YYYYMMDD".
  */
 
-void passenger_set_id (Passageiros *p, char *id, GHashTable *lista_strings) {
-    p->id_passageiro =  procura_string(lista_strings,id); //g_strdup(id);
+void passenger_set_id (Passageiros *p, char *id, StringPool *pool) {
+    p->id_passageiro =  string_pool_get(pool,id); //g_strdup(id);
 }
 
-void passenger_set_pn (Passageiros *p, char *pn, GHashTable *lista_strings) {
+void passenger_set_pn (Passageiros *p, char *pn, StringPool *pool) {
 //    g_free(p->primeiro_nome);
-    p->primeiro_nome = procura_string(lista_strings,pn); //g_strdup(pn);
+    p->primeiro_nome = string_pool_get(pool,pn); //g_strdup(pn);
 }
 
-void passenger_set_un (Passageiros *p, char *un, GHashTable *lista_strings) {
+void passenger_set_un (Passageiros *p, char *un, StringPool *pool) {
    // g_free(p->ultimo_nome);
-    p->ultimo_nome = procura_string(lista_strings,un); //g_strdup(un);
+    p->ultimo_nome = string_pool_get(pool,un); //g_strdup(un);
 }
 
 
@@ -104,9 +104,9 @@ void passenger_set_dn (Passageiros *p, char *dn) {
     p->data_nascimento = data;
 }
 
-void passenger_set_nc (Passageiros *p, char *nc, GHashTable *lista_strings) {
+void passenger_set_nc (Passageiros *p, char *nc, StringPool *pool) {
     //g_free(p->nacionalidade);
-    p->nacionalidade = procura_string(lista_strings,nc); //g_strdup(nc);
+    p->nacionalidade = string_pool_get(pool,nc); //g_strdup(nc);
 }
 
 /* ============================================

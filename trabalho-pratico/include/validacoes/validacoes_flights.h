@@ -38,6 +38,6 @@
  * @return Ponteiro para Voo válido, ou NULL se algum campo for inválido.
  */
 
-Voo *validacoes_campos_flights(char **campos, GestorAircrafts *AC, GHashTable *lista_strings);
+Voo *validacoes_campos_flights(char **campos, GestorAircrafts *AC, StringPool *pool);
 
 #endif

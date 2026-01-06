@@ -24,7 +24,7 @@ int valida_id_reserva (const char *s) {
  * Valida a lista dos voos reservados, passa para o formato de uma lista e atribui a "Reserva"
  */
 
-int valida_set_voos_reservados(const char *s, Reservas *r, GHashTable *lista_strings) {
+int valida_set_voos_reservados(const char *s, Reservas *r, StringPool *pool) {
     if (!s || strlen(s) < 3) return 0; //[] invalido
     int len = strlen(s);
     if (s[0] != '[' || s[len-1] != ']') return 0; //verifica se tem os parenteses retos no inicio e no final
@@ -53,7 +53,7 @@ int valida_set_voos_reservados(const char *s, Reservas *r, GHashTable *lista_str
 	   liberta_lista_reserva(novo);//free(novo)
            return 0; //liberta string_voos e novo?
 	}
-	set_lista_voos(novo,i,token,lista_strings);
+	set_lista_voos(novo,i,token,pool);
     }
 
     r_set_lista(r, novo);
@@ -102,14 +102,14 @@ int valida_RESERVA(Reservas *reserva, GestorFlights *gestor_voos, GestorPassenge
  * RESERVA -> VALIDAÇÃO COMPLETA DO PARSING 
  * ============================================================ */ 
 
-Reservas *validacoes_campos_reservations(char **campos, GestorFlights *V, GestorPassengers *P, GHashTable *lista_strings) {
+Reservas *validacoes_campos_reservations(char **campos, GestorFlights *V, GestorPassengers *P, StringPool *pool) {
     Reservas *r = criaReserva();
     if (valida_id_reserva(campos[0]) 	        && //id_reserva
-	valida_set_voos_reservados(campos[1],r,lista_strings) && //lista voos reservados
+	valida_set_voos_reservados(campos[1],r,pool) && //lista voos reservados
 	valida_id_passageiro(campos[2]) 	) //id da pessoa q reservou
     {
 
-	r_set_id_reserva(r,campos[0],lista_strings);
+	r_set_id_reserva(r,campos[0],pool);
 	r_set_id_pessoa_reservou(r,campos[2]);
 	r_set_preco(r,campos[4]);
 

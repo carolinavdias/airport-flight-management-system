@@ -62,6 +62,6 @@
  */
 
 int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, 
-               GestorAircrafts *AC, GestorPassengers *P, GestorReservations *R, GHashTable *lista_strings);
+               GestorAircrafts *AC, GestorPassengers *P, GestorReservations *R, StringPool *pool);
 
 #endif  

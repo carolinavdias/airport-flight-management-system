@@ -35,6 +35,6 @@
   * @return Ponteiro para Aeroporto válido, ou NULL se algum campo for inválido. 
   */
 
-Aeroporto *validacoes_campos_airports(char **campos, GHashTable *lista_strings);
+Aeroporto *validacoes_campos_airports(char **campos, StringPool *pool);
 
 #endif

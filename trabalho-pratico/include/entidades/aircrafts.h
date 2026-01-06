@@ -1,6 +1,9 @@
 #ifndef AIRCRAFTS_H
 #define AIRCRAFTS_H
 
+/* Forward declaration */
+typedef struct _StringPool StringPool;
+
 #include <glib.h>
 
 /**
@@ -83,7 +86,7 @@ int aircraft_get_year(const Aeronave *a);
  * @param id Novo identificador.
  */
 
-void aircraft_set_id (Aeronave *a, char *id, GHashTable *lista_strings);
+void aircraft_set_id (Aeronave *a, char *id, StringPool *pool);
 
 /**
  * @brief Define o modelo da aeronave.
@@ -92,7 +95,7 @@ void aircraft_set_id (Aeronave *a, char *id, GHashTable *lista_strings);
  * @param model_ Modelo da aeronave.
  */
 
-void aircraft_set_model (Aeronave *a, char *model_, GHashTable *lista_strings);
+void aircraft_set_model (Aeronave *a, char *model_, StringPool *pool);
 
 /**
  * @brief Define o fabricante da aeronave.
@@ -102,7 +105,7 @@ void aircraft_set_model (Aeronave *a, char *model_, GHashTable *lista_strings);
  */
 
 //void aircraft_set_manuf (Aeronave *a, char *manuf);
-void aircraft_set_manuf(Aeronave *a, char *s, GHashTable *lista_strings);
+void aircraft_set_manuf(Aeronave *a, char *s, StringPool *pool);
 /**
  * @brief Define o ano de fabrico da aeronave.
  *

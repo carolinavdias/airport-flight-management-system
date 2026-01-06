@@ -35,6 +35,6 @@
  * @return Ponteiro para Passageiros válido, ou NULL se algum campo for inválido.
  */
 
-Passageiros *validacoes_campos_passengers(char **campos, GHashTable *lista_strings);
+Passageiros *validacoes_campos_passengers(char **campos, StringPool *pool);
 
 #endif

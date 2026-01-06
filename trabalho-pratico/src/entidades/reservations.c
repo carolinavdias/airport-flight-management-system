@@ -120,17 +120,17 @@ void liberta_lista_reserva(void *data) {
     g_free(v);
 }
 
-void set_lista_voos (Voos_reservados *vr, int i, char *s, GHashTable *lista_strings) {
-    vr->lista_voos_reservados[i] = procura_string(lista_strings,s); //g_strdup(s);
+void set_lista_voos (Voos_reservados *vr, int i, char *s, StringPool *pool) {
+    vr->lista_voos_reservados[i] = string_pool_get(pool,s); //g_strdup(s);
 }
 
 void r_set_lista (Reservas *r, Voos_reservados *novo) {
     r->reserva_lista = novo;
 }
 
-void r_set_id_reserva (Reservas *r, char *s, GHashTable *lista_strings) {
+void r_set_id_reserva (Reservas *r, char *s, StringPool *pool) {
     //g_free(r->id_reserva);
-    r->id_reserva = procura_string(lista_strings,s); //g_strdup(s);
+    r->id_reserva = string_pool_get(pool,s); //g_strdup(s);
 }
 
 void r_set_id_pessoa_reservou (Reservas *r, char *s) {

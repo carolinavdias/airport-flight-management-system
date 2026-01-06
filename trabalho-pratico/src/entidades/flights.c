@@ -119,30 +119,30 @@ const char *voo_get_airline(const Voo *v) {
  *  - 'd' → aeroporto de destino
  */
 
-void voo_set_code (Voo *v, char *code, char versao, GHashTable *lista_strings) {
+void voo_set_code (Voo *v, char *code, char versao, StringPool *pool) {
    switch (versao) {
 	case 'o' : //g_free(v->code_origin);
-		   v->code_origin = procura_string(lista_strings,code); //g_strdup(code);
+		   v->code_origin = string_pool_get(pool,code); //g_strdup(code);
 		   break;
  	case 'd' : //g_free(v->code_destination);
-		   v->code_destination = procura_string(lista_strings,code); //g_strdup(code);
+		   v->code_destination = string_pool_get(pool,code); //g_strdup(code);
 		   break;
    }
 }
 
-void voo_set_flight_id (Voo *v, char *id, GHashTable *lista_strings) {
+void voo_set_flight_id (Voo *v, char *id, StringPool *pool) {
    //g_free(v->flight_id);
-   v->flight_id = procura_string(lista_strings,id); //g_strdup(id);
+   v->flight_id = string_pool_get(pool,id); //g_strdup(id);
 }
 
-void voo_set_id_aircraft (Voo *v, char *id_airc, GHashTable *lista_strings) {
+void voo_set_id_aircraft (Voo *v, char *id_airc, StringPool *pool) {
 //   g_free(v->id_aircraft);
-   v->id_aircraft = procura_string(lista_strings,id_airc); //g_strdup(id_airc);
+   v->id_aircraft = string_pool_get(pool,id_airc); //g_strdup(id_airc);
 }
 
-void voo_set_airline (Voo *v, char *airl, GHashTable *lista_strings) {
+void voo_set_airline (Voo *v, char *airl, StringPool *pool) {
 //   g_free(v->airline);
-   v->airline = procura_string(lista_strings,airl); //g_strdup(airl);
+   v->airline = string_pool_get(pool,airl); //g_strdup(airl);
 }
 
 /**

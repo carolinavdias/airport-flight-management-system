@@ -33,16 +33,16 @@ int valida_year(const char *s) {
  * Se o ano for válido, a aeronave é criada e preenchida.
  */
 
-Aeronave *validacoes_campos_aircrafts(char **campos, GHashTable *lista_strings) {
+Aeronave *validacoes_campos_aircrafts(char **campos, StringPool *pool) {
     Aeronave *ac = criaAeronave();
 
     if (valida_year(campos[3])) //ano fabrico aeronave
     {
 
         // Preenchimento dos campos
-        aircraft_set_id(ac,campos[0],lista_strings);
-	aircraft_set_manuf(ac,campos[1],lista_strings);
-	aircraft_set_model(ac,campos[2],lista_strings);
+        aircraft_set_id(ac,campos[0],pool);
+	aircraft_set_manuf(ac,campos[1],pool);
+	aircraft_set_model(ac,campos[2],pool);
         aircraft_set_year(ac,campos[3]);
         return ac;
 

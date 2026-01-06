@@ -1,6 +1,9 @@
 #ifndef AIRPORTS_H
 #define AIRPORTS_H
 
+/* Forward declaration */
+typedef struct _StringPool StringPool;
+
 #include <stdint.h>
 #include <glib.h>
 
@@ -109,7 +112,7 @@ Tipo_aeroporto airport_get_type (Aeroporto *a);
  * @param name_ Nome do aeroporto.
  */
 
-void airport_set_name (Aeroporto *a, char *name_, GHashTable *lista_strings);
+void airport_set_name (Aeroporto *a, char *name_, StringPool *pool);
 
 /**
  * @brief Define a cidade do aeroporto.
@@ -118,7 +121,7 @@ void airport_set_name (Aeroporto *a, char *name_, GHashTable *lista_strings);
  * @param city_ Cidade do aeroporto.
  */
 
-void airport_set_city (Aeroporto *a, char *city_, GHashTable *lista_strings);
+void airport_set_city (Aeroporto *a, char *city_, StringPool *pool);
 
 /**
  * @brief Define o país do aeroporto.
@@ -127,7 +130,7 @@ void airport_set_city (Aeroporto *a, char *city_, GHashTable *lista_strings);
  * @param country_ País do aeroporto.
  */
 
-void airport_set_country (Aeroporto *a, char *country_, GHashTable *lista_strings);
+void airport_set_country (Aeroporto *a, char *country_, StringPool *pool);
 
 /**
  * @brief Define o código IATA do aeroporto.
@@ -136,7 +139,7 @@ void airport_set_country (Aeroporto *a, char *country_, GHashTable *lista_string
  * @param code_ Código IATA (3 letras).
  */
 
-void airport_set_code_IATA (Aeroporto *a, char *code_, GHashTable *lista_strings);
+void airport_set_code_IATA (Aeroporto *a, char *code_, StringPool *pool);
 
 /**
  * @brief Define o tipo do aeroporto.

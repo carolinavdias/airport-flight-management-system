@@ -11,6 +11,9 @@
 #include <stdio.h>
 #include <glib.h>
 
+/* Declaração interna - função não exposta no header público */
+extern void gestor_flights_set_contagens_aircraft(GestorFlights *g, GHashTable *contagens);
+
 /**
  * Calcula o dia da semana (0 = domingo, 6 = sábado).
  *
@@ -66,7 +69,7 @@ static long calcula_id_semana_parser(long long datetime) {
  *  - Constrói caches para queries otimizadas
  */
 
-int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircrafts *AC, GestorPassengers *P, GestorReservations *R, GHashTable *lista_strings) {
+int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircrafts *AC, GestorPassengers *P, GestorReservations *R, StringPool *pool) {
 
     // Inicializar contagens de passageiros por aeroporto (para Q1 otimizada)
     gestor_airports_init_contagens(AP);
@@ -165,20 +168,20 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
 
                switch (c) {
                    case 1:
-                   	Aeronave *aeronave_atual = validacoes_campos_aircrafts(campos, lista_strings);
+                   	Aeronave *aeronave_atual = validacoes_campos_aircrafts(campos, pool);
                    	if (aeronave_atual) gestor_aircrafts_insere(AC, aeronave_atual);
                    	else linha_valida = 0;
                    	//csv_file_error_name = strdup("resultados/aircrafts_errors.csv");
                    	break;
                    case 2:
-                        Aeroporto *aeroporto_atual = validacoes_campos_airports(campos,lista_strings);
+                        Aeroporto *aeroporto_atual = validacoes_campos_airports(campos,pool);
                         if (aeroporto_atual) gestor_airports_insere(AP, aeroporto_atual);
                         else linha_valida = 0;
                         //csv_file_error_name = strdup("resultados/airports_errors.csv");
                         break;
                    case 3:
 
-                   	Voo *voo_atual = validacoes_campos_flights(campos, AC,lista_strings);
+                   	Voo *voo_atual = validacoes_campos_flights(campos, AC,pool);
                    	if (voo_atual) {
                             //insere no gestor (hash table)
                             gestor_flights_inserir(V, voo_atual);
@@ -250,13 +253,13 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                    	//csv_file_error_name = strdup("resultados/flights_errors.csv");
                    	break;
                    case 4:
-                   	Passageiros *passageiro_atual = validacoes_campos_passengers(campos,lista_strings);
+                   	Passageiros *passageiro_atual = validacoes_campos_passengers(campos,pool);
                    	if (passageiro_atual) gestor_passengers_inserir(P, passageiro_atual);
                    	else linha_valida = 0;
                    	//csv_file_error_name = strdup("resultados/passengers_errors.csv");
                    	break;
                    case 5:
-                        Reservas *reserva_atual = validacoes_campos_reservations(campos,V,P,lista_strings);
+                        Reservas *reserva_atual = validacoes_campos_reservations(campos,V,P,pool);
                         if (reserva_atual) {
                             gestor_reservations_insere(R, reserva_atual);
                             // Popular cache Q4: gasto por semana por passageiro

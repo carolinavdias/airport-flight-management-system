@@ -82,13 +82,15 @@ FILE* abrir_ficheiro(Contexto *ctx, const char *nome_ficheiro, const char *modo)
 
 int qual_mes (int ano, int mes);
 
-GHashTable *cria_string_list (void);
+typedef struct _StringPool StringPool;
 
-const char *procura_string(GHashTable *lista, const char *s);
+StringPool *cria_string_pool(void);
 
-void esvazia_lista_strings (GHashTable *lista);
+const char *string_pool_get(StringPool *pool, const char *s);
 
-void destroi_lista_strings (GHashTable *lista);
+void string_pool_clear(StringPool *pool);
+
+void string_pool_destroy(StringPool *pool);
 
 /* ============================================================
  * GESTÃO DE ERROS
