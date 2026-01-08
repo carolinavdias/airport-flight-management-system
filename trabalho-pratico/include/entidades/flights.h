@@ -51,8 +51,12 @@ typedef struct voo Voo;
 /**
  * @brief Obtém o identificador do voo.
  *
+ * Retorna um ponteiro constante para o identificador interno.
+ * A memória é gerida pelo StringPool, pelo que o utilizador não deve
+ * libertar esta string.
+ *
  * @param v Ponteiro para o voo.
- * @return Cópia do identificador do voo.
+ * @return Ponteiro para o identificador ou NULL se o voo for inválido.
  */
 
 const char *voo_get_flight_id (const Voo *v);
@@ -60,8 +64,11 @@ const char *voo_get_flight_id (const Voo *v);
 /**
  * @brief Obtém o código IATA do aeroporto de origem.
  *
+ * Retorna um ponteiro constante para o código interno.
+ * O utilizador não deve libertar esta memória.
+ *
  * @param v Ponteiro para o voo.
- * @return Código IATA da origem.
+ * @return Ponteiro para o código IATA de origem ou NULL.
  */
 
 const char *voo_get_code_origin (const Voo *v);
@@ -69,18 +76,21 @@ const char *voo_get_code_origin (const Voo *v);
 /**
  * @brief Obtém o código IATA do aeroporto de destino.
  *
+ * Retorna um ponteiro constante para o código interno.
+ * O utilizador não deve libertar esta memória.
+ *
  * @param v Ponteiro para o voo.
- * @return Código IATA do destino.
+ * @return Ponteiro para o código IATA de destino ou NULL.
  */
 
 const char *voo_get_code_destination (const Voo *v);
 
-/**
- * @brief Obtém a data/hora prevista de chegada.
- *
- * @param v Ponteiro para o voo.
- * @return Data/hora prevista de chegada.
- */
+ /** 
+  * @brief Obtém a data/hora prevista de chegada. 
+  * 
+  * @param v Ponteiro para o voo. 
+  * @return Valor inteiro ordenável representando a data/hora prevista. 
+  */
 
 long long voo_get_arrival (const Voo *v);
 
@@ -88,16 +98,19 @@ long long voo_get_arrival (const Voo *v);
  * @brief Obtém a data/hora efetiva de chegada.
  *
  * @param v Ponteiro para o voo.
- * @return Data/hora efetiva de chegada.
+ * @return Valor inteiro ordenável representando a data/hora efetiva.
  */
 
 long long voo_get_actual_arrival (const Voo *v);
 
 /**
- * @brief Obtém o identificador da aeronave.
+ * @brief Obtém o identificador da aeronave associada ao voo.
+ *
+ * Retorna um ponteiro constante para o identificador interno.
+ * O utilizador não deve libertar esta memória.
  *
  * @param v Ponteiro para o voo.
- * @return Identificador da aeronave.
+ * @return Ponteiro para o identificador da aeronave ou NULL.
  */
 
 const char *voo_get_id_aircraft (const Voo *v);
@@ -106,16 +119,16 @@ const char *voo_get_id_aircraft (const Voo *v);
  * @brief Obtém o estado do voo.
  *
  * @param v Ponteiro para o voo.
- * @return Estado do voo.
+ * @return Estado do voo (enum Estado).
  */
 
 Estado voo_get_status (const Voo *v);
 
-/**
- * @brief Obtém a data/hora prevista de partida.
- *
- * @param v Ponteiro para o voo.
- * @return Data/hora prevista de partida.
+/** 
+ * @brief Obtém a data/hora prevista de partida. 
+ * 
+ * @param v Ponteiro para o voo. 
+ * @return Valor inteiro ordenável representando a data/hora prevista.  
  */
 
 long long voo_get_departure (const Voo *v);
@@ -124,16 +137,22 @@ long long voo_get_departure (const Voo *v);
  * @brief Obtém a data/hora efetiva de partida.
  *
  * @param v Ponteiro para o voo.
- * @return Data/hora efetiva de partida.
+ * @return Valor inteiro ordenável representando a data/hora efetiva.
  */
 
 long long voo_get_actual_departure (const Voo *v);
 
 /**
- * @brief Obtém a companhia aérea do voo
- * @param v Ponteiro para o voo
- * @return Cópia da airline (deve ser libertada com g_free)
+ * @brief Obtém a companhia aérea do voo.
+ *
+ * Retorna um ponteiro constante para a companhia aérea interna.
+ * A memória é gerida pelo StringPool, pelo que o utilizador não deve
+ * libertar esta string.
+ *
+ * @param v Ponteiro para o voo.
+ * @return Ponteiro para a companhia aérea ou NULL.
  */
+
 const char *voo_get_airline(const Voo *v);
 
 /* ============================================
@@ -187,16 +206,16 @@ void voo_set_airline (Voo *v, char *airl, StringPool *pool);
 
 void voo_set_id_aircraft (Voo *v, char *id_airc, StringPool *pool);
 
+/* ============================================
+ * USADO PARA SET
+ * ============================================ */
+
 /**
  * @brief Converte uma data/hora em formato textual para inteiro.
  *
  * @param s String no formato YYYY-MM-DD HH:MM.
  * @return Valor inteiro ordenável.
  */
-
-/* ============================================
- * USADO PARA SET
- * ============================================ */
 
 long long converte_dataH (const char *s);
 

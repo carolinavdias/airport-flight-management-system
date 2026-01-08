@@ -60,8 +60,11 @@ typedef struct aeroporto Aeroporto;
 /**
  * @brief Obtém o código IATA do aeroporto.
  *
+ * Retorna um ponteiro constante para o código IATA interno.
+ * O utilizador não deve libertar esta memória.
+ *
  * @param a Ponteiro para o aeroporto.
- * @return Cópia do código IATA (3 letras).
+ * @return Ponteiro para o código IATA ou NULL se o aeroporto for inválido.
  */
 
 const char *airport_get_code_IATA (const Aeroporto *a);
@@ -69,8 +72,11 @@ const char *airport_get_code_IATA (const Aeroporto *a);
 /**
  * @brief Obtém o nome do aeroporto.
  *
+ * Retorna um ponteiro constante para o nome interno.
+ * O utilizador não deve libertar esta memória.
+ *
  * @param a Ponteiro para o aeroporto.
- * @return Cópia do nome do aeroporto.
+ * @return Ponteiro para o nome ou NULL se o aeroporto for inválido.
  */
 
 const char *airport_get_name (const Aeroporto *a);
@@ -78,8 +84,12 @@ const char *airport_get_name (const Aeroporto *a);
 /**
  * @brief Obtém a cidade do aeroporto.
  *
+ * Retorna um ponteiro constante para a cidade armazenada internamente.
+ * A memória é gerida pelo StringPool, pelo que o utilizador não deve
+ * libertar esta string.
+ *
  * @param a Ponteiro para o aeroporto.
- * @return Cópia da cidade.
+ * @return Ponteiro para a cidade ou NULL se o aeroporto for inválido.
  */
 
 const char *airport_get_city (const Aeroporto *a);
@@ -87,8 +97,12 @@ const char *airport_get_city (const Aeroporto *a);
 /**
  * @brief Obtém o país do aeroporto.
  *
+ * Retorna um ponteiro constante para o país armazenado internamente.
+ * A memória é gerida pelo StringPool, pelo que o utilizador não deve
+ * libertar esta string.
+ *
  * @param a Ponteiro para o aeroporto.
- * @return Cópia do país.
+ * @return Ponteiro para o país ou NULL se o aeroporto for inválido.
  */
 
 const char *airport_get_country (const Aeroporto *a);
@@ -100,7 +114,7 @@ const char *airport_get_country (const Aeroporto *a);
  * @return Tipo do aeroporto.
  */
 
-Tipo_aeroporto airport_get_type (Aeroporto *a);
+Tipo_aeroporto airport_get_type (const Aeroporto *a);
 
 /* ============================================
  * SETTERS 

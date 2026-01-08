@@ -16,8 +16,9 @@ typedef struct _StringPool StringPool;
     * funções para criação, acesso, modificação e libertação de passageiros 
     * lidos do ficheiro passengers.csv. 
     * 
-    * Todos os getters que retornam strings devolvem cópias (g_strdup), 
-    * cabendo ao utilizador libertar a memória retornada. 
+    * Todos os getters que retornam strings devolvem ponteiros constantes
+    * para campos internos geridos pelo StringPool.
+    * O utilizador não deve libertar estas strings.
     */ 
 
 /* ============================================
@@ -38,11 +39,12 @@ typedef struct passageiros Passageiros;
 /**
  * @brief Obtém o identificador do passageiro.
  *
- * Retorna o identificador único do passageiro.  
- * A string devolvida é propriedade interna e não deve ser libertada.
+ * Retorna um ponteiro constante para o identificador interno.
+ * A memória é gerida pelo StringPool, pelo que o utilizador não deve
+ * libertar esta string.
  *
  * @param p Ponteiro para o passageiro.
- * @return Identificador ou NULL se inválido.
+ * @return Ponteiro para o identificador ou NULL se inválido.
  */
 
 const char *passenger_get_id (const Passageiros *p);
@@ -50,10 +52,12 @@ const char *passenger_get_id (const Passageiros *p);
 /**
  * @brief Obtém o primeiro nome do passageiro.
  *
- * Retorna uma cópia do primeiro nome.
+ * Retorna um ponteiro constante para o primeiro nome interno.
+ * A memória é gerida pelo StringPool, pelo que o utilizador não deve
+ * libertar esta string.
  *
  * @param p Ponteiro para o passageiro.
- * @return String alocada dinamicamente (libertar com g_free).
+ * @return Ponteiro para o primeiro nome ou NULL se inválido.
  */
 
 const char *passenger_get_primeiro (const Passageiros *p);
@@ -61,17 +65,21 @@ const char *passenger_get_primeiro (const Passageiros *p);
 /**
  * @brief Obtém o último nome do passageiro.
  *
+ * Retorna um ponteiro constante para o último nome interno.
+ * A memória é gerida pelo StringPool, pelo que o utilizador não deve
+ * libertar esta string.
+ *
  * @param p Ponteiro para o passageiro.
- * @return Cópia do último nome (libertar com g_free).
+ * @return Ponteiro para o último nome ou NULL se inválido.
  */
 
 const char *passenger_get_ultimo (const Passageiros *p);
 
-/**
- * @brief Obtém a data de nascimento do passageiro.
- *
- * A data é armazenada como inteiro no formato YYYYMMDD.
- *
+/** 
+ * @brief Obtém a data de nascimento do passageiro. 
+ * 
+ * A data é armazenada como inteiro no formato YYYYMMDD. 
+ * 
  * @param p Ponteiro para o passageiro.
  * @return Data de nascimento ou 0 se inválido.
  */
@@ -81,11 +89,19 @@ int passenger_get_data (Passageiros *p);
 /**
  * @brief Obtém a nacionalidade do passageiro.
  *
+ * Retorna um ponteiro constante para a nacionalidade interna.
+ * A memória é gerida pelo StringPool, pelo que o utilizador não deve
+ * libertar esta string.
+ *
  * @param p Ponteiro para o passageiro.
- * @return Cópia da nacionalidade (libertar com g_free).
+ * @return Ponteiro para a nacionalidade ou NULL se inválido.
  */
 
 const char *passenger_get_nacionalidade (const Passageiros *p);
+
+/* ============================================
+ * SETTERS
+ * ============================================ */
 
 /**
  * @brief Define o identificador do passageiro.
@@ -93,10 +109,6 @@ const char *passenger_get_nacionalidade (const Passageiros *p);
  * @param p Ponteiro para o passageiro.
  * @param id Novo identificador.
  */
-
-/* ============================================
- * SETTERS
- * ============================================ */
 
 void passenger_set_id (Passageiros *p, char *id, StringPool *pool);
 

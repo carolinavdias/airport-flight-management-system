@@ -8,11 +8,11 @@
 /**
  * Este ficheiro contém a definição da estrutura interna Aeronave e
  * a implementação das funções de acesso (getters), modificação 
- * (setters), validação, criação e libertação de aeronaves.
+ * (setters), criação e libertação de aeronaves.
  *
  * As aeronaves são construídas a partir de linhas do ficheiro
- * aircrafts.csv, sendo garantido o encapsulamento da estrutura
- * através da devolução de cópias nos getters.
+ * aircrafts.csv, através do encapsulamento da estrutura e acesso 
+ * controlado via getters.
  */
 
 /**
@@ -30,11 +30,7 @@ struct aeronave {
  * GETTERS
  * ============================================ */
 
-/*
- * Devolvem cópias (g_strdup) dos campos internos para garantir
- * encapsulamento. A memória devolvida deve ser libertada pelo
- * utilizador.
-*/
+/** Devolvem ponteiros constantes para os campos internos. */
 
 const char *aircraft_get_identifier(const Aeronave *a) {
     return a->identifier;
@@ -56,10 +52,7 @@ int aircraft_get_year(const Aeronave *a) {
  * SETTERS
  * ============================================ */
 
-/*
- * Atualizam os campos da aeronave, libertando previamente
- * a memória existente para evitar fugas de memória.
-*/
+/** Atualizam os campos usando o StringPool (não é necessário libertar memória). */
 
 void aircraft_set_id(Aeronave *a, char *s, StringPool *pool) {
     if (!a || !s) return;

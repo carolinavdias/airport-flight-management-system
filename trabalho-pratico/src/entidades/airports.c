@@ -24,12 +24,10 @@ typedef struct aeroporto {
  * GETTERS
  * ============================================ */
 
- /*
-  * Devolvem cópias (g_strdup) dos campos internos de modo a evitar
-  * o acesso direto à estrutura e garantir encapsulamento.
-  * 
-  * A memória devolvida deve ser libertada pelo utilizador.
-  */
+/** 
+ * Devolvem ponteiros constantes para os campos internos, geridos pelo StringPool.
+ * O utilizador não deve libertar esta memória.
+ */
 
 const char *airport_get_code_IATA (const Aeroporto *a) {
     return a->code_IATA;
@@ -47,7 +45,7 @@ const char *airport_get_country (const Aeroporto *a) {
     return a->country;
 }
 
-Tipo_aeroporto airport_get_type (Aeroporto *a) {
+Tipo_aeroporto airport_get_type (const Aeroporto *a) {
     return a->type;
 }
 
@@ -55,10 +53,10 @@ Tipo_aeroporto airport_get_type (Aeroporto *a) {
  * SETTERS
  * ============================================ */
 
- /* 
-  * Substituem os valores atuais dos campos, libertando previamente
-  * a memória associada para evitar fugas de memória.
-  */
+/** 
+ * Atualizam os campos usando o StringPool.
+ * Não é necessário libertar as strings individualmente.
+ */
 
 void airport_set_name (Aeroporto *a, char *name_, StringPool *pool) {
    a->name = string_pool_get(pool,name_); 

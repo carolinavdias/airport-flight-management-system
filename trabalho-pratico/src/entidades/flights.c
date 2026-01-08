@@ -29,22 +29,12 @@ typedef struct voo {
  * GETTERS
  * ============================================ */
 
-
 /**
- * As funções de acesso permitem consultar os campos internos
- * da estrutura Voo.  
+ * Os getters que retornam strings devolvem ponteiros constantes
+ * para os campos internos, geridos pelo StringPool.
+ * O utilizador não deve libertar esta memória.
  *
- * Os getters que retornam strings devolvem cópias (g_strdup),
- * cabendo ao utilizador libertar a memória retornada.
- * 
- * Os getters que retornam `const char *` devolvem ponteiros internos
- * que não devem ser libertados, sendo apenas para leitura.
- * 
- * Os campos numéricos (datas e horas no formato inteiro ordenável)
- * são devolvidos diretamente.
- *
- * Esta abordagem garante encapsulamento e evita que o utilizador
- * modifique acidentalmente os dados internos do voo.
+ * Os campos numéricos são devolvidos diretamente.
  */
 
 const char *voo_get_flight_id (const Voo *v) {
@@ -95,8 +85,8 @@ const char *voo_get_airline(const Voo *v) {
  * As funções de modificação atualizam os campos internos
  * da estrutura Voo.
  *
- * Sempre que substituem uma string, libertam previamente a memória
- * antiga com `g_free()` para evitar fugas de memória.
+ * As strings são geridas pelo StringPool, pelo que não é 
+ * necessário libertar memória antes de atualizar os campos.
  * 
  * Os setters de datas e horas convertem strings no formato
  * `"YYYY-MM-DD HH:MM"` para um valor inteiro ordenável no formato

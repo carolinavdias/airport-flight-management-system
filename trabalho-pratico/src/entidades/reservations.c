@@ -36,12 +36,9 @@ typedef struct reservas {
 /**
  * Os getters permitem consultar os campos internos da reserva.
  *
- * Getters que retornam strings devolvem cópias (g_strdup), devendo o
- * utilizador libertar a memória retornada.
- * 
- * Getters que retornam ponteiros internos (`char **`) devolvem dados
- * pertencentes à estrutura e não devem ser libertados.
- * 
+ * Getters que retornam strings devolvem ponteiros internos geridos pelo StringPool,
+ * exceto r_get_voo_por_indice(), que devolve uma cópia (g_strdup).
+ *
  * Getters numéricos devolvem os valores diretamente.
  */
 
@@ -87,12 +84,10 @@ char *r_get_voo_por_indice(const Reservas *r, int indice) {
 /**
  * Os setters atualizam os campos internos da reserva.
  *
- * Sempre que substituem uma string, libertam previamente a memória antiga
- * para evitar fugas de memória.
- * 
+ * As strings são geridas pelo StringPool, pelo que não é necessário
+ * libertar memória antes de atualizar os campos.
+ *
  * Campos numéricos são convertidos a partir de strings (ex.: preço, ID da pessoa).
- * 
- * Campos booleanos são interpretados a partir de `'t'` ou `'f'`.
  */
 
 /* ============================================

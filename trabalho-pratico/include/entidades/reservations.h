@@ -40,14 +40,20 @@ typedef struct reservas Reservas;
 
 /**
  * @brief Obtém o ID da reserva.
+ *
+ * Retorna um ponteiro constante para o ID interno da reserva.
+ * A memória é gerida pelo StringPool, pelo que o utilizador não deve
+ * libertar esta string.
+ *
  * @param r Ponteiro para a reserva.
- * @return Cópia do ID da reserva (libertar com g_free).
+ * @return Ponteiro para o ID ou NULL se inválido.
  */
 
 const char *r_get_id_reserva (const Reservas *r);
 
 /**
  * @brief Obtém o ID numérico da pessoa que fez a reserva.
+ *
  * @param r Ponteiro para a reserva.
  * @return ID da pessoa (int).
  */
@@ -56,8 +62,9 @@ int r_get_id_pessoa_reservou (const Reservas *r);
 
 /**
  * @brief Obtém o número de voos associados à reserva.
+ *
  * @param r Ponteiro para a reserva.
- * @return Número de voos.
+ * @return Número de voos (>=0).
  */
 
 int r_get_lista_n_voos (const Reservas *r);
@@ -65,36 +72,36 @@ int r_get_lista_n_voos (const Reservas *r);
 /**
  * @brief Obtém a lista interna de IDs de voos.
  *
- * este getter devolve o ponteiro interno, não deve ser libertado.
+ * Retorna um ponteiro constante para o array interno de strings.
+ * As strings são geridas pelo StringPool e não devem ser libertadas.
  *
  * @param r Ponteiro para a reserva.
- * @return Array de strings com IDs dos voos.
+ * @return Array interno de strings ou NULL se inválido.
  */
 
 const char **r_get_lista_voos_reserv (const Reservas *r);
 
 /**
- * @brief Obtém o preço da reserva
- * @param r Ponteiro para a reserva
- * @return Preço da reserva (double)
+ * @brief Obtém o preço total da reserva.
+ *
+ * @param r Ponteiro para a reserva.
+ * @return Preço da reserva (double).
  */
 
 double r_get_preco(const Reservas *r);
 
 /**
- * @brief Obtém o ID de um voo da reserva por índice (encapsulado)
- * @param r Ponteiro para a reserva
- * @param indice Índice do voo (0 ou 1)
- * @return Cópia do ID do voo (libertar com g_free!) ou NULL se inválido
+ * @brief Obtém o ID de um voo da reserva por índice.
+ *
+ * Retorna uma **cópia** do ID do voo, garantindo encapsulamento.
+ * O utilizador deve libertar a string retornada com `g_free()`.
+ *
+ * @param r Ponteiro para a reserva.
+ * @param indice Índice do voo (0 <= indice < número de voos).
+ * @return Cópia do ID do voo ou NULL se o índice for inválido.
  */
 
 char *r_get_voo_por_indice(const Reservas *r, int indice);
-
-/**
- * @brief Cria uma estrutura de lista de voos com espaço para n voos.
- * @param n Número de voos.
- * @return Estrutura alocada dinamicamente.
- */
 
 /* ============================================
  * SETTERS 
@@ -103,6 +110,12 @@ char *r_get_voo_por_indice(const Reservas *r, int indice);
 /* ============================================
  * USADO PARA SET
  * ============================================ */
+
+/**
+ * @brief Cria uma estrutura de lista de voos com espaço para n voos.
+ * @param n Número de voos.
+ * @return Estrutura alocada dinamicamente.
+ */
 
 Voos_reservados *cria0_lista_reserva (int n);
 

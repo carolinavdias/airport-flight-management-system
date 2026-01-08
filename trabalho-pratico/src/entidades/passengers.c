@@ -27,8 +27,7 @@ typedef struct passageiros {
 /**
  * As funções de acesso devolvem os valores dos campos internos.
  * 
- * Os getters retornam ponteiros const para strings geridas pela StringPool,
- * cabendo ao utilizador libertar a memória retornada.
+ * Os getters retornam ponteiros const para strings geridas pela StringPool.
  * 
  * O getter do identificador devolve um ponteiro interno, pois este
  * campo é imutável após a criação.
@@ -61,8 +60,8 @@ const char *passenger_get_nacionalidade (const Passageiros *p) {
 /**
  * As funções de modificação atualizam os campos internos.
  * 
- * Sempre que substituem uma string, libertam primeiro a memória antiga
- * para evitar fugas de memória.
+ * As strings são geridas pelo StringPool, pelo que não é necessário
+ * libertar memória antes de atualizar os campos.
  * 
  * A data de nascimento é convertida de "YYYY-MM-DD" para inteiro
  * ordenável "YYYYMMDD".

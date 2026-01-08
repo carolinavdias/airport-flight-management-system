@@ -1,7 +1,8 @@
 #ifndef AIRCRAFTS_H
 #define AIRCRAFTS_H
 
-/* Forward declaration */
+/** Forward declaration */
+
 typedef struct _StringPool StringPool;
 
 #include <glib.h>
@@ -11,13 +12,13 @@ typedef struct _StringPool StringPool;
  * @brief Interface da entidade Aeronave.
  *
  * Este módulo define a estrutura Aeronave e disponibiliza
- * funções para criação, acesso, modificação, validação e libertação
+ * funções para criação, acesso, modificação e libertação
  * de aeronaves lidas a partir do ficheiro aircrafts.csv.
  */
 
-// ===================================================
-// ESTRUTURA
-// ===================================================
+/* ============================================
+ * ESTRUTURA 
+ * ============================================ */
 
 /**
  * @struct aeronave 
@@ -26,18 +27,18 @@ typedef struct _StringPool StringPool;
 
 typedef struct aeronave Aeronave;
 
-// ===================================================
-// GETTERS
-// ===================================================
+/* ============================================
+ * GETTERS
+ * ============================================ */
 
 /**
  * @brief Obtém o identificador da aeronave.
  *
- * Retorna uma cópia do identificador único da aeronave.
- * O utilizador é responsável por libertar a memória retornada.
+ * Retorna um ponteiro constante para o identificador interno.
+ * O utilizador não deve libertar esta memória.
  *
  * @param a Ponteiro para a aeronave.
- * @return String com o identificador ou NULL se a aeronave for inválida.
+ * @return Ponteiro para o identificador ou NULL se a aeronave for inválida.
  */
 
 const char *aircraft_get_identifier (const Aeronave *a);
@@ -45,10 +46,11 @@ const char *aircraft_get_identifier (const Aeronave *a);
 /**
  * @brief Obtém o fabricante da aeronave.
  *
- * Retorna uma cópia do nome do fabricante.
+ * Retorna um ponteiro constante para o fabricante interno.
+ * O utilizador não deve libertar esta memória.
  *
  * @param a Ponteiro para a aeronave.
- * @return String com o fabricante ou NULL se a aeronave for inválida.
+ * @return Ponteiro para o fabricante ou NULL se a aeronave for inválida.
  */
 
 const char *aircraft_get_manufacturer (const Aeronave *a);
@@ -56,10 +58,11 @@ const char *aircraft_get_manufacturer (const Aeronave *a);
 /**
  * @brief Obtém o modelo da aeronave.
  *
- * Retorna uma cópia do modelo da aeronave.
+ * Retorna um ponteiro constante para o modelo interno.
+ * O utilizador não deve libertar esta memória.
  *
  * @param a Ponteiro para a aeronave.
- * @return String com o modelo ou NULL se a aeronave for inválida.
+ * @return Ponteiro para o modelo ou NULL se a aeronave for inválida.
  */
 
 const char *aircraft_get_model (const Aeronave *a);
@@ -73,9 +76,9 @@ const char *aircraft_get_model (const Aeronave *a);
 
 int aircraft_get_year(const Aeronave *a);
 
-// ===================================================
-// SETTERS
-// ===================================================
+/* ============================================
+ * SETTERS
+ * ============================================ */
 
 /**
  * @brief Define o identificador da aeronave.
@@ -104,7 +107,6 @@ void aircraft_set_model (Aeronave *a, char *model_, StringPool *pool);
  * @param manuf Fabricante da aeronave.
  */
 
-//void aircraft_set_manuf (Aeronave *a, char *manuf);
 void aircraft_set_manuf(Aeronave *a, char *s, StringPool *pool);
 /**
  * @brief Define o ano de fabrico da aeronave.
@@ -115,18 +117,9 @@ void aircraft_set_manuf(Aeronave *a, char *s, StringPool *pool);
 
 void aircraft_set_year(Aeronave *a, char *year);
 
-// ===================================================
-// CRIA AERONAVE
-// ===================================================
-
-/**
- * @brief Cria uma aeronave a partir de uma linha CSV.
- *
- * Caso a linha seja inválida, a função regista o erro e devolve NULL.
- *
- * @param linha Linha do ficheiro aircrafts.csv.
- * @return Ponteiro para a aeronave criada ou NULL em caso de erro.
- */
+/* ============================================
+ * CRIA AERONAVE
+ * ============================================ */
 
 /**
  * @brief Cria uma nova aeronave vazia.
@@ -136,9 +129,9 @@ void aircraft_set_year(Aeronave *a, char *year);
 
 Aeronave *criaAeronave();
 
-// ===================================================
-// DESTRÓI AERONAVE
-// ===================================================
+/* ============================================
+ * DESTRÓI AERONAVE
+ * ============================================ */
 
 /**
  * @brief Liberta a memória associada a uma aeronave.
