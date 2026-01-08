@@ -9,14 +9,13 @@
  * destruição.
  */
 
-// Estrutura que representa a lista de voos reservados 
 /**
- * Estrutura interna que representa um passageiro.
+ * Estrutura que representa a lista de voos reservados 
  */
 
 typedef struct voos_reservados { 
     const char **lista_voos_reservados;   /**< Array de IDs de voos */ 
-    int n_voos;                     /**< Número de voos       */ 
+    int n_voos;                           /**< Número de voos       */ 
 } Voos_reservados;
 
 /**
@@ -110,18 +109,12 @@ Voos_reservados *cria0_lista_reserva (int n) {
 void liberta_lista_reserva(void *data) {
     Voos_reservados *v = data;
     if (!v) return;
-/*    if (v->lista_voos_reservados) {
-        for (int i = 0; i < v->n_voos; i++) {
-            if (v->lista_voos_reservados[i]) g_free(v->lista_voos_reservados[i]);
-        }
-        free(v->lista_voos_reservados);
-    }*/
     free(v->lista_voos_reservados);
     g_free(v);
 }
 
 void set_lista_voos (Voos_reservados *vr, int i, char *s, StringPool *pool) {
-    vr->lista_voos_reservados[i] = string_pool_get(pool,s); //g_strdup(s);
+    vr->lista_voos_reservados[i] = string_pool_get(pool,s); 
 }
 
 void r_set_lista (Reservas *r, Voos_reservados *novo) {
@@ -129,8 +122,7 @@ void r_set_lista (Reservas *r, Voos_reservados *novo) {
 }
 
 void r_set_id_reserva (Reservas *r, char *s, StringPool *pool) {
-    //g_free(r->id_reserva);
-    r->id_reserva = string_pool_get(pool,s); //g_strdup(s);
+    r->id_reserva = string_pool_get(pool,s); 
 }
 
 void r_set_id_pessoa_reservou (Reservas *r, char *s) {
@@ -164,6 +156,5 @@ void libertaReserva(void *data) {
     Reservas *a = data;
     if (!a) return;
     if (a->reserva_lista) liberta_lista_reserva (a->reserva_lista); 
-    //if (a->id_reserva) g_free(a->id_reserva);
     g_free(a);
 }

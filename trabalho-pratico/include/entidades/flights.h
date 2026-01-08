@@ -1,7 +1,7 @@
 #ifndef FLIGHTS_H
 #define FLIGHTS_H
 
-/* Forward declaration */
+/** Forward declaration */
 typedef struct _StringPool StringPool;
 
 #include <stdint.h>
@@ -26,13 +26,13 @@ typedef struct _StringPool StringPool;
 
 typedef uint8_t Estado;
 
-// * @brief Voo no horário previsto
+/** @brief Voo no horário previsto */
 #define ESTADO_ON_TIME 0
 
-// * @brief Voo atrasado
+/** @brief Voo atrasado */
 #define ESTADO_DELAYED 1
 
-// @brief Voo cancelado
+/** @brief Voo cancelado */
 #define ESTADO_CANCELLED 2
 
 /**
@@ -238,6 +238,28 @@ Voo *criaVoo ();
 
 void libertaVoo(void *data);
 
+/**
+ * @brief Compara dois voos pela data/hora de partida real.
+ *
+ * Função de comparação usada com qsort() para ordenar um array
+ * de apontadores para Voo por ordem cronológica crescente.
+ *
+ * A comparação é feita com base no campo:
+ *  - actual_departure (data/hora real de partida)
+ *
+ *  - Retorna valor negativo se o primeiro voo ocorrer antes do segundo
+ *  - Retorna valor positivo se o primeiro voo ocorrer depois do segundo
+ *  - Retorna 0 se as datas forem iguais
+ *
+ * Esta função é utilizada no parser para ordenar os voos uma única vez,
+ * permitindo que a Query 3 seja executada de forma eficiente.
+ *
+ * @param a Apontador para um apontador de Voo
+ * @param b Apontador para um apontador de Voo
+ * @return Valor inteiro conforme convenção do qsort()
+ */
+
 int compara_voos_por_data(const void *a, const void *b);
+
 #endif
 

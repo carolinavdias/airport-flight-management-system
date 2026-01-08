@@ -1,8 +1,10 @@
 #ifndef RESERVATIONS_H
 #define RESERVATIONS_H
 
-/* Forward declaration */
+/** Forward declaration */
+
 typedef struct _StringPool StringPool;
+
 #include <glib.h>
 
 /** 
@@ -144,14 +146,6 @@ void r_set_id_reserva (Reservas *r, char *s, StringPool *pool);
 
 void r_set_id_pessoa_reservou (Reservas *r, char *s);
 
-/**
- * @brief Define o lugar reservado.
- * @param r Ponteiro para a reserva.
- * @param s Lugar.
- */
-
-void r_set_lugar (Reservas *r, char *s);
-
  /** 
     * @brief Define o preço da reserva. 
     * @param r Ponteiro para a reserva.
@@ -159,23 +153,6 @@ void r_set_lugar (Reservas *r, char *s);
     */
 
 void r_set_preco (Reservas *r, char *s);
-
-/**
- * @brief Define valores booleanos (bagagem extra ou prioridade).
- * @param r Ponteiro para a reserva.
- * @param s String "t" ou "f".
- * @param versao 1 = bagagem_extra, 2 = prioridade.
- */
-
-void r_set_bools (Reservas *r, char *s, int versao);
-
-/**
- * @brief Define o QR code da reserva.
- * @param r Ponteiro para a reserva.
- * @param s Novo QR code.
- */
-
-void r_set_qr_code (Reservas *r, char *s);
 
 /* ============================================
  * CRIA RESERVA

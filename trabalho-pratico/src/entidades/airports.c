@@ -17,7 +17,7 @@ typedef struct aeroporto {
     const char *name;               /**< Nome do aeroporto */
     const char *city;               /**< Cidade onde o aeroporto se localiza */
     const char *country;            /**< País do aeroporto */
-    Tipo_aeroporto type;      /**< Tipo de aeroporto */
+    Tipo_aeroporto type;            /**< Tipo de aeroporto */
 } Aeroporto;
 
 /* ============================================
@@ -61,23 +61,19 @@ Tipo_aeroporto airport_get_type (Aeroporto *a) {
   */
 
 void airport_set_name (Aeroporto *a, char *name_, StringPool *pool) {
-//   g_free(a->name);
-   a->name = string_pool_get(pool,name_); //g_strdup(name_);
+   a->name = string_pool_get(pool,name_); 
 }
 
 void airport_set_city (Aeroporto *a, char *city_, StringPool *pool) {
-//   g_free(a->city);
-   a->city = string_pool_get(pool,city_); //g_strdup(city_);
+   a->city = string_pool_get(pool,city_);
 }
 
 void airport_set_country (Aeroporto *a, char *country_, StringPool *pool) {
-//   g_free(a->country);
-   a->country = string_pool_get(pool,country_); //g_strdup(country_);
+   a->country = string_pool_get(pool,country_); 
 }
 
 void airport_set_code_IATA (Aeroporto *a, char *code_, StringPool *pool) {
-//    g_free(a->code_IATA);
-   a->code_IATA = string_pool_get(pool,code_); //g_strdup(code_);  //estava a->country (bug)
+   a->code_IATA = string_pool_get(pool,code_); 
 }
 
 /**
@@ -124,10 +120,6 @@ Aeroporto *criaAeroporto () {
 void libertaAeroporto(void *data) {
     Aeroporto *a = data;
     if (!a) return;
-//    if (a->name) g_free(a->name);
-//    if (a->city) g_free(a->city);
-//    if (a->country) g_free(a->country);
-//    if (a->code_IATA) g_free(a->code_IATA);
     g_free(a);
 }
 

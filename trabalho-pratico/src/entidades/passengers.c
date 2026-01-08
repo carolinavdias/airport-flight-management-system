@@ -16,7 +16,7 @@ typedef struct passageiros {
     const char *id_passageiro;     /**< Identificador único do passageiro */
     const char *primeiro_nome;     /**< Primeiro nome */
     const char *ultimo_nome;       /**< Último nome */
-    int data_nascimento;     /**< Data de nascimento (YYYYMMDD) */
+    int data_nascimento;           /**< Data de nascimento (YYYYMMDD) */
     const char *nacionalidade;     /**< Nacionalidade */
 } Passageiros;
 
@@ -69,17 +69,15 @@ const char *passenger_get_nacionalidade (const Passageiros *p) {
  */
 
 void passenger_set_id (Passageiros *p, char *id, StringPool *pool) {
-    p->id_passageiro =  string_pool_get(pool,id); //g_strdup(id);
+    p->id_passageiro =  string_pool_get(pool,id); 
 }
 
 void passenger_set_pn (Passageiros *p, char *pn, StringPool *pool) {
-//    g_free(p->primeiro_nome);
-    p->primeiro_nome = string_pool_get(pool,pn); //g_strdup(pn);
+    p->primeiro_nome = string_pool_get(pool,pn); 
 }
 
 void passenger_set_un (Passageiros *p, char *un, StringPool *pool) {
-   // g_free(p->ultimo_nome);
-    p->ultimo_nome = string_pool_get(pool,un); //g_strdup(un);
+    p->ultimo_nome = string_pool_get(pool,un); 
 }
 
 
@@ -105,8 +103,7 @@ void passenger_set_dn (Passageiros *p, char *dn) {
 }
 
 void passenger_set_nc (Passageiros *p, char *nc, StringPool *pool) {
-    //g_free(p->nacionalidade);
-    p->nacionalidade = string_pool_get(pool,nc); //g_strdup(nc);
+    p->nacionalidade = string_pool_get(pool,nc); 
 }
 
 /* ============================================
@@ -129,10 +126,6 @@ Passageiros *criaPassageiro() {
 void libertaPassageiro(void *data) {
     Passageiros *a = data;
     if (!a) return;
-//    if (a->id_passageiro) g_free(a->id_passageiro);
-//    if (a->primeiro_nome) g_free(a->primeiro_nome);
-//    if (a->ultimo_nome) g_free(a->ultimo_nome);
-//    if (a->nacionalidade) g_free(a->nacionalidade);
     g_free(a);
 }
 

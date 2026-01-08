@@ -1,7 +1,8 @@
 #ifndef AIRPORTS_H
 #define AIRPORTS_H
 
-/* Forward declaration */
+/** Forward declaration */
+
 typedef struct _StringPool StringPool;
 
 #include <stdint.h>
@@ -28,19 +29,19 @@ typedef struct _StringPool StringPool;
 
 typedef uint8_t Tipo_aeroporto;
 
-// * @brief Aeroporto de pequena dimensão
+/** @brief Aeroporto de pequena dimensão */
 #define TIPO_SMALL_AIRPORT 0
 
-// * @brief Aeroporto de média dimensão
+/** @brief Aeroporto de média dimensão */
 #define TIPO_MEDIUM_AIRPORT 1
 
-// * @brief Aeroporto de grande dimensão
+/** @brief Aeroporto de grande dimensão */
 #define TIPO_LARGE_AIRPORT 2
 
-// * @brief Heliporto 
+/**  @brief Heliporto */
 #define TIPO_HELIPORT 3
 
-// * @brief Base de hidroaviões
+/** @brief Base de hidroaviões */
 #define TIPO_SEAPLANE_BASE 4
 
 /**

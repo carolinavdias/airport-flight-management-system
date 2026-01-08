@@ -1,7 +1,8 @@
 #ifndef PASSENGERS_H
 #define PASSENGERS_H
 
-/* Forward declaration */
+/** Forward declaration */
+
 typedef struct _StringPool StringPool;
 
 #include <stdint.h>

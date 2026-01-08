@@ -14,11 +14,11 @@
 
 typedef struct voo {
     const char *flight_id;              /**< Identificador único do voo */
-    long long departure;          /**< Data/hora prevista de partida */
-    long long actual_departure;   /**< Data/hora efetiva de partida */
-    long long arrival;            /**< Data/hora prevista de chegada */
-    long long actual_arrival;     /**< Data/hora efetiva de chegada */
-    Estado status;                /**< Estado atual do voo */
+    long long departure;                /**< Data/hora prevista de partida */
+    long long actual_departure;         /**< Data/hora efetiva de partida */
+    long long arrival;                  /**< Data/hora prevista de chegada */
+    long long actual_arrival;           /**< Data/hora efetiva de chegada */
+    Estado status;                      /**< Estado atual do voo */
     const char *code_origin;            /**< Código IATA do aeroporto de origem */
     const char *code_destination;       /**< Código IATA do aeroporto de destino */
     const char *id_aircraft;            /**< Identificador da aeronave */
@@ -52,7 +52,7 @@ const char *voo_get_flight_id (const Voo *v) {
 }
 
 const char *voo_get_code_origin (const Voo *v) {
-    return v->code_origin;  // const char* não precisa g_strdup
+    return v->code_origin; 
 }
 
 long long voo_get_departure (const Voo *v) {
@@ -68,11 +68,11 @@ Estado voo_get_status (const Voo *v) {
 }
 
 const char *voo_get_id_aircraft (const Voo *v) {
-    return v->id_aircraft;  // const char* não precisa g_strdup
+    return v->id_aircraft;  
 }
 
 const char *voo_get_code_destination (const Voo *v) {
-    return v->code_destination;  // const char* não precisa g_strdup
+    return v->code_destination;  
 }
 
 long long voo_get_arrival (const Voo *v) {
@@ -121,28 +121,26 @@ const char *voo_get_airline(const Voo *v) {
 
 void voo_set_code (Voo *v, char *code, char versao, StringPool *pool) {
    switch (versao) {
-	case 'o' : //g_free(v->code_origin);
-		   v->code_origin = string_pool_get(pool,code); //g_strdup(code);
+	case 'o' : 
+		   v->code_origin = string_pool_get(pool,code); 
 		   break;
- 	case 'd' : //g_free(v->code_destination);
-		   v->code_destination = string_pool_get(pool,code); //g_strdup(code);
+ 	case 'd' : 
+		   v->code_destination = string_pool_get(pool,code); 
 		   break;
    }
 }
 
 void voo_set_flight_id (Voo *v, char *id, StringPool *pool) {
-   //g_free(v->flight_id);
-   v->flight_id = string_pool_get(pool,id); //g_strdup(id);
+   v->flight_id = string_pool_get(pool,id); 
 }
 
 void voo_set_id_aircraft (Voo *v, char *id_airc, StringPool *pool) {
-//   g_free(v->id_aircraft);
-   v->id_aircraft = string_pool_get(pool,id_airc); //g_strdup(id_airc);
+   v->id_aircraft = string_pool_get(pool,id_airc); 
 }
 
 void voo_set_airline (Voo *v, char *airl, StringPool *pool) {
 //   g_free(v->airline);
-   v->airline = string_pool_get(pool,airl); //g_strdup(airl);
+   v->airline = string_pool_get(pool,airl); 
 }
 
 /**
@@ -245,15 +243,16 @@ Voo *criaVoo () {
 void libertaVoo(void *data) {
     Voo *v = data;
     if (!v) return;
-//    if (v->flight_id) g_free(v->flight_id);
-//    if (v->code_origin) g_free(v->code_origin);
-//    if (v->code_destination) g_free(v->code_destination);
-//    if (v->id_aircraft) g_free(v->id_aircraft);
-//    if (v->airline) g_free(v->airline);
     g_free(v);
 }
 
-
+/**
+ * Recebe dois elementos genéricos (void *) conforme exigido pelo qsort(),
+ * que são convertidos para apontadores para Voo.
+ *
+ * A ordenação é feita por ordem crescente da data/hora de partida real,
+ * permitindo percursos sequenciais eficientes nas queries.
+ */
 
 int compara_voos_por_data(const void *a, const void *b) {
     Voo *v1 = *(Voo **)a;
