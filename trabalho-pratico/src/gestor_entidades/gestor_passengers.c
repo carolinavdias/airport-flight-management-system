@@ -16,8 +16,8 @@
  */
 
 struct gestor_passengers {
-    GHashTable *tabela_passageiros;
-    GHashTable *cache_q6;  /**< nacionalidade -> (destino -> count) para Q6 */
+    GHashTable *tabela_passageiros;  /**< Tabela principal de passageiros */
+    GHashTable *cache_q6;            /**< nacionalidade -> (destino -> count) para Q6 */
 };
 
 /* ============================================

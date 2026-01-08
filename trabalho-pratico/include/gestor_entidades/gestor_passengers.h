@@ -146,13 +146,32 @@ void gestor_passengers_init_cache_q6(GestorPassengers *gp);
 void gestor_passengers_add_destino_q6(GestorPassengers *gp, const char *nacionalidade, const char *destino);
 
 /**
+ * @brief Função callback usada para iterar destinos e respetivas contagens.
+ *
+ * Este tipo de função é utilizado em operações de iteração sobre estruturas
+ * que armazenam destinos (por exemplo, códigos IATA) associados a um número
+ * de ocorrências.  
+ *
+ * A função callback recebe:
+ *  - `destino` — string com o código do destino (ex.: "LIS", "OPO"),
+ *  - `count` — número de voos ou ocorrências associadas ao destino,
+ *  - `user_data` — ponteiro genérico fornecido pelo utilizador, permitindo
+ *                  passar contexto adicional para o callback.
+ *
+ * Este tipo é normalmente usado em funções do tipo `foreach`, permitindo
+ * ao utilizador definir o que fazer com cada destino encontrado.
+ */
+
+typedef void (*DestinoIterFunc)(const char *destino, int count, void *user_data);
+
+/**
  * @brief Itera sobre destinos de uma nacionalidade.
  * @param gp Ponteiro para o gestor.
  * @param nacionalidade Nacionalidade a consultar.
  * @param func Callback para cada destino.
  * @param user_data Dados do utilizador.
  */
-typedef void (*DestinoIterFunc)(const char *destino, int count, void *user_data);
+
 void gestor_passengers_foreach_destinos_q6(GestorPassengers *gp, const char *nacionalidade, DestinoIterFunc func, void *user_data);
 
 #endif

@@ -17,7 +17,7 @@
  * @brief Executa a Query 6.
  *
  * Para uma dada nacionalidade, esta query calcula o aeroporto
- * de destino mais frequente considerando todas as reservas
+ * de destino mais frequente, considerando todas as reservas
  * efetuadas por passageiros dessa nacionalidade.
  *
  * Regras:

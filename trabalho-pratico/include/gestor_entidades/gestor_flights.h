@@ -156,6 +156,7 @@ Voo **gestor_flights_get_array_ordenado(GestorFlights *g, int *num_voos);
 /* ============================================
  * CONTAGENS DE AIRCRAFT (Q2) 
  * ============================================ */
+
 /**
  * @brief Obtém o número de voos de um aircraft específico.
  *
@@ -164,6 +165,25 @@ Voo **gestor_flights_get_array_ordenado(GestorFlights *g, int *num_voos);
  * @return Número de voos ou 0 se não encontrado.
  */
 int gestor_flights_get_contagem_aircraft(GestorFlights *g, const char *aircraft_id);
+
+/**
+ * @brief Define a tabela de contagens de voos por aircraft_id (Q2).
+ *
+ * Esta função associa ao gestor de voos uma hash table onde cada chave é um
+ * ´aircraft_id´ (string) e o valor associado é um inteiro que representa o
+ * número de voos realizados por esse aircraft.
+ *
+ * A função não copia a tabela recebida, apenas guarda o ponteiro, pelo que
+ * a gestão de memória da hash table deve ser feita externamente ou no destrutor
+ * do gestor.
+ *
+ * @param g Ponteiro para o gestor de voos.
+ * @param contagens Hash table no formato:
+ *        - chave: ´char*´ (aircraft_id)
+ *        - valor: ´GINT_TO_POINTER(int)´ (contagem de voos)
+ */
+
+void gestor_flights_set_contagens_aircraft(GestorFlights *g, GHashTable *contagens);
 
 /* ============================================
  * PROCURA
@@ -207,12 +227,26 @@ void gestor_flights_add_atraso_q5(GestorFlights *g, const char *airline, int del
 DadosAtrasoQ5 *gestor_flights_get_atraso_q5(GestorFlights *g, const char *airline);
 
 /**
+ * @brief Tipo de função callback para iteração sobre dados de atrasos por companhia aérea.
+ *
+ * Esta função é utilizada durante a iteração sobre a cache da Query 5,
+ * sendo chamada uma vez por cada companhia aérea existente.
+ *
+ * @param airline Código da companhia aérea.
+ * @param total_delay Soma total dos atrasos (em minutos) da companhia.
+ * @param count Número de voos considerados no cálculo dos atrasos.
+ * @param user_data Ponteiro genérico para dados adicionais definidos pelo utilizador.
+ */
+
+typedef void (*AirlineIterFunc)(const char *airline, long total_delay, int count, void *user_data);
+
+/**
  * @brief Itera sobre todas as airlines no cache Q5.
  * @param g Ponteiro para o gestor.
  * @param func Callback para cada airline.
  * @param user_data Dados do utilizador.
  */
-typedef void (*AirlineIterFunc)(const char *airline, long total_delay, int count, void *user_data);
+
 void gestor_flights_foreach_q5(GestorFlights *g, AirlineIterFunc func, void *user_data);
 
 #endif

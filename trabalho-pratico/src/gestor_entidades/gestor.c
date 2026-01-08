@@ -10,12 +10,12 @@
  * Contém ponteiros para todos os gestores de entidades do sistema.
  */
 
-struct gestor_geral {
-    GestorAircrafts *aircrafts;
-    GestorAirports *airports;
-    GestorFlights *flights;
-    GestorPassengers *passengers;
-    GestorReservations *reservations;
+struct gestor_geral { 
+    GestorAircrafts *aircrafts;        /**< Gestor responsável pelos aviões. */ 
+    GestorAirports *airports;          /**< Gestor responsável pelos aeroportos. */ 
+    GestorFlights *flights;            /**< Gestor responsável pelos voos. */ 
+    GestorPassengers *passengers;      /**< Gestor responsável pelos passageiros. */ 
+    GestorReservations *reservations;  /**< Gestor responsável pelas reservas. */ 
 };
 
 /** 

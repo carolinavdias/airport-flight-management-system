@@ -23,7 +23,7 @@ struct aeronave {
     const char *identifier;      /**< Identificador único da aeronave */
     const char *manufacturer;    /**< Fabricante */
     const char *model;           /**< Modelo */
-    int year;              /**< Ano de fabrico */
+    int year;                    /**< Ano de fabrico */
 };
 
 /* ============================================
@@ -63,20 +63,17 @@ int aircraft_get_year(const Aeronave *a) {
 
 void aircraft_set_id(Aeronave *a, char *s, StringPool *pool) {
     if (!a || !s) return;
-  //  g_free(a->identifier);
-    a->identifier = string_pool_get(pool,s); //g_strdup(s);
+    a->identifier = string_pool_get(pool,s); 
 }
 
 void aircraft_set_manuf(Aeronave *a, char *s, StringPool *pool) {
     if (!a || !s) return;
-    //g_free(a->manufacturer);
-    a->manufacturer = string_pool_get(pool,s); //g_strdup(s);
+    a->manufacturer = string_pool_get(pool,s); 
 }
 
 void aircraft_set_model(Aeronave *a, char *model_, StringPool *pool) {
     if (!a || !model_) return;
-    // g_free(a->model);
-    a->model = string_pool_get(pool,model_); //g_strdup(model_);
+    a->model = string_pool_get(pool,model_); 
 }
 
 void aircraft_set_year(Aeronave *a, char *year) {
@@ -100,9 +97,6 @@ Aeronave *criaAeronave() {
 void libertaAeronave(void *data) {
     Aeronave *a = data;
     if (!a) return;
-//    if (a->identifier) g_free(a->identifier);
-//    if (a->manufacturer) g_free(a->manufacturer);
-//    if (a->model) g_free(a->model);
     g_free(a);
 }
 

@@ -2,8 +2,6 @@
 #include "entidades/flights.h"
 #include "queries/q5.h"
 #include "utils/utils.h"
-//#include <string.h>
-//#include <stdio.h>
 
 /* ============================================
  * ESTRUTURA 
@@ -46,8 +44,7 @@ GestorFlights *gestor_flights_novo() {
     g->array_ordenado = NULL;
     g->num_voos = 0;
     g->contagens_aircraft = NULL;  // será criado no parsing
-    g->cache_q5 = NULL;  // será criado no parsing
-//    g->listaQ5 = init_lista();
+    g->cache_q5 = NULL;            // será criado no parsing
     return g;
 }
 

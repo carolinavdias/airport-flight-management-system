@@ -147,6 +147,7 @@ int gestor_reservations_conta_por_voo(GestorReservations *g, const char *flight_
  *
  * @param g Ponteiro para o gestor de reservas.
  */
+
 void gestor_reservations_init_cache_q4(GestorReservations *g);
 
 /**
@@ -157,6 +158,7 @@ void gestor_reservations_init_cache_q4(GestorReservations *g);
  * @param doc_number Documento do passageiro.
  * @param preco Preço a adicionar.
  */
+
 void gestor_reservations_add_gasto_q4(GestorReservations *g, long id_semana, const char *doc_number, double preco);
 
 /**
@@ -166,7 +168,9 @@ void gestor_reservations_add_gasto_q4(GestorReservations *g, long id_semana, con
  * @param func Função callback chamada para cada (semana, passageiro, gasto).
  * @param user_data Dados passados ao callback.
  */
+
 typedef void (*CacheQ4IterFunc)(long id_semana, const char *doc_number, double gasto, void *user_data);
+
 void gestor_reservations_foreach_cache_q4(GestorReservations *g, CacheQ4IterFunc func, void *user_data);
 
 /**
@@ -175,7 +179,27 @@ void gestor_reservations_foreach_cache_q4(GestorReservations *g, CacheQ4IterFunc
  *
  * @param g Ponteiro para o gestor.
  */
+
 void gestor_reservations_finaliza_cache_q4(GestorReservations *g);
+
+/**
+ * @brief Função callback usada para iterar resultados da Top10.
+ *
+ * Este tipo de função é utilizado em operações de iteração sobre estruturas
+ * que armazenam pares (id_semana, doc_number), normalmente associados a
+ * estatísticas semanais, rankings ou contagens.
+ *
+ * A função callback recebe:
+ *  - `id_semana` — identificador numérico da semana (por exemplo, 202301),
+ *  - `doc_number` — documento ou identificador associado ao elemento dessa semana,
+ *  - `user_data` — ponteiro genérico fornecido pelo utilizador, permitindo
+ *                  passar contexto adicional para o callback.
+ *
+ * Este tipo é usado em funções do tipo `foreach`, permitindo ao utilizador
+ * definir o que fazer com cada entrada do Top10.
+ */
+
+typedef void (*Top10IterFunc)(long id_semana, const char *doc_number, void *user_data);
 
 /**
  * @brief Itera sobre os top 10 pré-calculados.
@@ -184,7 +208,7 @@ void gestor_reservations_finaliza_cache_q4(GestorReservations *g);
  * @param func Função callback chamada para cada (semana, doc_number no top10).
  * @param user_data Dados passados ao callback.
  */
-typedef void (*Top10IterFunc)(long id_semana, const char *doc_number, void *user_data);
+
 void gestor_reservations_foreach_top10(GestorReservations *g, Top10IterFunc func, void *user_data);
 
 #endif

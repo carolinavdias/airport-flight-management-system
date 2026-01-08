@@ -1,7 +1,6 @@
 #include "gestor_entidades/gestor_aircrafts.h"
 #include <stdlib.h>
 #include <glib.h>
-//#include <string.h>
 
 /* ============================================
  * ESTRUTURA 
@@ -10,6 +9,7 @@
 /** 
  * Estrutura interna do gestor aeronaves.
  */
+
 typedef struct gestor_aircrafts {
     GHashTable *tabela;   /**< Hash table: id_aeronave -> Aeronave* */
 } GestorAircrafts; 
