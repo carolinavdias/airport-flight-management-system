@@ -22,7 +22,7 @@ static int compare_files(const char *expected, const char *output, const char t)
     FILE *f1 = fopen(expected, "r");
     FILE *f2 = fopen(output, "r");
     if (!f1 || !f2) {
-        printf("✘ Erro a abrir ficheiros: '%s' ou '%s'\n", expected, output);
+        if (t == 'l') printf("✘ Erro a abrir ficheiros: '%s' ou '%s'\n", expected, output);
         if (f1) fclose(f1);
         if (f2) fclose(f2);
         return -1;
@@ -107,7 +107,7 @@ int main(int argc, char *argv[]) {
     for (int i = 1; i <= 120; i++) {
         snprintf(expected_path, sizeof(expected_path), "%s/command%d_output.txt", expected_dir, i);
         snprintf(output_path, sizeof(output_path), "resultados/command%d_output.txt", i);
-        printf("\n▶ Comparando comando %d...\n", i);
+        if (t == 'l') printf("\n▶ Comparando comando %d...\n", i);
         int status = compare_files(expected_path, output_path,t);
         if (status != 0) {
 	    all = 0;

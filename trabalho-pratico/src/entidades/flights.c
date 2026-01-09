@@ -1,10 +1,11 @@
 #include "entidades/flights.h"
 #include "utils/utils.h"
+#include <glib.h>
 
 /**
  * Contém a definição da estrutura interna Voo e a implementação
- * das funções de acesso (getters), modificação (setters), 
- * conversão de datas e libertação de memória associada aos voos 
+ * das funções de acesso (getters), modificação (setters),
+ * conversão de datas e libertação de memória associada aos voos
  * lidos do ficheiro flights.csv.
  */
 
@@ -42,7 +43,7 @@ const char *voo_get_flight_id (const Voo *v) {
 }
 
 const char *voo_get_code_origin (const Voo *v) {
-    return v->code_origin; 
+    return v->code_origin;
 }
 
 long long voo_get_departure (const Voo *v) {
@@ -58,11 +59,11 @@ Estado voo_get_status (const Voo *v) {
 }
 
 const char *voo_get_id_aircraft (const Voo *v) {
-    return v->id_aircraft;  
+    return v->id_aircraft;
 }
 
 const char *voo_get_code_destination (const Voo *v) {
-    return v->code_destination;  
+    return v->code_destination;
 }
 
 long long voo_get_arrival (const Voo *v) {
@@ -85,16 +86,16 @@ const char *voo_get_airline(const Voo *v) {
  * As funções de modificação atualizam os campos internos
  * da estrutura Voo.
  *
- * As strings são geridas pelo StringPool, pelo que não é 
+ * As strings são geridas pelo StringPool, pelo que não é
  * necessário libertar memória antes de atualizar os campos.
- * 
+ *
  * Os setters de datas e horas convertem strings no formato
  * `"YYYY-MM-DD HH:MM"` para um valor inteiro ordenável no formato
  * `YYYYMMDDHHMM`, permitindo comparações diretas.
- * 
+ *
  * O setter do estado (`status`) converte o texto do dataset para
  * o enum interno `Estado`, usando apenas o primeiro caractere.
- * 
+ *
  * Campos vazios no dataset são tratados explicitamente, sendo
  * representados pelo valor `-2` quando aplicável.
  *
@@ -111,31 +112,30 @@ const char *voo_get_airline(const Voo *v) {
 
 void voo_set_code (Voo *v, char *code, char versao, StringPool *pool) {
    switch (versao) {
-	case 'o' : 
-		   v->code_origin = string_pool_get(pool,code); 
+	case 'o' :
+		   v->code_origin = string_pool_get(pool,code);
 		   break;
- 	case 'd' : 
-		   v->code_destination = string_pool_get(pool,code); 
+ 	case 'd' :
+		   v->code_destination = string_pool_get(pool,code);
 		   break;
    }
 }
 
 void voo_set_flight_id (Voo *v, char *id, StringPool *pool) {
-   v->flight_id = string_pool_get(pool,id); 
+   v->flight_id = string_pool_get(pool,id);
 }
 
 void voo_set_id_aircraft (Voo *v, char *id_airc, StringPool *pool) {
-   v->id_aircraft = string_pool_get(pool,id_airc); 
+   v->id_aircraft = string_pool_get(pool,id_airc);
 }
 
 void voo_set_airline (Voo *v, char *airl, StringPool *pool) {
-//   g_free(v->airline);
    v->airline = string_pool_get(pool,airl); 
 }
 
 /**
  * Conversão do estado textual do dataset para enum interno
- * 
+ *
  * A decisão é feita com base no primeiro caractere:
  *  - 'O' → ON_TIME
  *  - 'D' → DELAYED
@@ -159,7 +159,7 @@ void voo_set_status (Voo *v, char *status) {
 
 /**
  * Converte uma data/hora textual para um valor inteiro ordenável
- * 
+ *
  * Formato esperado: YYYY-MM-DD HH:MM
  * O valor devolvido permite comparações diretas entre datas.
  */

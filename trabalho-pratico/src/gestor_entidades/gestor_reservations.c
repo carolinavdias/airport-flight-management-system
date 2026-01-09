@@ -5,7 +5,7 @@
 #include <string.h>
 
 /* ============================================
- * ESTRUTURA 
+ * ESTRUTURA
  * ============================================ */
 
 /**
@@ -31,8 +31,8 @@ GestorReservations *gestor_reservations_cria(void) {
     GestorReservations *g = malloc(sizeof(struct gestor_reservations));
     if (!g) return NULL;
     g->tabela = g_hash_table_new_full(
-        g_str_hash, 
-        g_str_equal, 
+        g_str_hash,
+        g_str_equal,
         g_free,          // liberta chave
         libertaReserva   // liberta Reservas*
     );
@@ -40,7 +40,7 @@ GestorReservations *gestor_reservations_cria(void) {
 }
 
 /* ============================================
- * OPERAÇÕES BÁSICAS 
+ * OPERAÇÕES BÁSICAS
  * ============================================ */
 
 void gestor_reservations_insere(GestorReservations *g, Reservas *reserva) {
@@ -94,9 +94,9 @@ GSList *gestor_reservations_get_by_passenger(GestorReservations *gr, const char 
 
     while (g_hash_table_iter_next(&iter, &key, &value)) {
         Reservas *r = (Reservas *)value;
-        
+
         int id_reserva = r_get_id_pessoa_reservou(r);  // retorna int
-        
+
         if (id_reserva == id_pessoa) {
             lista = g_slist_prepend(lista, r);
         }
@@ -111,12 +111,12 @@ GSList *gestor_reservations_get_by_passenger(GestorReservations *gr, const char 
 
 void gestor_reservations_foreach(GestorReservations *g, ReservationIterFunc f, void *user_data) {
     if (!g || !g->tabela || !f) return;
-    
+
     GHashTableIter iter;
     gpointer key, value;
-    
+
     g_hash_table_iter_init(&iter, g->tabela);
-    
+
     while (g_hash_table_iter_next(&iter, &key, &value)) {
         f((Reservas *)value, user_data);
     }
@@ -131,17 +131,17 @@ void gestor_reservations_foreach(GestorReservations *g, ReservationIterFunc f, v
 
 int gestor_reservations_conta_por_voo(GestorReservations *g, const char *flight_id) {
     if (!g || !g->tabela || !flight_id) return 0;
-    
+
     int count = 0;
     GHashTableIter iter;
     gpointer key, value;
-    
+
     g_hash_table_iter_init(&iter, g->tabela);
-    
+
     while (g_hash_table_iter_next(&iter, &key, &value)) {
         Reservas *r = (Reservas *)value;
         int n_voos = r_get_lista_n_voos(r);
-        
+
         for (int i = 0; i < n_voos; i++) {
             char *voo_id = r_get_voo_por_indice(r, i);
             if (voo_id && strcmp(voo_id, flight_id) == 0) {
@@ -152,7 +152,7 @@ int gestor_reservations_conta_por_voo(GestorReservations *g, const char *flight_
             g_free(voo_id);
         }
     }
-    
+
     return count;
 }
 
@@ -180,14 +180,14 @@ void gestor_reservations_init_cache_q4(GestorReservations *g) {
 
 void gestor_reservations_add_gasto_q4(GestorReservations *g, long id_semana, const char *doc_number, double preco) {
     if (!g || !g->cache_q4 || !doc_number) return;
-    
+
     // Obter ou criar hash de gastos para esta semana
     GHashTable *gastos_semana = g_hash_table_lookup(g->cache_q4, GINT_TO_POINTER(id_semana));
     if (!gastos_semana) {
         gastos_semana = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
         g_hash_table_insert(g->cache_q4, GINT_TO_POINTER(id_semana), gastos_semana);
     }
-    
+
     // Acumular gasto do passageiro
     double *gasto_atual = g_hash_table_lookup(gastos_semana, doc_number);
     if (!gasto_atual) {
@@ -200,18 +200,18 @@ void gestor_reservations_add_gasto_q4(GestorReservations *g, long id_semana, con
 
 void gestor_reservations_foreach_cache_q4(GestorReservations *g, CacheQ4IterFunc func, void *user_data) {
     if (!g || !g->cache_q4 || !func) return;
-    
+
     GHashTableIter iter_semana;
     gpointer key_semana, value_semana;
-    
+
     g_hash_table_iter_init(&iter_semana, g->cache_q4);
     while (g_hash_table_iter_next(&iter_semana, &key_semana, &value_semana)) {
         long id_semana = GPOINTER_TO_INT(key_semana);
         GHashTable *gastos = (GHashTable *)value_semana;
-        
+
         GHashTableIter iter_pass;
         gpointer key_pass, value_pass;
-        
+
         g_hash_table_iter_init(&iter_pass, gastos);
         while (g_hash_table_iter_next(&iter_pass, &key_pass, &value_pass)) {
             const char *doc_number = (const char *)key_pass;
@@ -222,7 +222,7 @@ void gestor_reservations_foreach_cache_q4(GestorReservations *g, CacheQ4IterFunc
 }
 
 /**
- * Estrutura auxiliar para ordenação 
+ * Estrutura auxiliar para ordenação
  */
 
 typedef struct {
@@ -244,23 +244,23 @@ static void liberta_lista_top10(gpointer data) {
 
 void gestor_reservations_finaliza_cache_q4(GestorReservations *g) {
     if (!g || !g->cache_q4) return;
-    
+
     // Criar cache_top10
     g->cache_top10 = g_hash_table_new_full(
         g_direct_hash, g_direct_equal,
         NULL, liberta_lista_top10
     );
-    
+
     GHashTableIter iter_sem;
     gpointer key_sem, val_sem;
     g_hash_table_iter_init(&iter_sem, g->cache_q4);
-    
+
     while (g_hash_table_iter_next(&iter_sem, &key_sem, &val_sem)) {
         long id_semana = GPOINTER_TO_INT(key_sem);
         GHashTable *gastos = (GHashTable *)val_sem;
         guint n = g_hash_table_size(gastos);
         if (n == 0) continue;
-        
+
         // Converter para array
         GastoOrdenado *arr = g_new(GastoOrdenado, n);
         GHashTableIter iter_g;
@@ -272,17 +272,17 @@ void gestor_reservations_finaliza_cache_q4(GestorReservations *g) {
             arr[i].gasto = *(double *)v;
             i++;
         }
-        
+
         // Ordenar
         qsort(arr, n, sizeof(GastoOrdenado), compara_gastos_desc);
-        
+
         // Guardar top 10 como lista
         GSList *top10 = NULL;
         int limite = (n < 10) ? (int)n : 10;
         for (int j = limite - 1; j >= 0; j--) {
             top10 = g_slist_prepend(top10, g_strdup(arr[j].doc_number));
         }
-        
+
         g_hash_table_insert(g->cache_top10, GINT_TO_POINTER(id_semana), top10);
         g_free(arr);
     }
@@ -290,15 +290,15 @@ void gestor_reservations_finaliza_cache_q4(GestorReservations *g) {
 
 void gestor_reservations_foreach_top10(GestorReservations *g, Top10IterFunc func, void *user_data) {
     if (!g || !g->cache_top10 || !func) return;
-    
+
     GHashTableIter iter;
     gpointer key, value;
     g_hash_table_iter_init(&iter, g->cache_top10);
-    
+
     while (g_hash_table_iter_next(&iter, &key, &value)) {
         long id_semana = GPOINTER_TO_INT(key);
         GSList *top10 = (GSList *)value;
-        
+
         for (GSList *l = top10; l; l = l->next) {
             func(id_semana, (const char *)l->data, user_data);
         }

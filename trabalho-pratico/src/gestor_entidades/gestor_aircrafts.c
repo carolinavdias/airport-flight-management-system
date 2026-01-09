@@ -3,16 +3,16 @@
 #include <glib.h>
 
 /* ============================================
- * ESTRUTURA 
+ * ESTRUTURA
  * ============================================ */
 
-/** 
+/**
  * Estrutura interna do gestor aeronaves.
  */
 
 typedef struct gestor_aircrafts {
     GHashTable *tabela;   /**< Hash table: id_aeronave -> Aeronave* */
-} GestorAircrafts; 
+} GestorAircrafts;
 
 /* ============================================
  * GESTÃO DE AERONAVES
@@ -39,12 +39,12 @@ GestorAircrafts *gestor_aircrafts_cria(void) {
  * e usado como chave.
  */
 
-void gestor_aircrafts_insere(GestorAircrafts *g, Aeronave *a) { 
-    if (!g || !a) return; 
-    const char *id_int = aircraft_get_identifier(a); 
-    if (!id_int) return; 
+void gestor_aircrafts_insere(GestorAircrafts *g, Aeronave *a) {
+    if (!g || !a) return;
+    const char *id_int = aircraft_get_identifier(a);
+    if (!id_int) return;
     char *key = strdup(id_int);
-    g_hash_table_insert(g->tabela, key, a); 
+    g_hash_table_insert(g->tabela, key, a);
 }
 
 /**

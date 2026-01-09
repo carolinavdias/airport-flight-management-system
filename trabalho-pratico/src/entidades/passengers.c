@@ -1,10 +1,11 @@
 #include "entidades/passengers.h"
 #include "utils/utils.h"
+#include <glib.h>
 
 /**
  * Este ficheiro contém a definição da estrutura interna Passageiros
- * e a implementação das funções de acesso (getters), modificação 
- * (setters), conversão de datas e libertação de memória associada 
+ * e a implementação das funções de acesso (getters), modificação
+ * (setters), conversão de datas e libertação de memória associada
  * aos passageiros lidos do ficheiro passengers.csv.
  */
 
@@ -26,15 +27,15 @@ typedef struct passageiros {
 
 /**
  * As funções de acesso devolvem os valores dos campos internos.
- * 
+ *
  * Os getters retornam ponteiros const para strings geridas pela StringPool.
- * 
+ *
  * O getter do identificador devolve um ponteiro interno, pois este
  * campo é imutável após a criação.
  */
 
 const char *passenger_get_id (const Passageiros *p) {
-    return p->id_passageiro; 
+    return p->id_passageiro;
 }
 
 const char *passenger_get_primeiro (const Passageiros *p) {
@@ -50,7 +51,7 @@ int passenger_get_data (Passageiros *p) {
 }
 
 const char *passenger_get_nacionalidade (const Passageiros *p) {
-    return p->nacionalidade;  
+    return p->nacionalidade;
 }
 
 /* ============================================
@@ -59,24 +60,24 @@ const char *passenger_get_nacionalidade (const Passageiros *p) {
 
 /**
  * As funções de modificação atualizam os campos internos.
- * 
+ *
  * As strings são geridas pelo StringPool, pelo que não é necessário
  * libertar memória antes de atualizar os campos.
- * 
+ *
  * A data de nascimento é convertida de "YYYY-MM-DD" para inteiro
  * ordenável "YYYYMMDD".
  */
 
 void passenger_set_id (Passageiros *p, char *id, StringPool *pool) {
-    p->id_passageiro =  string_pool_get(pool,id); 
+    p->id_passageiro =  string_pool_get(pool,id);
 }
 
 void passenger_set_pn (Passageiros *p, char *pn, StringPool *pool) {
-    p->primeiro_nome = string_pool_get(pool,pn); 
+    p->primeiro_nome = string_pool_get(pool,pn);
 }
 
 void passenger_set_un (Passageiros *p, char *un, StringPool *pool) {
-    p->ultimo_nome = string_pool_get(pool,un); 
+    p->ultimo_nome = string_pool_get(pool,un);
 }
 
 
@@ -102,7 +103,7 @@ void passenger_set_dn (Passageiros *p, char *dn) {
 }
 
 void passenger_set_nc (Passageiros *p, char *nc, StringPool *pool) {
-    p->nacionalidade = string_pool_get(pool,nc); 
+    p->nacionalidade = string_pool_get(pool,nc);
 }
 
 /* ============================================

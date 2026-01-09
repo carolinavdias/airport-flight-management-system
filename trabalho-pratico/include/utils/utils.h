@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include <stddef.h>
-#include <glib.h>
 
 /**
  * @file utils.h

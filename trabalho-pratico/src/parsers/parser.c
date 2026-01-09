@@ -144,7 +144,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
 
 	    if (c == 3) {
 	 	array_voos = malloc(capacidade_array * sizeof(Voo *));
-                contagens = g_hash_table_new(g_str_hash, g_str_equal); //, g_free, NULL);
+                contagens = g_hash_table_new(g_str_hash, g_str_equal);
 
 		if (!array_voos || !contagens) {
 		    fclose(ficheiro);
@@ -162,20 +162,18 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
 
 	       int linha_valida = 1;
 
-               if (csv_split(buffer, &campos, &n_campos) != 0) linha_valida = 0; //return ?
-
-               switch (c) {
+               if (csv_split(buffer, &campos, &n_campos) != 0) linha_valida = 0;
+	       else {
+                switch (c) {
                    case 1:
                    	Aeronave *aeronave_atual = validacoes_campos_aircrafts(campos, pool);
                    	if (aeronave_atual) gestor_aircrafts_insere(AC, aeronave_atual);
                    	else linha_valida = 0;
-                   	//csv_file_error_name = strdup("resultados/aircrafts_errors.csv");
                    	break;
                    case 2:
                         Aeroporto *aeroporto_atual = validacoes_campos_airports(campos,pool);
                         if (aeroporto_atual) gestor_airports_insere(AP, aeroporto_atual);
                         else linha_valida = 0;
-                        //csv_file_error_name = strdup("resultados/airports_errors.csv");
                         break;
                    case 3:
 
@@ -287,11 +285,12 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                         break;
 
            	}
-		if (erro_fatal) {
+	       }
+	       if (erro_fatal) {
 	            break;
-	   	}
+	       }
 
-           	if (!linha_valida) {
+               if (!linha_valida) {
                     if (!ficheiro_erros) {
                         ficheiro_erros = fopen(csv_error_names[c], "w");
 		 	if (!ficheiro_erros) {
@@ -309,9 +308,9 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                     	fputs(buffer, ficheiro_erros);
                     	fputc('\n', ficheiro_erros);
                     }
-           	}
+               }
 
-                if (campos) csv_free_fields(campos, n_campos);
+               if (campos) csv_free_fields(campos, n_campos);
            }
 
     	   if (erro_fatal) {

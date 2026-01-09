@@ -87,7 +87,7 @@ int main(int argc, char **argv) {
     GestorFlights *gestorVoos = gestor_flights_novo();
     GestorAirports *gestorAeroportos = gestor_airports_cria();
     GestorPassengers *gestorPassageiros = gestor_passengers_novo();
-    GestorReservations *gestorReservas = gestor_reservations_cria();   // <-- NECESSÁRIO
+    GestorReservations *gestorReservas = gestor_reservations_cria();
     gestor_reservations_init_cache_q4(gestorReservas);  // Cache para Q4
     gestor_flights_init_cache_q5(gestorVoos);  // Cache para Q5
     gestor_passengers_init_cache_q6(gestorPassageiros);  // Cache para Q6
@@ -163,7 +163,7 @@ int main(int argc, char **argv) {
     gestor_airports_liberta(gestorAeroportos);
     gestor_passengers_destroy(gestorPassageiros);
     gestor_reservations_liberta(gestorReservas);
-    
+
     free(ctx);
     string_pool_destroy(pool);
 

@@ -4,7 +4,7 @@
 #include "utils/utils.h"
 
 /* ============================================
- * ESTRUTURA 
+ * ESTRUTURA
  * ============================================ */
 
 /**
@@ -16,9 +16,9 @@
  *  - uma tabela auxiliar de contagens por aircraft_id (para Q2).
  */
 
-typedef struct gestor_flights { 
+typedef struct gestor_flights {
     GHashTable *tabela_voos;          /**< Tabela principal de voos */
-    Voo **array_ordenado;             /**< Array ordenado por data (Q3) */ 
+    Voo **array_ordenado;             /**< Array ordenado por data (Q3) */
     int num_voos;                     /**< Número de voos no array ordenado */
     GHashTable *contagens_aircraft;   /**< Contagens por aircraft_id (Q2) */
     GHashTable *cache_q5;             /**< airline -> {total_delay, count} para Q5 */
@@ -56,13 +56,13 @@ void gestor_flights_destroy(GestorFlights *g) {
     if (!g) return;
     g_hash_table_destroy(g->tabela_voos);
     if (g->array_ordenado) free(g->array_ordenado);
-    if (g->contagens_aircraft) g_hash_table_destroy(g->contagens_aircraft);  
+    if (g->contagens_aircraft) g_hash_table_destroy(g->contagens_aircraft);
     if (g->cache_q5) g_hash_table_destroy(g->cache_q5);
     free(g);
 }
 
 /* ============================================
- * OPERAÇÕES BÁSICAS 
+ * OPERAÇÕES BÁSICAS
  * ============================================ */
 
 void gestor_flights_inserir(GestorFlights *g, Voo *voo) {
@@ -95,7 +95,7 @@ void gestor_flights_print(GestorFlights *g) {
     GHashTableIter iter;
     gpointer key, value;
     g_hash_table_iter_init(&iter, g->tabela_voos);
-    
+
     while (g_hash_table_iter_next(&iter, &key, &value)) {
         Voo *v = value;
         const char *fid = voo_get_flight_id(v);
@@ -104,7 +104,7 @@ void gestor_flights_print(GestorFlights *g) {
 }
 
 /* ============================================
- * CONSULTAS 
+ * CONSULTAS
  * ============================================ */
 
 const char *gestor_flights_obter_origem(GestorFlights *g, const char *flight_id) {
@@ -120,7 +120,7 @@ const char *gestor_flights_obter_destino(GestorFlights *g, const char *flight_id
 }
 
 /* ============================================
- * ARRAY ORDENADO (Q3) 
+ * ARRAY ORDENADO (Q3)
  * ============================================ */
 
 void gestor_flights_set_array_ordenado(GestorFlights *g, Voo **array, int num_voos) {
@@ -136,7 +136,7 @@ Voo **gestor_flights_get_array_ordenado(GestorFlights *g, int *num_voos) {
 }
 
 /* ============================================
- * CONTAGENS DE AIRCRAFT (Q2) 
+ * CONTAGENS DE AIRCRAFT (Q2)
  * ============================================ */
 
 void gestor_flights_set_contagens_aircraft(GestorFlights *g, GHashTable *contagens) {
@@ -152,7 +152,7 @@ int gestor_flights_get_contagem_aircraft(GestorFlights *g, const char *aircraft_
 
 
 /* ============================================
- * PROCURA 
+ * PROCURA
  * ============================================ */
 
 Voo *gestor_flights_procura(GestorFlights *g, const char *flight_id) {
@@ -175,7 +175,7 @@ void gestor_flights_init_cache_q5(GestorFlights *g) {
 
 void gestor_flights_add_atraso_q5(GestorFlights *g, const char *airline, int delay) {
     if (!g || !g->cache_q5 || !airline) return;
-    
+
     DadosAtrasoQ5 *dados = g_hash_table_lookup(g->cache_q5, airline);
     if (!dados) {
         dados = g_new(DadosAtrasoQ5, 1);
@@ -194,11 +194,11 @@ DadosAtrasoQ5 *gestor_flights_get_atraso_q5(GestorFlights *g, const char *airlin
 
 void gestor_flights_foreach_q5(GestorFlights *g, AirlineIterFunc func, void *user_data) {
     if (!g || !g->cache_q5 || !func) return;
-    
+
     GHashTableIter iter;
     gpointer key, value;
     g_hash_table_iter_init(&iter, g->cache_q5);
-    
+
     while (g_hash_table_iter_next(&iter, &key, &value)) {
         const char *airline = (const char *)key;
         DadosAtrasoQ5 *dados = (DadosAtrasoQ5 *)value;

@@ -13,22 +13,22 @@
 #include <stdio.h>
 #include <glib.h>
 
-/** 
+/**
  * Estrutura auxiliar para armazenar o número de partidas
  * e chegadas associadas a um aeroporto.
  */
 
-typedef struct contagens_aeroporto { 
-    int partidas;   /**< Número total de voos que partiram do aeroporto. */ 
-    int chegadas;   /**< Número total de voos que chegaram ao aeroporto. */ 
+typedef struct contagens_aeroporto {
+    int partidas;   /**< Número total de voos que partiram do aeroporto. */
+    int chegadas;   /**< Número total de voos que chegaram ao aeroporto. */
 } ContagensAeroporto;
 
-/** 
+/**
  * =====================================================
  * FUNÇÃO AUXILIAR
  * ===================================================== */
- 
-/** 
+
+/**
  * Encontra, através de pesquisa binária, o índice do primeiro voo
  * cuja data de partida real é maior ou igual a t_inicio.
  *
@@ -39,11 +39,11 @@ typedef struct contagens_aeroporto {
 static int intervalo_inicio(Voo **voos_ordenados, int num_voos, long long t_inicio) {
     int esq = 0, dir = num_voos - 1;
     int resultado = num_voos;
-    
+
     while (esq <= dir) {
         int meio = esq + (dir - esq) / 2;
         long long t = voo_get_actual_departure(voos_ordenados[meio]);
-        
+
         if (t >= t_inicio) {
             resultado = meio;
             dir = meio - 1;
@@ -51,22 +51,22 @@ static int intervalo_inicio(Voo **voos_ordenados, int num_voos, long long t_inic
             esq = meio + 1;
         }
     }
-    
+
     return resultado;
 }
 
-/** 
+/**
  * =====================================================
  * QUERY 3 — IMPLEMENTAÇÃO OTIMIZADA
  * ===================================================== */
 
- /** 
+ /**
  * Utiliza o array de voos ordenado fornecido pelo gestor,
  * evitando iterações desnecessárias sobre todo o conjunto
  * de voos.
  */
 
-char *query3(const char *data_inicio, const char *data_fim, 
+char *query3(const char *data_inicio, const char *data_fim,
              GestorFlights *gestorVoos, GestorAirports *gestorAeroportos) {
 
     // Validações iniciais
@@ -85,7 +85,7 @@ char *query3(const char *data_inicio, const char *data_fim,
     //obtém array ordenado do gestor (já vem do parser ordenado)
     int num_voos;
     Voo **voos_ordenados = gestor_flights_get_array_ordenado(gestorVoos, &num_voos);
-    
+
     if (!voos_ordenados || num_voos == 0) {
         return strdup("\n");
     }
@@ -104,7 +104,7 @@ char *query3(const char *data_inicio, const char *data_fim,
         long long t = voo_get_actual_departure(v);
 
         if (t > t_fim) break;
-        
+
         // Ignorar voos cancelados (conforme enunciado)
         if (voo_get_status(v) == ESTADO_CANCELLED) continue;
 
@@ -136,7 +136,7 @@ char *query3(const char *data_inicio, const char *data_fim,
     const char *melhor = NULL;
     int max_total = 0;
     int melhor_partidas = 0;
-    
+
 
     GHashTableIter iter;
     gpointer key, value;
@@ -150,7 +150,7 @@ char *query3(const char *data_inicio, const char *data_fim,
             max_total = total;
             melhor = code;
             melhor_partidas = c->partidas;
-            
+
         }
     }
 
@@ -167,7 +167,7 @@ char *query3(const char *data_inicio, const char *data_fim,
             const char *name = airport_get_name(a);
             const char *city = airport_get_city(a);
             const char *country = airport_get_country(a);
-            
+
             if (asprintf(&resultado, "%s;%s;%s;%s;%d\n",
                         iata,
                         name,

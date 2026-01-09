@@ -2,7 +2,6 @@
 #define VALIDACOES_AIRCRAFTS_H
 
 #include "entidades/aircrafts.h"
-#include <glib.h>
 
  /** 
   * @file validacoes_aircrafts.h 

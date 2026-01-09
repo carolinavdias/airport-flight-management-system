@@ -16,7 +16,7 @@
  * =====================================================
  */
 
-/** 
+/**
  * Top N companhias aéreas com maior atraso médio.
  *
  * Esta implementação utiliza um cache pré-computado
@@ -59,17 +59,17 @@ typedef struct {
 int compara_delay_dec(const void *a, const void *b) {
     const AirlineData *x = *(const AirlineData **)a;
     const AirlineData *y = *(const AirlineData **)b;
-    
+
     // Arredondar para 3 casas decimais antes de comparar
     double avg_x = round(x->delay_avg * 1000) / 1000;
     double avg_y = round(y->delay_avg * 1000) / 1000;
-    
+
     if (avg_x < avg_y) return 1;
     if (avg_x > avg_y) return -1;
     return strcmp(x->airline, y->airline);
 }
 
-/** 
+/**
  * =====================================================
  * CALLBACK PARA PROCESSAR CACHE PRÉ-COMPUTADO
  * =====================================================
@@ -85,17 +85,17 @@ int compara_delay_dec(const void *a, const void *b) {
 
 static void processa_cache_q5(const char *airline, long total_delay, int count, void *user_data) {
     GHashTable *airlines = user_data;
-    
+
     AirlineData *ad = g_new(AirlineData, 1);
     ad->airline = g_strdup(airline);
     ad->total_delay = total_delay;
     ad->delay_count = count;
     ad->delay_avg = (double)total_delay / count;
-    
+
     g_hash_table_insert(airlines, g_strdup(airline), ad);
 }
 
-/** 
+/**
  * Função auxiliar para libertar AirlineData.
  */
 
@@ -107,7 +107,7 @@ static void free_airline_data(gpointer data) {
     }
 }
 
-/** 
+/**
  * =====================================================
  * QUERY 5 — IMPLEMENTAÇÃO PRINCIPAL
  * =====================================================
@@ -115,7 +115,7 @@ static void free_airline_data(gpointer data) {
 
 char *query5(const char *linhaComando, GestorFlights *gestorVoos) {
 
-    /** 
+    /**
      * =================================================
      * FASE 0: Validação de argumentos
      * =================================================
@@ -126,7 +126,7 @@ char *query5(const char *linhaComando, GestorFlights *gestorVoos) {
         return strdup("\n");
     }
 
-    /** 
+    /**
      * =================================================
      * FASE 1: Construção da tabela de companhias
      * =================================================
@@ -148,7 +148,7 @@ char *query5(const char *linhaComando, GestorFlights *gestorVoos) {
         return strdup("\n");
     }
 
-    /** 
+    /**
      * =================================================
      * FASE 2: Converter hash table para array
      * =================================================
@@ -165,7 +165,7 @@ char *query5(const char *linhaComando, GestorFlights *gestorVoos) {
         lista[idx++] = value;
     }
 
-    /** 
+    /**
      * =================================================
      * FASE 3: Ordenação
      * =================================================
@@ -173,7 +173,7 @@ char *query5(const char *linhaComando, GestorFlights *gestorVoos) {
 
     qsort(lista, total, sizeof(AirlineData*), compara_delay_dec);
 
-    /** 
+    /**
      * =================================================
      * FASE 4: Construção da string de output
      * =================================================
@@ -226,7 +226,7 @@ char *query5(const char *linhaComando, GestorFlights *gestorVoos) {
 
     output[current_pos] = '\0';
 
-    /** 
+    /**
      * =================================================
      * FASE 5: Limpeza
      * =================================================

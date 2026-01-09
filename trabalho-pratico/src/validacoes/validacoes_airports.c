@@ -8,7 +8,7 @@
  * AEROPORTO -> VALIDAÇÃO SINTÁTICA
  * ============================================ */
 
-/** 
+/**
  * Valida uma coordenada geográfica (latitude ou longitude).
  *
  * A função verifica:
@@ -18,7 +18,7 @@
  *  - limites adequados conforme o tipo (versao).
  */
 
-int valida_coordenadas(const char* s, int versao) {
+static int valida_coordenadas(const char* s, int versao) {
 //versao 1. latitude
 //versao 2. longitude
     if (!s) return 0;
@@ -45,13 +45,13 @@ int valida_coordenadas(const char* s, int versao) {
     return 1;
 }
 
-/** 
+/**
  * Valida o tipo de aeroporto.
  *
  * Apenas os tipos definidos na especificação são aceites.
  */
 
-int valida_tipo_aer(const char *s) {
+static int valida_tipo_aer(const char *s) {
     return s && (strcmp(s, "small_airport") == 0  ||
 	         strcmp(s, "medium_airport") == 0 ||
 	         strcmp(s, "large_airport") == 0  ||
@@ -59,7 +59,7 @@ int valida_tipo_aer(const char *s) {
 	         strcmp(s, "seaplane_base") == 0   );
 }
 
-/** 
+/**
  * Valida todos os campos essenciais de um aeroporto.
  *
  * Se forem válidos, cria e preenche a estrutura Aeroporto.

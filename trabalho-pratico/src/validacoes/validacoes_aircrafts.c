@@ -11,7 +11,7 @@
  * validação sintática rigorosa.
  */
 
-int valida_year(const char *s) {
+static int valida_year(const char *s) {
 
     int year = 0;
     if (!s || strlen(s) != 4) return 0;

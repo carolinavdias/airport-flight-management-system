@@ -3,7 +3,7 @@
 #include <glib.h>
 
 /* ============================================
- * ESTRUTURA 
+ * ESTRUTURA
  * ============================================ */
 
 /**
@@ -26,7 +26,7 @@ typedef struct gestor_airports {
  * GESTÃO DE AEROPORTOS
  * ============================================ */
 
-/** 
+/**
  * Cria e inicializa o gestor de aeroportos.
  *
  * Aloca memória para o gestor e cria a hash table principal,
@@ -49,7 +49,7 @@ GestorAirports *gestor_airports_cria(void) {
  * CONTAGENS DE CHEGADAS E PARTIDAS
  * ============================================ */
 
-/** 
+/**
  * Inicializa as tabelas auxiliares de contagem de chegadas e partidas.
  *
  * Cada tabela associa um código IATA a um inteiro que representa
@@ -64,7 +64,7 @@ void gestor_airports_init_contagens(GestorAirports *g) {
     g->contagens_partidas = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 }
 
-/** 
+/**
  * Insere um aeroporto no gestor.
  *
  * O aeroporto é armazenado na tabela principal e indexado pelo
@@ -81,7 +81,7 @@ void gestor_airports_insere(GestorAirports *g, Aeroporto *a) {
     g_hash_table_insert(g->tabela, key, a);
 }
 
-/** 
+/**
  * Procura um aeroporto no gestor através do código IATA.
  *
  * Devolve o ponteiro para a estrutura Aeroporto armazenada,
@@ -104,7 +104,7 @@ int gestor_airports_existe(GestorAirports *g, const char *code_IATA) {
     return g && code_IATA && g_hash_table_contains(g->tabela, code_IATA);
 }
 
-/** 
+/**
  * Incrementa o contador de chegadas de um aeroporto.
  *
  * Se o aeroporto ainda não tiver registos, o contador é iniciado a 1.
@@ -117,7 +117,7 @@ void gestor_airports_incrementa_chegadas(GestorAirports *g, const char *code) {
     g_hash_table_insert(g->contagens_chegadas, g_strdup(code), GINT_TO_POINTER(count));
 }
 
-/** 
+/**
  * Incrementa o contador de partidas de um aeroporto.
  *
  * Funciona de forma idêntica ao contador de chegadas, mas utilizando
@@ -131,7 +131,7 @@ void gestor_airports_incrementa_partidas(GestorAirports *g, const char *code) {
     g_hash_table_insert(g->contagens_partidas, g_strdup(code), GINT_TO_POINTER(count));
 }
 
-/** 
+/**
  * Obtém o número total de chegadas registadas para um aeroporto.
  *
  * Se o aeroporto não tiver registos ou as contagens não estiverem
@@ -143,7 +143,7 @@ int gestor_airports_get_chegadas(GestorAirports *g, const char *code) {
     return GPOINTER_TO_INT(g_hash_table_lookup(g->contagens_chegadas, code));
 }
 
-/** 
+/**
  * Obtém o número total de partidas registadas para um aeroporto.
  *
  * Se o aeroporto não tiver registos ou as contagens não estiverem
@@ -159,7 +159,7 @@ int gestor_airports_get_partidas(GestorAirports *g, const char *code) {
  * DESTRÓI GESTOR DE AEROPORTOS
  * ============================================ */
 
-/** 
+/**
  * Liberta toda a memória associada ao gestor de aeroportos.
  *
  * Destrói a tabela principal, as tabelas de contagens (se existirem)

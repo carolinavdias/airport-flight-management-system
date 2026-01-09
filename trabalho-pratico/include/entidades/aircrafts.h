@@ -5,8 +5,6 @@
 
 typedef struct _StringPool StringPool;
 
-#include <glib.h>
-
 /**
  * @file aircrafts.h
  * @brief Interface da entidade Aeronave.

@@ -20,13 +20,13 @@
 #include "gestor_entidades/gestor_passengers.h"
 #include "gestor_entidades/gestor_reservations.h"
 
-/** 
+/**
  * =====================================================
  * INTERPRETER
  * =====================================================
  */
 
- /** 
+ /**
  * Este módulo funciona como um dispatcher de queries.
  * Recebe comandos do programa principal e encaminha
  * a execução para a query correta.
@@ -37,7 +37,7 @@
  *  - Escrita consistente do output
  */
 
-/** 
+/**
  * =====================================================
  * FORMATAÇÃO DE OUTPUT
  * =====================================================
@@ -52,9 +52,9 @@
 
 static void aplica_formato(char *str, bool formato_alternativo) {
     if (!str) return;
-    
+
     char separador = formato_alternativo ? '=' : ';';
-    
+
     //troca TODAS os ´;´ pelo separador correto
     for (int i = 0; str[i]; i++) {
         if (str[i] == ';') {
@@ -78,32 +78,32 @@ static void aplica_formato(char *str, bool formato_alternativo) {
 
 static int extrai_numero_query(const char *comando, bool *formato_alternativo) {
     if (!comando || !comando[0]) return 0;
-    
+
     *formato_alternativo = false;
-    
+
     //conta dígitos iniciais
     int i = 0;
     while (comando[i] && comando[i] >= '0' && comando[i] <= '9') {
         i++;
     }
-    
+
     //se o próximo caractere é 'S' e é o fim da string
     if (comando[i] == 'S' && (comando[i+1] == ' ' || comando[i+1] == '\0')) {
         *formato_alternativo = true;
     }
-    
+
     //converte apenas a parte numérica
     char num_str[16];
     int copy_len = i;
     if (copy_len >= (int)sizeof(num_str)) {
         copy_len = sizeof(num_str) - 1;
     }
-    
+
     for (int j = 0; j < copy_len; j++) {
         num_str[j] = comando[j];
     }
     num_str[copy_len] = '\0';
-    
+
     return atoi(num_str);
 }
 

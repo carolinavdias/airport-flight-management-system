@@ -8,19 +8,19 @@
 #include <ctype.h>
 #include "entidades/flights.h"
 #include "entidades/aircrafts.h"
-#include "gestor_entidades/gestor_aircrafts.h" 
-#include "gestor_entidades/gestor_flights.h" 
+#include "gestor_entidades/gestor_aircrafts.h"
+#include "gestor_entidades/gestor_flights.h"
 
-/** 
+/**
  * Estrutura auxiliar que guarda a informação de cada aeronave
  * e o número de voos associados.
  */
 
-typedef struct contagem { 
-    const char *identifier;    /**< Identificador único do equipamento. */ 
-    const char *manufacturer;  /**< Nome do fabricante do equipamento. */ 
-    const char *model;         /**< Modelo específico do equipamento. */ 
-    int count;           /**< Número de ocorrências registadas. */ 
+typedef struct contagem {
+    const char *identifier;    /**< Identificador único do equipamento. */
+    const char *manufacturer;  /**< Nome do fabricante do equipamento. */
+    const char *model;         /**< Modelo específico do equipamento. */
+    int count;                 /**< Número de ocorrências registadas. */
 } Contagem;
 
 /**
@@ -29,7 +29,7 @@ typedef struct contagem {
  * ===================================================== */
 
 /**
- * Remove espaços em branco no início e no fim de uma string 
+ * Remove espaços em branco no início e no fim de uma string
  */
 
 static void trim(char *s) {
@@ -45,7 +45,7 @@ static void trim(char *s) {
     }
 }
 
-/** 
+/**
  * Função de comparação usada na ordenação:
  * - Primeiro pelo número de voos (ordem decrescente)
  * - Em caso de empate, pelo identificador da aeronave
@@ -67,11 +67,11 @@ int comparaContagens(const Contagem *a, const Contagem *b) {
  * pelas aeronaves.
  */
 
-typedef struct { 
-    const char *fabricante_lower;  /**< Nome do fabricante em minúsculas, usado para comparação case-insensitive. */ 
-    int usar_filtro;               /**< Flag que indica se o filtro deve ser aplicado (1) ou ignorado (0). */ 
-    GList *resultado;              /**< Lista ligada (GLib) onde serão acumulados os resultados filtrados. */ 
-    GestorFlights *gestorVoos;     /**< Apontador para o gestor de voos, usado para consultar contagens e metadados. */ 
+typedef struct {
+    const char *fabricante_lower;  /**< Nome do fabricante em minúsculas, usado para comparação case-insensitive. */
+    int usar_filtro;               /**< Flag que indica se o filtro deve ser aplicado (1) ou ignorado (0). */
+    GList *resultado;              /**< Lista ligada (GLib) onde serão acumulados os resultados filtrados. */
+    GestorFlights *gestorVoos;     /**< Apontador para o gestor de voos, usado para consultar contagens e metadados. */
 } DadosFiltro;
 
 /**
@@ -85,7 +85,7 @@ static void processa_aeronave(Aeronave *a, void *user_data) {
 
     // guardar ponteiro para o fabricante (string interna, não libertar)
     const char *manuf_str = aircraft_get_manufacturer(a);
-    
+
     // filtro
     if (dados->usar_filtro) {
         if (g_ascii_strcasecmp(manuf_str, dados->fabricante_lower) != 0) {
@@ -97,7 +97,7 @@ static void processa_aeronave(Aeronave *a, void *user_data) {
     //guardar getters para libertar
     const char *id_str = aircraft_get_identifier(a);
     const char *model_str = aircraft_get_model(a);
-    
+
     //busca contagem na tabela PRÉ-CONSTRUÍDA (não reconstrói!)
     int count = 0;
     if (dados->gestorVoos) {
@@ -114,15 +114,12 @@ static void processa_aeronave(Aeronave *a, void *user_data) {
     dados->resultado = g_list_prepend(dados->resultado, c);
 }
 
-/** 
- * Liberta a memória associada a uma estrutura Contagem 
+/**
+ * Liberta a memória associada a uma estrutura Contagem
  */
 
 static void free_contagem(void *data) {
     Contagem *c = data;
-//    g_free(c->identifier);
-//    g_free(c->manufacturer);
-//    g_free(c->model);
     g_free(c);
 }
 
@@ -131,12 +128,12 @@ static void free_contagem(void *data) {
  * QUERY 2 — IMPLEMENTAÇÃO OTIMIZADA
  * ===================================================== */
 
-/** 
+/**
  * Utiliza contagens de voos pré-calculadas durante o parsing,
  * evitando percorrer todos os voos para cada aeronave.
  */
 char *query2(const char *linhaComando, GestorAircrafts *gestorAeronaves, GestorFlights *gestorVoos) {
-    
+
     int N;
     char fabricante_raw[200] = "";
 
@@ -181,18 +178,18 @@ char *query2(const char *linhaComando, GestorAircrafts *gestorAeronaves, GestorF
         g_list_free_full(dados.resultado, free_contagem);
         return strdup("\n");
     }
-    
+
     output[0] = '\0';
     size_t current_pos = 0;
 
     int printed = 0;
     for (GList *l = dados.resultado; l != NULL && printed < N; l = l->next, printed++) {
         Contagem *c = l->data;
-        
+
         char linha[512];
         int len = snprintf(linha, sizeof(linha), "%s;%s;%s;%d\n",
                           c->identifier, c->manufacturer, c->model, c->count);
-        
+
         if (current_pos + len + 1 > buffer_size) {
             buffer_size *= 2;
             char *new_output = realloc(output, buffer_size);
@@ -203,7 +200,7 @@ char *query2(const char *linhaComando, GestorAircrafts *gestorAeronaves, GestorF
             }
             output = new_output;
         }
-        
+
         strcpy(output + current_pos, linha);
         current_pos += len;
     }
@@ -215,7 +212,7 @@ char *query2(const char *linhaComando, GestorAircrafts *gestorAeronaves, GestorF
     }
 
     g_list_free_full(dados.resultado, free_contagem);
-    
+
     return output;
 }
 

@@ -2,7 +2,7 @@
 #define VALIDACOES_AIRPORTS_H
 
 #include "entidades/airports.h"
-#include <glib.h>
+
 /**
  * @file validacoes_airports.h
  * @brief Validações sintáticas para aeroportos.

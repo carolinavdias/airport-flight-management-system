@@ -5,7 +5,6 @@
 #include "gestor_entidades/gestor_flights.h"
 #include "gestor_entidades/gestor_passengers.h"
 
-#include <glib.h>
 
 /**
  * @file validacoes_reservations.h

@@ -12,7 +12,7 @@
  * Valida o id da reserva e faz o strdup
  */
 
-int valida_id_reserva (const char *s) {
+static int valida_id_reserva (const char *s) {
     if (!s || strlen(s) != 10 || s[0] != 'R') return 0;
     for (int i = 1; i < 10; i++) {
         if (s[i] < '0' || s[i] > '9') return 0;
@@ -24,7 +24,7 @@ int valida_id_reserva (const char *s) {
  * Valida a lista dos voos reservados, passa para o formato de uma lista e atribui a "Reserva"
  */
 
-int valida_set_voos_reservados(const char *s, Reservas *r, StringPool *pool) {
+static int valida_set_voos_reservados(const char *s, Reservas *r, StringPool *pool) {
     if (!s || strlen(s) < 3) return 0; //[] invalido
     int len = strlen(s);
     if (s[0] != '[' || s[len-1] != ']') return 0; //verifica se tem os parenteses retos no inicio e no final
@@ -65,7 +65,7 @@ int valida_set_voos_reservados(const char *s, Reservas *r, StringPool *pool) {
  * RESERVAS -> VALIDAÇÃO LÓGICA
  * ============================================ */
 
-int valida_RESERVA(Reservas *reserva, GestorFlights *gestor_voos, GestorPassengers *gestor_passageiros) {
+static int valida_RESERVA(Reservas *reserva, GestorFlights *gestor_voos, GestorPassengers *gestor_passageiros) {
     int length_vr = r_get_lista_n_voos(reserva);
     if (length_vr < 1 || length_vr > 2) return 0;
 
@@ -81,7 +81,7 @@ int valida_RESERVA(Reservas *reserva, GestorFlights *gestor_voos, GestorPassenge
     int id_pessoa = r_get_id_pessoa_reservou(reserva);
     char id_str[32];
     snprintf(id_str, sizeof(id_str), "%09d", id_pessoa);
-    
+
     if (!gestor_passengers_existe(gestor_passageiros, id_str))
         return 0;
 
@@ -96,15 +96,15 @@ int valida_RESERVA(Reservas *reserva, GestorFlights *gestor_voos, GestorPassenge
     return 1;
 }
 
-/* ============================================================ 
- * RESERVA -> VALIDAÇÃO COMPLETA DO PARSING 
- * ============================================================ */ 
+/* ============================================================
+ * RESERVA -> VALIDAÇÃO COMPLETA DO PARSING
+ * ============================================================ */
 
 Reservas *validacoes_campos_reservations(char **campos, GestorFlights *V, GestorPassengers *P, StringPool *pool) {
     Reservas *r = criaReserva();
-    if (valida_id_reserva(campos[0]) 	        && //id_reserva
+    if (valida_id_reserva(campos[0]) 	             && //id_reserva
 	valida_set_voos_reservados(campos[1],r,pool) && //lista voos reservados
-	valida_id_passageiro(campos[2]) 	) //id da pessoa q reservou
+	valida_id_passageiro(campos[2]) 	      ) //id da pessoa q reservou
     {
 
 	r_set_id_reserva(r,campos[0],pool);

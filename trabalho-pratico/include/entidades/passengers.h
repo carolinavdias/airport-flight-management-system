@@ -5,24 +5,22 @@
 
 typedef struct _StringPool StringPool;
 
-#include <stdint.h>
-#include <glib.h>
 
-/** 
-    * @file passengers.h 
-    * @brief Interface da entidade Passageiros. 
-    * 
-    * Este módulo define a estrutura Passageiros e disponibiliza 
-    * funções para criação, acesso, modificação e libertação de passageiros 
-    * lidos do ficheiro passengers.csv. 
-    * 
+/**
+    * @file passengers.h
+    * @brief Interface da entidade Passageiros.
+    *
+    * Este módulo define a estrutura Passageiros e disponibiliza
+    * funções para criação, acesso, modificação e libertação de passageiros
+    * lidos do ficheiro passengers.csv.
+    *
     * Todos os getters que retornam strings devolvem ponteiros constantes
     * para campos internos geridos pelo StringPool.
     * O utilizador não deve libertar estas strings.
-    */ 
+    */
 
 /* ============================================
- * ESTRUTURA 
+ * ESTRUTURA
  * ============================================ */
 
 /**
@@ -75,11 +73,11 @@ const char *passenger_get_primeiro (const Passageiros *p);
 
 const char *passenger_get_ultimo (const Passageiros *p);
 
-/** 
- * @brief Obtém a data de nascimento do passageiro. 
- * 
- * A data é armazenada como inteiro no formato YYYYMMDD. 
- * 
+/**
+ * @brief Obtém a data de nascimento do passageiro.
+ *
+ * A data é armazenada como inteiro no formato YYYYMMDD.
+ *
  * @param p Ponteiro para o passageiro.
  * @return Data de nascimento ou 0 se inválido.
  */
@@ -112,11 +110,11 @@ const char *passenger_get_nacionalidade (const Passageiros *p);
 
 void passenger_set_id (Passageiros *p, char *id, StringPool *pool);
 
- /** 
+ /**
     * @brief Define o primeiro nome do passageiro.
-    *  
-    * @param p Ponteiro para o passageiro. 
-    * @param pn Primeiro nome. 
+    *
+    * @param p Ponteiro para o passageiro.
+    * @param pn Primeiro nome.
     */
 
 void passenger_set_pn (Passageiros *p, char *pn, StringPool *pool);

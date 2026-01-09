@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <glib.h>  
+#include <glib.h>
 #include "queries/q6.h"
 #include "entidades/passengers.h"
 #include "entidades/flights.h"
@@ -12,13 +12,13 @@
 #include "gestor_entidades/gestor_flights.h"
 #include "gestor_entidades/gestor_reservations.h"
 
-/** 
+/**
  * =====================================================
  * QUERY 6
  * =====================================================
  */
 
-/** 
+/**
  * Aeroporto de destino mais comum para passageiros
  * de uma determinada nacionalidade.
  *
@@ -27,7 +27,7 @@
  * e voos em cada execução da query.
  */
 
-/** 
+/**
  * =====================================================
  * ESTRUTURA AUXILIAR
  * =====================================================
@@ -43,13 +43,13 @@ typedef struct {
     int max_count;               /**< número máximo de chegadas */
 } DadosQ6Cache;
 
-/** 
+/**
  * =====================================================
  * CALLBACK DE PROCESSAMENTO DO CACHE
  * =====================================================
  */
 
-/** 
+/**
  * Callback chamada para cada aeroporto de destino
  * associado à nacionalidade pedida.
  *
@@ -60,8 +60,8 @@ typedef struct {
 
 static void encontra_melhor_destino(const char *destino, int count, void *user_data) {
     DadosQ6Cache *dados = user_data;
-    
-    if (count > dados->max_count || 
+
+    if (count > dados->max_count ||
         (count == dados->max_count && dados->melhor_destino && strcmp(destino, dados->melhor_destino) < 0)) {
         dados->melhor_destino = destino;
         dados->max_count = count;
@@ -83,7 +83,7 @@ char *query6(const char *linhaComando,
     (void)gestorVoos;
     (void)gestorReservas;
 
-    /** 
+    /**
      * =================================================
      * FASE 0: Validação da nacionalidade
      * =================================================
@@ -101,7 +101,7 @@ char *query6(const char *linhaComando,
     char *nl = strchr(nacionalidade, '\n');
     if (nl) *nl = '\0';
 
-    /** 
+    /**
      * =================================================
      * FASE 1: Percorrer cache pré-computado
      * =================================================
@@ -122,7 +122,7 @@ char *query6(const char *linhaComando,
 	return strdup("\n");
     }
 
-    /**  
+    /**
      * =================================================
      * FASE 2: Formatação do resultado
      * =================================================
@@ -138,4 +138,3 @@ char *query6(const char *linhaComando,
 
     return resultado;
 }
-

@@ -14,7 +14,7 @@
  * Função valida_estado de um voo
  */
 
-int valida_Estado(const char *s) {
+static int valida_Estado(const char *s) {
     if (!s || strlen(s) == 0) return 0;
     return (strcmp(s, "On Time") == 0 || strcmp(s, "Delayed") == 0 || strcmp(s, "Cancelled") == 0);
 }
@@ -23,57 +23,57 @@ int valida_Estado(const char *s) {
  * VOO -> VALIDAÇÃO LÓGICA
  * ============================================ */
 
-int valida_VOO (Voo *voo, GestorAircrafts *gestor_aeronaves) {
-    
+static int valida_VOO (Voo *voo, GestorAircrafts *gestor_aeronaves) {
+
     //DESTINATION != ORIGIN
     if (strcmp(voo_get_code_origin(voo), voo_get_code_destination(voo)) == 0) {
         return 0;
     }
-    
+
     //AIRCRAFT EXISTE
     if (gestor_aeronaves && voo_get_id_aircraft(voo)) {
         if (!gestor_aircrafts_existe(gestor_aeronaves, voo_get_id_aircraft(voo))) {
             return 0;
         }
     }
-    
+
     //ARRIVAL >= DEPARTURE
     if (voo_get_arrival(voo) < voo_get_departure(voo)) {
         return 0;
     }
-    
+
     //se CANCELLED, actual_departure E actual_arrival devem ser -2 (N/A)
     if (voo_get_status(voo) == ESTADO_CANCELLED) {
-        if (voo_get_actual_departure(voo) != -2 || 
+        if (voo_get_actual_departure(voo) != -2 ||
             voo_get_actual_arrival(voo) != -2) {
             return 0;
         }
     }
-    
+
     //se NÃO CANCELLED: actual_arrival >= actual_departure
     if (voo_get_status(voo) != ESTADO_CANCELLED) {
-        if (voo_get_actual_departure(voo) != -2 && 
+        if (voo_get_actual_departure(voo) != -2 &&
             voo_get_actual_arrival(voo) != -2) {
             if (voo_get_actual_arrival(voo) < voo_get_actual_departure(voo)) {
                 return 0;
             }
         }
     }
-    
+
     // se DELAYED, actual >= scheduled
     if (voo_get_status(voo) == ESTADO_DELAYED) {
         // actual_departure >= departure
-        if (voo_get_actual_departure(voo) != -2 && 
+        if (voo_get_actual_departure(voo) != -2 &&
             voo_get_actual_departure(voo) < voo_get_departure(voo)) {
             return 0;
         }
         //actual_arrival >= arrival
-        if (voo_get_actual_arrival(voo) != -2 && 
+        if (voo_get_actual_arrival(voo) != -2 &&
             voo_get_actual_arrival(voo) < voo_get_arrival(voo)) {
             return 0;
         }
     }
-    
+
     return 1; //válido
 }
 

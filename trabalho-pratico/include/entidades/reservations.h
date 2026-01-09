@@ -5,8 +5,6 @@
 
 typedef struct _StringPool StringPool;
 
-#include <glib.h>
-
 /** 
     * @file reservations.h 
     * @brief Interface da entidade Reservas. 

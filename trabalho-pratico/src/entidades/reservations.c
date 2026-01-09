@@ -1,7 +1,7 @@
 #include "entidades/reservations.h"
 #include "utils/utils.h"
-#include <stdbool.h>
 #include <stdlib.h>
+#include <glib.h>
 
 /**
  * Contém a definição interna das estruturas `Reservas` e `Voos_reservados`,
@@ -10,12 +10,12 @@
  */
 
 /**
- * Estrutura que representa a lista de voos reservados 
+ * Estrutura que representa a lista de voos reservados
  */
 
-typedef struct voos_reservados { 
-    const char **lista_voos_reservados;   /**< Array de IDs de voos */ 
-    int n_voos;                           /**< Número de voos       */ 
+typedef struct voos_reservados {
+    const char **lista_voos_reservados;   /**< Array de IDs de voos */
+    int n_voos;                           /**< Número de voos       */
 } Voos_reservados;
 
 /**
@@ -72,7 +72,7 @@ char *r_get_voo_por_indice(const Reservas *r, int indice) {
     if (indice < 0 || indice >= r->reserva_lista->n_voos) return NULL;
     if (!r->reserva_lista->lista_voos_reservados) return NULL;
     if (!r->reserva_lista->lista_voos_reservados[indice]) return NULL;
-    
+
     // Retorna CÓPIA para encapsulamento - libertar com g_free()!
     return g_strdup(r->reserva_lista->lista_voos_reservados[indice]);
 }
@@ -109,7 +109,7 @@ void liberta_lista_reserva(void *data) {
 }
 
 void set_lista_voos (Voos_reservados *vr, int i, char *s, StringPool *pool) {
-    vr->lista_voos_reservados[i] = string_pool_get(pool,s); 
+    vr->lista_voos_reservados[i] = string_pool_get(pool,s);
 }
 
 void r_set_lista (Reservas *r, Voos_reservados *novo) {
@@ -117,7 +117,7 @@ void r_set_lista (Reservas *r, Voos_reservados *novo) {
 }
 
 void r_set_id_reserva (Reservas *r, char *s, StringPool *pool) {
-    r->id_reserva = string_pool_get(pool,s); 
+    r->id_reserva = string_pool_get(pool,s);
 }
 
 void r_set_id_pessoa_reservou (Reservas *r, char *s) {
@@ -150,6 +150,6 @@ Reservas *criaReserva () {
 void libertaReserva(void *data) {
     Reservas *a = data;
     if (!a) return;
-    if (a->reserva_lista) liberta_lista_reserva (a->reserva_lista); 
+    if (a->reserva_lista) liberta_lista_reserva (a->reserva_lista);
     g_free(a);
 }

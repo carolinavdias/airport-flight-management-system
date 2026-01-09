@@ -24,7 +24,7 @@ typedef struct aeroporto {
  * GETTERS
  * ============================================ */
 
-/** 
+/**
  * Devolvem ponteiros constantes para os campos internos, geridos pelo StringPool.
  * O utilizador não deve libertar esta memória.
  */

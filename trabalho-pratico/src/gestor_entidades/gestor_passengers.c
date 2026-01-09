@@ -5,7 +5,7 @@
 #include <string.h>
 
 /* ============================================
- * ESTRUTURA 
+ * ESTRUTURA
  * ============================================ */
 
 /**
@@ -59,7 +59,7 @@ void gestor_passengers_inserir(GestorPassengers *g, Passageiros *p) {
 
     const char *id = passenger_get_id(p);
     if (!id) return;
-    
+
     char *key = g_strdup(id);
     g_hash_table_insert(g->tabela_passageiros, key, p);
 }
@@ -91,7 +91,7 @@ int gestor_passengers_conta_por_voo(GestorPassengers *g, const char *flight_id) 
 
 bool gestor_passengers_existe(GestorPassengers *g, const char *id_passageiro) {
     if (!g || !id_passageiro) return false;
-    
+
     return g_hash_table_contains(g->tabela_passageiros, id_passageiro);
 }
 
@@ -106,7 +106,7 @@ Passageiros *gestor_passengers_procura(GestorPassengers *g, const char *doc_numb
 
 void gestor_passengers_foreach(GestorPassengers *g, PassengerIterFunc f, void *user_data) {
     if (!g || !g->tabela_passageiros || !f) return;
-    
+
     GHashTableIter iter;
     gpointer key, value;
     g_hash_table_iter_init(&iter, g->tabela_passageiros);
@@ -132,27 +132,27 @@ void gestor_passengers_init_cache_q6(GestorPassengers *gp) {
 
 void gestor_passengers_add_destino_q6(GestorPassengers *gp, const char *nacionalidade, const char *destino) {
     if (!gp || !gp->cache_q6 || !nacionalidade || !destino) return;
-    
+
     GHashTable *destinos = g_hash_table_lookup(gp->cache_q6, nacionalidade);
     if (!destinos) {
         destinos = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
         g_hash_table_insert(gp->cache_q6, g_strdup(nacionalidade), destinos);
     }
-    
+
     int count = GPOINTER_TO_INT(g_hash_table_lookup(destinos, destino));
     g_hash_table_insert(destinos, g_strdup(destino), GINT_TO_POINTER(count + 1));
 }
 
 void gestor_passengers_foreach_destinos_q6(GestorPassengers *gp, const char *nacionalidade, DestinoIterFunc func, void *user_data) {
     if (!gp || !gp->cache_q6 || !nacionalidade || !func) return;
-    
+
     GHashTable *destinos = g_hash_table_lookup(gp->cache_q6, nacionalidade);
     if (!destinos) return;
-    
+
     GHashTableIter iter;
     gpointer key, value;
     g_hash_table_iter_init(&iter, destinos);
-    
+
     while (g_hash_table_iter_next(&iter, &key, &value)) {
         func((const char *)key, GPOINTER_TO_INT(value), user_data);
     }

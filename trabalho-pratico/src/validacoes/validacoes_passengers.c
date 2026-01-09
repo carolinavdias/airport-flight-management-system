@@ -13,7 +13,7 @@
  * Valida o Genero(passageiro) e passa para a estrutura previamente definida para o genero
  */
 
-int valida_genero(const char *s) {
+static int valida_genero(const char *s) {
     return s && strlen(s) == 1 && (s[0] == 'M' || s[0] == 'F' || s[0] == 'O');
 }
 
@@ -21,7 +21,7 @@ int valida_genero(const char *s) {
  * Valida o email e faz o strdup (passageiros)
  */
 
-int valida_email(const char *s) {
+static int valida_email(const char *s) {
      if (!s || strlen(s) == 0) return 0;
      int i = 0;
      int mark = i;

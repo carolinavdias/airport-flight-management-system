@@ -46,7 +46,7 @@ char *query1(const char *code,
              GestorReservations *gestorReservas) {
 
     /** Estes gestores não são utilizados nesta versão otimizada,
-        mas mantêm-se para compatibilidade com versões não otimizadas 
+        mas mantêm-se para compatibilidade com versões não otimizadas
         ou com o interpretador */
     (void)gestorVoos;
     (void)gestorReservas;

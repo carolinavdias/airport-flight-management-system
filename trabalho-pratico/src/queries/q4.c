@@ -12,12 +12,12 @@
 #include "gestor_entidades/gestor_flights.h"
 #include "gestor_entidades/gestor_reservations.h"
 
-/** 
+/**
  * =====================================================
  * QUERY 4
  * ===================================================== */
 
- /** 
+ /**
  * Passageiro que mais vezes apareceu no Top 10 semanal
  * de gastos em reservas.
  *
@@ -26,13 +26,13 @@
  * cancelados, pelo que estes são considerados.
  */
 
-/** 
+/**
  * =====================================================
  * FUNÇÕES AUXILIARES PARA DATAS
  * =====================================================
  */
 
-/** 
+/**
  * Verifica se um ano é bissexto.
  */
 
@@ -40,7 +40,7 @@ static int eh_bissexto(int ano) {
     return (ano % 4 == 0 && ano % 100 != 0) || (ano % 400 == 0);
 }
 
-/** 
+/**
  * Converte uma data (ano, mês, dia) para o número total
  * de dias desde 01-01-0001.
  *
@@ -52,12 +52,12 @@ static long data_para_dias(int ano, int mes, int dia) {
     int a = ano - 1;
     long dias_anos = a * 365L + a/4 - a/100 + a/400;
 
-    int dias_mes_acum[] = 
+    int dias_mes_acum[] =
         {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
 
     long dias_meses = dias_mes_acum[mes - 1];
     if (mes > 2 && eh_bissexto(ano)) dias_meses++;
-    
+
     return dias_anos + dias_meses + dia;
 }
 
@@ -76,10 +76,10 @@ static long parse_data_str(const char *str) {
     return data_para_dias(ano, mes, dia);
 }
 
-/** 
+/**
  * =====================================================
  * ESTRUTURAS AUXILIARES
- * ===================================================== 
+ * =====================================================
  */
 
 /**
@@ -87,10 +87,10 @@ static long parse_data_str(const char *str) {
  * um passageiro aparece no Top 10 semanal.
  */
 
-typedef struct { 
-    GHashTable *contagem;   /**< Tabela de dispersão que mapeia doc_number -> count. */ 
-    long inicio_dias;       /**< Data inicial do intervalo, representada em dias desde uma época definida. */ 
-    long fim_dias;          /**< Data final do intervalo, representada em dias desde a mesma época. */ 
+typedef struct {
+    GHashTable *contagem;   /**< Tabela de dispersão que mapeia doc_number -> count. */
+    long inicio_dias;       /**< Data inicial do intervalo, representada em dias desde uma época definida. */
+    long fim_dias;          /**< Data final do intervalo, representada em dias desde a mesma época. */
 } DadosTop10;
 
 /**
@@ -107,11 +107,11 @@ typedef struct {
 static int semana_no_intervalo(long id_semana, long inicio, long fim) {
     if (inicio < 0 || fim < 0) return 1;
     long dom = id_semana, sab = id_semana + 6;
-    
+
     return (dom <= fim && sab >= inicio);
 }
 
-/** 
+/**
  * Callback chamada para cada entrada do Top 10 semanal
  * pré-calculado no gestor de reservas.
  *
@@ -137,7 +137,7 @@ static void conta_top10(long id_semana,
     (*c)++;
 }
 
-/** 
+/**
  * =====================================================
  * QUERY 4 — IMPLEMENTAÇÃO PRINCIPAL
  * ===================================================== */
@@ -145,8 +145,8 @@ static void conta_top10(long id_semana,
 char *query4(const char *linhaComando,
              GestorPassengers *gestorPassageiros,
              GestorReservations *gestorReservas) {
-    
-     /** 
+
+   /**
      * =================================================
      * FASE 0: Parse do filtro opcional de datas
      * =================================================
@@ -155,15 +155,15 @@ char *query4(const char *linhaComando,
     char data_ini_str[32] = "";
     char data_fim_str[32] = "";
     long inicio_dias = -1, fim_dias = -1;
-    
+
     if (linhaComando && linhaComando[0] != '\0') {
         if (sscanf(linhaComando, "%31s %31s", data_ini_str, data_fim_str) == 2) {
             inicio_dias = parse_data_str(data_ini_str);
             fim_dias = parse_data_str(data_fim_str);
         }
     }
-    
-    /**  
+
+    /**
      * =================================================
      * FASE 1 + 2: Usar cache de Top 10 semanal
      * =================================================
@@ -172,16 +172,16 @@ char *query4(const char *linhaComando,
     GHashTable *contagem_top10 = g_hash_table_new_full(
         g_str_hash, g_str_equal, g_free, g_free
     );
-    
+
     DadosTop10 dados_top = {
         .contagem = contagem_top10,
         .inicio_dias = inicio_dias,
         .fim_dias = fim_dias
     };
-    
+
     gestor_reservations_foreach_top10(gestorReservas, conta_top10, &dados_top);
 
-    /**  
+    /**
      * =================================================
      * FASE 3: Encontrar passageiro vencedor
      * =================================================
@@ -191,60 +191,60 @@ char *query4(const char *linhaComando,
         g_hash_table_destroy(contagem_top10);
         return strdup("\n");
     }
-    
+
     const char *melhor_doc = NULL;
     int max_count = 0;
-    
+
     GHashTableIter iter_cnt;
     gpointer key_doc, val_cnt;
     g_hash_table_iter_init(&iter_cnt, contagem_top10);
-    
+
     while (g_hash_table_iter_next(&iter_cnt, &key_doc, &val_cnt)) {
         int count = *((int *)val_cnt);
         const char *doc = key_doc;
-        
+
         // Mais aparições OU empate com menor doc_number
-        if (count > max_count || 
+        if (count > max_count ||
             (count == max_count && melhor_doc && strcmp(doc, melhor_doc) < 0)) {
             max_count = count;
             melhor_doc = doc;
         }
     }
-    
-    /** 
+
+    /**
      * =================================================
      * FASE 4: Construção do resultado
      * =================================================
      */
-    
+
     char *resultado = NULL;
-    
+
     if (melhor_doc && max_count > 0) {
         // Procurar passageiro usando a string com 9 dígitos
         Passageiros *p = gestor_passengers_procura(gestorPassageiros, melhor_doc);
-        
+
         if (p) {
             // Getters devolvem ponteiros internos; não é necessário libertar
-            const char *primeiro = passenger_get_primeiro(p); 
-            const char *ultimo = passenger_get_ultimo(p);  
-            const char *nacionalidade = passenger_get_nacionalidade(p); 
-            int dob_int = passenger_get_data(p);  
-            
+            const char *primeiro = passenger_get_primeiro(p);
+            const char *ultimo = passenger_get_ultimo(p);
+            const char *nacionalidade = passenger_get_nacionalidade(p);
+            int dob_int = passenger_get_data(p);
+
             // Formatar dob: YYYYMMDD -> YYYY-MM-DD
             char dob_str[16];
             snprintf(dob_str, sizeof(dob_str), "%04d-%02d-%02d",
-                    dob_int / 10000, 
-                    (dob_int / 100) % 100, 
+                    dob_int / 10000,
+                    (dob_int / 100) % 100,
                     dob_int % 100);
-            
+
             // Output com VÍRGULAS (o interpreter converte para ; ou =)
             // Formato: document_number,first_name,last_name,dob,nationality,count_top_10
             if (asprintf(&resultado, "%s;%s;%s;%s;%s;%d\n",
-                        melhor_doc, 
-                        primeiro, 
-                        ultimo, 
-                        dob_str, 
-                        nacionalidade, 
+                        melhor_doc,
+                        primeiro,
+                        ultimo,
+                        dob_str,
+                        nacionalidade,
                         max_count) == -1) {
                 resultado = strdup("\n");
             }
@@ -255,10 +255,10 @@ char *query4(const char *linhaComando,
     } else {
         resultado = strdup("\n");
     }
-    
+
     // Limpeza
     g_hash_table_destroy(contagem_top10);
-    
-    
+
+
     return resultado;
 }

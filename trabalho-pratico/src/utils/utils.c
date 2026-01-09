@@ -108,31 +108,31 @@ void string_pool_destroy(StringPool *pool) {
 
 /**
  * Divide uma linha CSV em campos individuais.
- * 
+ *
  * Suporta campos com aspas e vírgulas dentro dos campos.
  */
 
 int csv_split(const char *line, char ***fields, size_t *count) {
     if (!line || !fields || !count) return -1;
-    
+
     *fields = NULL;
     *count = 0;
-    
+
     //começa com capacidade para 16 campos
     size_t capacity = 16;
     char **result = malloc(capacity * sizeof(char*));
     if (!result) return -1;
-    
+
     const char *p = line;
-    
+
     while (*p) {
         //salta espaços no inicio
         while (*p && isspace((unsigned char)*p)) p++;
         if (!*p) break;
-        
+
         const char *start;
         const char *end;
-        
+
         //verifica se o campo tem aspas
         if (*p == '"') {
             p++; //passa a aspa inicial
@@ -146,7 +146,7 @@ int csv_split(const char *line, char ***fields, size_t *count) {
             while (*p && *p != ',') p++;
             end = p;
         }
-        
+
         //aloca espaço e copia o campo
         size_t len = end - start;
         char *field = malloc(len + 1);
@@ -156,7 +156,7 @@ int csv_split(const char *line, char ***fields, size_t *count) {
         }
         memcpy(field, start, len);
         field[len] = '\0';
-        
+
         //expande array se necessário
         if (*count >= capacity) {
             capacity *= 2;
@@ -168,14 +168,14 @@ int csv_split(const char *line, char ***fields, size_t *count) {
             }
             result = new_result;
         }
-        
+
         result[*count] = field;
         (*count)++;
-        
+
         //passa a vírgula se houver
         if (*p == ',') p++;
     }
-    
+
     *fields = result;
     return 0;
 }
@@ -226,6 +226,10 @@ void errors_begin(void) {
     }
 }
 
+/**
+ * Cria uma nova estrutura Erro e adiciona-a à lista interna.
+ */
+
 void errors_add(const char *ficheiro, int linha, const char *mensagem) {
     if (!ficheiro || !mensagem) return;
     Erro *e = g_new(Erro, 1);
@@ -234,6 +238,10 @@ void errors_add(const char *ficheiro, int linha, const char *mensagem) {
     e->mensagem = g_strdup(mensagem);
     ERROS = g_list_append(ERROS, e);
 }
+
+/**
+ * Escreve todos os erros registados para um ficheiro CSV.
+ */
 
 void errors_write_csv(const char *caminho) {
     FILE *f = fopen(caminho, "w");
@@ -248,6 +256,10 @@ void errors_write_csv(const char *caminho) {
     }
     fclose(f);
 }
+
+/**
+ * Finaliza o sistema de registo de erros.
+ */
 
 void errors_end(void) {
     for (GList *l = ERROS; l; l = l->next) {

@@ -6,7 +6,6 @@
 typedef struct _StringPool StringPool;
 
 #include <stdint.h>
-#include <glib.h>
 
 /**
  * @file airports.h
