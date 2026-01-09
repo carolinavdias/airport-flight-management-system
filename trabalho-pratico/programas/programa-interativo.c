@@ -117,7 +117,7 @@ static void mostra_menu() {
  * Carrega dataset.
  */
 
-static int carrega_dataset(EstadoPrograma *estado, const char *caminho, StringPool *pool) {
+static int carrega_dataset(EstadoPrograma *estado, const char *caminho, char **caminho_atual, StringPool *pool) {
     printf(COLOR_YELLOW "\n⏳ A carregar dados de: %s\n" COLOR_RESET, caminho);
 
     Contexto *ctx = cria_contexto();
@@ -166,6 +166,11 @@ static int carrega_dataset(EstadoPrograma *estado, const char *caminho, StringPo
     else return 0;
 
     free(lidos);
+
+    //Atualiza o caminho
+    if (*caminho_atual) free(*caminho_atual);
+    *caminho_atual = strdup(caminho);
+
     return 1;
 }
 
@@ -248,7 +253,7 @@ static void executa_query3(EstadoPrograma *estado) {
     char *data_inicio = le_linha();
     if (!data_inicio || data_inicio[0] == '\0' || !valida_Data(data_inicio)) {
         printf(COLOR_RED "⚠ Data inválida!\n" COLOR_RESET);
-        free(data_inicio);
+        if (data_inicio) free(data_inicio);
         return;
     }
 
@@ -257,7 +262,7 @@ static void executa_query3(EstadoPrograma *estado) {
     if (!data_fim || data_fim[0] == '\0' || !valida_Data(data_fim)) {
         printf(COLOR_RED "⚠ Data inválida!\n" COLOR_RESET);
         free(data_inicio);
-        free(data_fim);
+        if (data_fim) free(data_fim);
         return;
     }
 
@@ -297,20 +302,22 @@ static void executa_query4(EstadoPrograma *estado) {
     if (data_inicio && data_inicio[0] != '\0') {
 	if (!valida_Data(data_inicio)) {
             printf(COLOR_RED "⚠ Data inválida!\n" COLOR_RESET);
-            free(data_inicio);
+            if (data_inicio) free(data_inicio);
             return;
 	}
 	else {
 	    printf("Data fim (YYYY-MM-DD): ");
-    	    char *data_fim = le_linha();
+    	    data_fim = le_linha();
             if (!data_fim || data_fim[0] == '\0') {
             	printf(COLOR_RED "⚠ Data inválida!\n" COLOR_RESET);
             	free(data_inicio);
+		if (data_fim) free(data_fim);
             	return;
             }
 	    else if (!valida_Data(data_fim)) {
 	    	printf(COLOR_RED "⚠ Data inválida!\n" COLOR_RESET);
             	free(data_inicio);
+		free(data_fim);
             	return;
 	         } else {
 	    	     snprintf(comando, sizeof(comando), "%s %s", data_inicio, data_fim);
@@ -438,25 +445,25 @@ int main() {
 
     mostra_banner();
     StringPool *pool = cria_string_pool();
+    char *caminho_atual = NULL;
 
     //pede caminho do dataset
     printf(COLOR_CYAN "Digite o caminho do dataset " COLOR_RESET);
-    printf(COLOR_YELLOW "(Enter para './dataset-fase-1'): " COLOR_RESET);
+    printf(COLOR_YELLOW "(Enter para 'dataset-fase-1'): " COLOR_RESET);
 
     char *caminho = le_linha();
     if (!caminho || caminho[0] == '\0') {
         free(caminho);
-        caminho = strdup("./dataset-fase-1");
+        caminho = strdup("dataset-fase-1");
         printf(COLOR_GREEN "✓ A usar caminho padrão: %s\n" COLOR_RESET, caminho);
     }
 
     //carrega dados
-    if (!carrega_dataset(&estado, caminho,pool)) {
+    if (!carrega_dataset(&estado, caminho, &caminho_atual, pool)) {
         printf(COLOR_RED "\n❌ Falha ao carregar dataset. A encerrar...\n" COLOR_RESET);
         free(caminho);
         return EXIT_FAILURE;
     }
-
     free(caminho);
 
     //loop principal
@@ -501,11 +508,16 @@ int main() {
             case 'R':
                 printf(COLOR_CYAN "\nDigite o novo caminho do dataset: " COLOR_RESET);
                 caminho = le_linha();
+		if (strcmp(caminho,caminho_atual) == 0) {
+		    printf (COLOR_GREEN "✓ Caminho atual!\n" COLOR_RESET);
+	   	    free(caminho);
+		    break;
+		}
 
                 if (caminho && caminho[0] != '\0' && g_file_test(caminho,G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
                     liberta_recursos(&estado);
 		    string_pool_clear(pool);
-		    if (!carrega_dataset(&estado, caminho,pool)) {
+		    if (!carrega_dataset(&estado, caminho, &caminho_atual, pool)) {
         		printf(COLOR_RED "\n❌ Falha ao carregar dataset. A encerrar...\n" COLOR_RESET);
         		free(caminho);
         		return EXIT_FAILURE;
@@ -535,6 +547,7 @@ int main() {
     }
 
     //limpa
+    free(caminho_atual);
     printf(COLOR_YELLOW "\n👋 A encerrar programa...\n" COLOR_RESET);
     liberta_recursos(&estado);
     string_pool_destroy(pool);
