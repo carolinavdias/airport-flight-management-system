@@ -1,46 +1,21 @@
-cat > .gitignore << 'EOF'
 # Binários e objetos
 obj/
 *.o
 programa-principal
 programa-testes
+programa-interativo
 
-# Resultados (gerados na execução)
+# Resultados
 resultados/
-resultados-esperados/
 
-# Datasets (NUNCA no Git!)
-dataset/
-datasets/
-dataset*/
-data*/
-*.csv
-!resultados/*.csv
+# Editor
+.vscode/
+
+# Ficheiros macOS
+._*
+.DS_Store
 
 # Temporários
 *.swp
 *.log
 *.tmp
-*.zip
-*_errors.csv
-*.sh
-TESTAR_LOCAL.sh
-input_teste.txt
-teste.*
-
-# Backups
-backup*/
-*.backup
-EOF
-
-# 4. Verificar estrutura
-tree -L 2 -I 'obj|resultados*|dataset*'
-
-# Deve mostrar:
-# .
-# ├── include/
-# ├── src/
-# ├── programa-principal.c
-# ├── programa-testes.c
-# ├── Makefile
-# └── .gitignore
