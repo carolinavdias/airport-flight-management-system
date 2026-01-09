@@ -366,6 +366,7 @@ static void executa_query5(EstadoPrograma *estado) {
         printf(COLOR_YELLOW "\n⚠ Nenhum resultado encontrado.\n" COLOR_RESET);
     }
 
+    limpa_buffer();
     free(resultado);
 }
 
