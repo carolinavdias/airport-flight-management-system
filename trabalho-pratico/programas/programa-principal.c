@@ -18,6 +18,15 @@
 #include "queries/interpreter.h"
 
 /**
+ * Este módulo:
+ *  - inicializa gestores e caches
+ *  - lê o dataset completo
+ *  - processa o ficheiro de comandos
+ *  - escreve os resultados em ficheiros individuais
+ *  - gera o ficheiro de erros
+ */
+
+/**
  * Função auxiliar para processar linha de comando.
  */
 

@@ -6,7 +6,7 @@
 
  /** 
   * @file validacoes_aircrafts.h 
-  * @brief Validações sintáticas e semânticas para aeronaves. 
+  * @brief Validações sintáticas para aeronaves. 
   * 
   * Este módulo contém funções responsáveis por validar campos individuais 
   * e conjuntos de campos associados a aeronaves durante o parsing. 

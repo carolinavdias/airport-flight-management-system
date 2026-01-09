@@ -5,7 +5,7 @@
 
 /** 
  * @file validacoes_passengers.h 
- * @brief Validações sintáticas e semânticas para passageiros. 
+ * @brief Validações sintáticas para passageiros. 
  * 
  * Este módulo contém funções responsáveis por validar campos individuais 
  * e conjuntos de campos associados a passageiros durante o parsing. 

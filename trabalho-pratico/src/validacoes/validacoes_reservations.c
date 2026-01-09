@@ -57,8 +57,6 @@ int valida_set_voos_reservados(const char *s, Reservas *r, StringPool *pool) {
     }
 
     r_set_lista(r, novo);
-    //liberta_lista_reserva(novo);
-    //free(novo);  //libertar a estrutura Voos_reservados após copiar!
     g_free(string_voos);
     return 1;
 }

@@ -5,7 +5,7 @@
 #include <glib.h>
 /**
  * @file validacoes_airports.h
- * @brief Validações sintáticas e semânticas para aeroportos.
+ * @brief Validações sintáticas para aeroportos.
  *
  * Este módulo contém funções responsáveis por validar campos individuais
  * e conjuntos de campos associados a aeroportos durante o parsing.

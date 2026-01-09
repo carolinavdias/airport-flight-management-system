@@ -17,7 +17,6 @@
  * Inclui:
  *  - validação sintática do ID da reserva;
  *  - validação da lista de voos reservados;
- *  - validação de campos booleanos;
  *  - validação lógica completa (existência de voos, passageiro e escala);
  *  - criação da estrutura Reservas apenas quando os dados são válidos.
  */

@@ -7,6 +7,14 @@
 #include <sys/resource.h>
 
 /**
+ * Este programa:
+ *  - executa o programa-principal com um dataset e ficheiro de comandos
+ *  - compara os outputs gerados com os resultados esperados
+ *  - mede tempo e memória usados
+ *  - apresenta um resumo final
+ */
+
+/**
  * Compara dois ficheiros linha a linha.
  */
 

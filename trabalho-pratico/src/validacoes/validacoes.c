@@ -119,7 +119,7 @@ int valida_id_voo (const char *s) {
 
 
 /**
- * Valida o id do passageiro e faz o atoi (int)
+ * Valida o id do passageiro (9 dígitos).
  */
 
 int valida_id_passageiro(const char *s) {
