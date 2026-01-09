@@ -2,6 +2,7 @@
 #define FLIGHTS_H
 
 /** Forward declaration */
+
 typedef struct _StringPool StringPool;
 
 #include <stdint.h>

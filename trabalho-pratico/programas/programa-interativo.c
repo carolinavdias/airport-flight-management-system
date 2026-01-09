@@ -22,7 +22,6 @@
 #include "gestor_entidades/gestor_reservations.h"
 #include "gestor_entidades/gestor.h"
 
-#include "errors/errors.h"
 #include "utils/utils.h"
 
 #include "IO/processador_input_interativo.h"

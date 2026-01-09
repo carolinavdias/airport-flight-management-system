@@ -13,7 +13,6 @@
 #include "gestor_entidades/gestor.h"
 
 #include "utils/utils.h"
-#include "errors/errors.h"
 #include "parsers/parser.h"
 #include "queries/interpreter.h"
 
