@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <string.h>
 
+/** Tamanho máximo de uma linha lida do CSV. */
+
 #define MAX_LINHA 2000
 
 /**
@@ -21,7 +23,6 @@ int parser_input_read_header(const char *dataset_dir, const char *filename, char
     if (ficheiro == NULL) return 0;
     
     char buffer[MAX_LINHA];
-    //int no_header = 1;
     
     if (fgets(buffer, sizeof(buffer), ficheiro) == NULL) {
         fclose(ficheiro);

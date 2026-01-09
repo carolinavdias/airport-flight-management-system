@@ -23,7 +23,7 @@ static void trim_newline(char *s) {
 }
 
 /**
- * @brief Processa um comando individual.
+ * Processa um comando individual.
  */
 
 static int processar_comando(GestorGeral *gestor, char *input) {
@@ -61,6 +61,10 @@ static int processar_comando(GestorGeral *gestor, char *input) {
 /* ============================================================
  * API PÚBLICA
  * ============================================================ */
+
+/**
+ * Inicia o ciclo principal do modo interativo.
+ */
 
 void modo_interativo(GestorGeral *gestor) {
     char buffer[MAX_FOR_INPUT];

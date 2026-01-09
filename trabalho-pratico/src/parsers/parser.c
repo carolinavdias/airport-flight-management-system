@@ -12,6 +12,7 @@
 #include <glib.h>
 
 /* Declaração interna - função não exposta no header público */
+
 extern void gestor_flights_set_contagens_aircraft(GestorFlights *g, GHashTable *contagens);
 
 /**
@@ -73,7 +74,6 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
 
     // Inicializar contagens de passageiros por aeroporto (para Q1 otimizada)
     gestor_airports_init_contagens(AP);
-
 
     gchar *caminhoAeroportos = g_build_filename(get_contexto(ctx), "airports.csv", NULL);
     gchar *caminhoAeronaves  = g_build_filename(get_contexto(ctx), "aircrafts.csv", NULL);
@@ -154,8 +154,6 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
 
 	    }
 
-//            Estrt_aux_q5 *lista_Q5 = init_lista();
-
            while (fgets(buffer, sizeof(buffer), ficheiro) && no_header) {
 
                buffer[strcspn(buffer, "\n")] = '\0';
@@ -213,22 +211,6 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                                 }
 			    }
 
-/*
-                            //ADICIONA ao array local (se válido para query3)
-                            if (voo_get_status(voo_atual) != ESTADO_CANCELLED && voo_get_code_origin(voo_atual)) {
-                            	if (num_voos_array >= capacidade_array) {
-                                    capacidade_array *= 2;
-                                    Voo **temp = realloc(array_voos, capacidade_array * sizeof(Voo *));
-				    if (!temp) {
-					erro_fatal = 1;
-					break;
-				    } else {
-					array_voos = temp;
-				    }
-                            	}
-                            	array_voos[num_voos_array++] = voo_atual;
-                            }
-*/
                             // Popular cache Q5: atrasos por airline (so voos Delayed)
                             if (voo_get_status(voo_atual) == ESTADO_DELAYED) {
                                 const char *airline = voo_get_airline(voo_atual);
@@ -246,17 +228,14 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                                     int delay = act_total - dep_total;
                                     if (delay < 0) delay = 0;
                                     gestor_flights_add_atraso_q5(V, airline, delay);
-                                    //g_free(airline);
                                 }
                             }
                    	} else linha_valida = 0;
-                   	//csv_file_error_name = strdup("resultados/flights_errors.csv");
                    	break;
                    case 4:
                    	Passageiros *passageiro_atual = validacoes_campos_passengers(campos,pool);
                    	if (passageiro_atual) gestor_passengers_inserir(P, passageiro_atual);
                    	else linha_valida = 0;
-                   	//csv_file_error_name = strdup("resultados/passengers_errors.csv");
                    	break;
                    case 5:
                         Reservas *reserva_atual = validacoes_campos_reservations(campos,V,P,pool);
@@ -305,7 +284,6 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                                 }
                             }
                         } else linha_valida = 0;
-                        //csv_file_error_name = strdup("resultados/reservations_errors.csv");
                         break;
 
            	}
