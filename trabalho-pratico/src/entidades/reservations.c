@@ -134,8 +134,6 @@ void r_set_preco (Reservas *r, char *s) {
 
 Reservas *criaReserva () {
     Reservas *r = calloc (1, sizeof *r);
-    r->reserva_lista->n_voos = 0;
-    r->reserva_lista->lista_voos_reservados = NULL;
     return r;
 }
 
