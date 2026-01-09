@@ -7,6 +7,7 @@
 #include <glib.h>
 
 #include "parsers/parser.h"
+#include "validacoes/validacoes.h"
 
 #include "queries/q1.h"
 #include "queries/q2.h"
@@ -73,11 +74,11 @@ static char *le_linha() {
 	free(linha);
 	return NULL;
     }
- 
+
     if (len > 0 && linha[len-1] == '\n') {
         linha[len-1] = '\0';
     }
-    
+
     return linha;
 }
 
@@ -151,11 +152,17 @@ static int carrega_dataset(EstadoPrograma *estado, const char *caminho, StringPo
     gestor_reservations_finaliza_cache_q4(estado->gestorReservas);
     //printf ("%d %d %d %d %d\n", lidos[1], lidos[2], lidos[3], lidos[4], lidos[5]); NÃO APAGAR, ÚTIL para debugs
     errors_end();
-    free(lidos);
     free(ctx);
-    
-    printf(COLOR_GREEN "✓ Dados carregados com sucesso!\n" COLOR_RESET);
+
+    int i = 1, sucesso = 1;
+    for (; sucesso != 0 && i < 6; i++) {
+ 	if (lidos[i] == 0) sucesso = 0;
+    }
+
+    if (sucesso) printf(COLOR_GREEN "✓ Dados carregados com sucesso!\n" COLOR_RESET);
+    else printf (COLOR_RED "❌ Erro ao carregar dados: localizado no ficheiro.csv nº%d!\n" COLOR_RESET, i-1);
     estado->dados_carregados = 1;
+    free(lidos);
     return 1;
 }
 
@@ -299,9 +306,13 @@ static void executa_query4(EstadoPrograma *estado) {
             free(data_inicio);
             return;
         }
-	else {
-	    snprintf(comando, sizeof(comando), "%s %s", data_inicio, data_fim);
-   	}
+	else if (!valida_Data(data_fim)) {
+	    printf(COLOR_RED "⚠ Data inválida!\n" COLOR_RESET);
+            free(data_inicio);
+            return;
+	     } else {
+	    	snprintf(comando, sizeof(comando), "%s %s", data_inicio, data_fim);
+   	     }
     }
 /*
 	 &&
@@ -396,7 +407,7 @@ static void liberta_recursos(EstadoPrograma *estado) {
     if (estado->gestorAeroportos) gestor_airports_liberta(estado->gestorAeroportos);
     if (estado->gestorPassageiros) gestor_passengers_destroy(estado->gestorPassageiros);
     if (estado->gestorReservas) gestor_reservations_liberta(estado->gestorReservas);
-    
+
     estado->dados_carregados = 0;
 }
 
@@ -421,12 +432,12 @@ int main() {
     
     //pede caminho do dataset
     printf(COLOR_CYAN "Digite o caminho do dataset " COLOR_RESET);
-    printf(COLOR_YELLOW "(Enter para './dataset'): " COLOR_RESET);
+    printf(COLOR_YELLOW "(Enter para './dataset-fase-1'): " COLOR_RESET);
     
     char *caminho = le_linha();
     if (!caminho || caminho[0] == '\0') {
         free(caminho);
-        caminho = strdup("./dataset");
+        caminho = strdup("./dataset-fase-1");
         printf(COLOR_GREEN "✓ A usar caminho padrão: %s\n" COLOR_RESET, caminho);
     }
     
@@ -450,7 +461,7 @@ int main() {
         //remove newline
         opcao[strcspn(opcao, "\n")] = '\0';
         
-        if (strlen(opcao) == 0) continue;
+        //if (strlen(opcao) == 0) continue;
         
         switch (opcao[0]) {
             case '1':

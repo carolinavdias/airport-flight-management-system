@@ -1,7 +1,7 @@
 #ifndef GESTOR_FLIGHTS_H
 #define GESTOR_FLIGHTS_H
 
-#include <glib.h>
+//#include <glib.h>
 #include <stdbool.h>
 #include "entidades/flights.h"
 
@@ -168,6 +168,77 @@ Voo **gestor_flights_get_array_ordenado(GestorFlights *g, int *num_voos);
 int gestor_flights_get_contagem_aircraft(GestorFlights *g, const char *aircraft_id);
 
 /**
+ * @struct tabelaContagens
+ * @brief Estrutura opaca que representa uma tabela de contagens.
+ * Estrutura que representa a tabela de contagens usada em Q2
+ */
+
+typedef struct tabelaContagens TabelaContagens;
+
+/**
+ * @brief Cria uma nova tabela de contagens sem tabela interna associada.
+ *
+ * Aloca e inicializa uma instância de `TabelaContagens` com todos os
+ * campos a zero (`NULL`).
+ *
+ * @return Ponteiro para a nova `TabelaContagens`, ou `NULL` em caso
+ *         de falha de alocação.
+ */
+
+TabelaContagens *cria_set_null_contagens(void);
+
+/**
+ * @brief Inicializa a hash table interna da tabela de contagens.
+ *
+ * Cria a `GHashTable` interna associada à estrutura `TabelaContagens`.
+ * Esta função deve ser chamada antes de qualquer inserção ou procura.
+ *
+ * @param contagens Ponteiro para a tabela de contagens a inicializar.
+ */
+
+int define_tabela_contagens (TabelaContagens *contagens);
+
+/**
+ * @brief Procura o valor associado a uma chave na tabela de contagens.
+ *
+ * @param contagens Ponteiro para a estrutura de contagens.
+ * @param chave String usada como chave de pesquisa (por exemplo, aircraft_id).
+ *
+ * @param encontrado Ponteiro opcional para um inteiro onde será indicado:
+ *        - 1 se a chave foi encontrada na tabela
+ *        - 0 se a chave não existe ou ocorreu erro
+ *        Pode ser NULL se essa informação não for necessária.
+ *
+ * @return O valor inteiro associado à chave se existir,
+ *         ou 0 caso a chave não exista ou em caso de erro.
+ */
+
+int procura_em_contagens (TabelaContagens *contagens, const char *chave, int *encontrado);
+
+/**
+ * @brief Insere ou atualiza uma entrada na tabela de contagens.
+ *
+ * Associa a string fornecida ao valor inteiro indicado.
+ *
+ * @param c Ponteiro para a tabela de contagens.
+ * @param s String usada como chave.
+ * @param valor Valor inteiro a associar à chave.
+ */
+
+void tabela_contagens_inserir (TabelaContagens *c, const char *s, int valor);
+
+/**
+ * @brief Liberta todos os recursos associados à tabela de contagens.
+ *
+ * Destrói a hash table interna (se existir) e liberta a estrutura
+ * `TabelaContagens`.
+ *
+ * @param c Ponteiro para a tabela de contagens a destruir.
+ */
+
+void tabela_contagens_destroy (TabelaContagens *c);
+
+/**
  * @brief Define a tabela de contagens de voos por aircraft_id (Q2).
  *
  * Esta função associa ao gestor de voos uma hash table onde cada chave é um
@@ -184,7 +255,7 @@ int gestor_flights_get_contagem_aircraft(GestorFlights *g, const char *aircraft_
  *        - valor: ´GINT_TO_POINTER(int)´ (contagem de voos)
  */
 
-void gestor_flights_set_contagens_aircraft(GestorFlights *g, GHashTable *contagens);
+void gestor_flights_set_contagens_aircraft(GestorFlights *g, TabelaContagens *contagens);
 
 /* ============================================
  * PROCURA

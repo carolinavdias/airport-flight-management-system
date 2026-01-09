@@ -13,7 +13,7 @@
 
 /* Declaração interna - função não exposta no header público */
 
-extern void gestor_flights_set_contagens_aircraft(GestorFlights *g, GHashTable *contagens);
+extern void gestor_flights_set_contagens_aircraft(GestorFlights *g, TabelaContagens *contagens);
 
 /**
  * Calcula o dia da semana (0 = domingo, 6 = sábado).
@@ -140,14 +140,15 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
 	    Voo **array_voos = NULL;
 
 	    //tabela de contagens para Q2
-	    GHashTable *contagens = NULL;
+	    TabelaContagens *contagens = cria_set_null_contagens();
 
 	    if (c == 3) {
 	 	array_voos = malloc(capacidade_array * sizeof(Voo *));
-                contagens = g_hash_table_new(g_str_hash, g_str_equal);
 
-		if (!array_voos || !contagens) {
+		if (!array_voos || !contagens || !define_tabela_contagens(contagens)) {
 		    fclose(ficheiro);
+    		    if (contagens) tabela_contagens_destroy(contagens);
+    		    if (array_voos) free(array_voos);
 		    resultados_read[c] = 0;
 		    continue;
 	        }
@@ -187,9 +188,9 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
 				//CONTA voos por aircraft (para Q2) - só voos não cancelados
                             	const char *aircraft_id = voo_get_id_aircraft(voo_atual);
 				if (aircraft_id) {
-                                    gpointer ptr = g_hash_table_lookup(contagens, aircraft_id);
-                                    int count = ptr ? GPOINTER_TO_INT(ptr) : 0;
-                                    g_hash_table_insert(contagens, (gpointer)aircraft_id, GINT_TO_POINTER(count + 1));
+    				    int existe;
+    				    int count = procura_em_contagens(contagens, aircraft_id, &existe);
+    				    tabela_contagens_inserir(contagens, aircraft_id, count + 1);
                             	}
 
 				//ADICIONA ao array local (se válido para query3)
@@ -316,7 +317,7 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
     	   if (erro_fatal) {
     		if (c == 3) {
         	    free(array_voos);
-        	    g_hash_table_destroy(contagens);
+		    tabela_contagens_destroy (contagens);
     		}
     		resultados_read[c] = 0;
 		continue;
@@ -332,6 +333,10 @@ int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircra
                     //passa tabela de contagens para o gestor
                     gestor_flights_set_contagens_aircraft(V, contagens);
 		}
+	   }
+
+	   if (c != 3) {
+		if (contagens) tabela_contagens_destroy (contagens);
 	   }
 
            if (ficheiro_erros) fclose(ficheiro_erros);

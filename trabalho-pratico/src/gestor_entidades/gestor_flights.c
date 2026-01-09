@@ -1,7 +1,9 @@
 #include "gestor_entidades/gestor_flights.h"
 #include "entidades/flights.h"
-#include "queries/q5.h"
+//#include "queries/q5.h"
 #include "utils/utils.h"
+
+#include <glib.h>
 
 /* ============================================
  * ESTRUTURA
@@ -20,7 +22,7 @@ typedef struct gestor_flights {
     GHashTable *tabela_voos;          /**< Tabela principal de voos */
     Voo **array_ordenado;             /**< Array ordenado por data (Q3) */
     int num_voos;                     /**< Número de voos no array ordenado */
-    GHashTable *contagens_aircraft;   /**< Contagens por aircraft_id (Q2) */
+    TabelaContagens *contagens_aircraft;   /**< Contagens por aircraft_id (Q2) */
     GHashTable *cache_q5;             /**< airline -> {total_delay, count} para Q5 */
 } GestorFlights;
 
@@ -56,7 +58,7 @@ void gestor_flights_destroy(GestorFlights *g) {
     if (!g) return;
     g_hash_table_destroy(g->tabela_voos);
     if (g->array_ordenado) free(g->array_ordenado);
-    if (g->contagens_aircraft) g_hash_table_destroy(g->contagens_aircraft);
+    if (g->contagens_aircraft) tabela_contagens_destroy(g->contagens_aircraft); //g_hash_table_destroy(g->contagens_aircraft);
     if (g->cache_q5) g_hash_table_destroy(g->cache_q5);
     free(g);
 }
@@ -139,14 +141,58 @@ Voo **gestor_flights_get_array_ordenado(GestorFlights *g, int *num_voos) {
  * CONTAGENS DE AIRCRAFT (Q2)
  * ============================================ */
 
-void gestor_flights_set_contagens_aircraft(GestorFlights *g, GHashTable *contagens) {
-    if (!g) return;
+/**
+ * @struct tabelaContagens
+ */
+
+typedef struct tabelaContagens {
+    GHashTable *tabela;
+} TabelaContagens;
+
+TabelaContagens *cria_set_null_contagens(void) {
+    TabelaContagens *contagens = calloc(1, sizeof *contagens);
+    return contagens;
+}
+
+int define_tabela_contagens (TabelaContagens *contagens) {
+    contagens->tabela = g_hash_table_new(g_str_hash, g_str_equal);
+    return (contagens->tabela != NULL);
+}
+
+int procura_em_contagens (TabelaContagens *contagens, const char *chave, int *encontrado) {
+    if (!contagens || !contagens->tabela || !chave) {
+        if (encontrado) *encontrado = 0;
+        return 0;
+    }
+    gpointer ptr = g_hash_table_lookup(contagens->tabela, chave);
+    if (!ptr) {
+        if (encontrado) *encontrado = 0;
+        return 0;
+    }
+    if (encontrado) *encontrado = 1;
+    return GPOINTER_TO_INT(ptr);
+}
+
+void tabela_contagens_inserir (TabelaContagens *c, const char *s, int valor) {
+    if (!c || !c->tabela || !s) return;
+    g_hash_table_insert(c->tabela, (gpointer)s, GINT_TO_POINTER(valor));
+}
+
+void tabela_contagens_destroy (TabelaContagens *c) {
+    if (!c) return;
+    if (c->tabela) g_hash_table_destroy(c->tabela);
+    g_free(c);
+}
+
+void gestor_flights_set_contagens_aircraft(GestorFlights *g, TabelaContagens *contagens) {
+    if (!g || !contagens) return;
     g->contagens_aircraft = contagens;
 }
 
 int gestor_flights_get_contagem_aircraft(GestorFlights *g, const char *aircraft_id) {
     if (!g || !g->contagens_aircraft || !aircraft_id) return 0;
-    gpointer val = g_hash_table_lookup(g->contagens_aircraft, aircraft_id);
+    TabelaContagens *c = g->contagens_aircraft;
+    gpointer val = g_hash_table_lookup(c->tabela, aircraft_id);
     return val ? GPOINTER_TO_INT(val) : 0;
 }
 

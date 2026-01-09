@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <glib.h>
 
 /* ============================================
  * RESERVAS -> VALIDAÇÃO SINTÁTICA
