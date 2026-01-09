@@ -83,7 +83,7 @@ typedef struct {
 static void processa_aeronave(Aeronave *a, void *user_data) {
     DadosFiltro *dados = user_data;
 
-    //guardar getter para libertar
+    // guardar ponteiro para o fabricante (string interna, não libertar)
     const char *manuf_str = aircraft_get_manufacturer(a);
     
     // filtro

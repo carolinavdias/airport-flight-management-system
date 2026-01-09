@@ -38,7 +38,8 @@ typedef struct {
     char *airline;        /**< código da companhia aérea */
     long total_delay;     /**< soma total dos atrasos */
     int  delay_count;     /**< número de voos com atraso */
-    double delay_avg;     /**<  atraso médio */
+    double delay_avg;     /**<  atraso médio (total_delay / delay_count)
+    */
 } AirlineData;
 
 /* =====================================================

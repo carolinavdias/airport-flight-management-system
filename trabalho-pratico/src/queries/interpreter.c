@@ -55,7 +55,7 @@ static void aplica_formato(char *str, bool formato_alternativo) {
     
     char separador = formato_alternativo ? '=' : ';';
     
-    //troca TODAS as vírgulas pelo separador correto
+    //troca TODAS os ´;´ pelo separador correto
     for (int i = 0; str[i]; i++) {
         if (str[i] == ';') {
             str[i] = separador;

@@ -47,4 +47,5 @@
 
 char *query1(const char *code, GestorAirports *gestorAeroportos, 
              GestorFlights *gestorVoos, GestorReservations *gestorReservas);
+             
 #endif

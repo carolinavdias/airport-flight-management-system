@@ -224,11 +224,11 @@ char *query4(const char *linhaComando,
         Passageiros *p = gestor_passengers_procura(gestorPassageiros, melhor_doc);
         
         if (p) {
-            // Obter dados (alguns getters retornam cópias!)
-            const char *primeiro = passenger_get_primeiro(p);   // cópia - libertar!
-            const char *ultimo = passenger_get_ultimo(p);       // cópia - libertar!
-            const char *nacionalidade = passenger_get_nacionalidade(p);  // cópia - libertar!
-            int dob_int = passenger_get_data(p);          // int - não libertar
+            // Getters devolvem ponteiros internos; não é necessário libertar
+            const char *primeiro = passenger_get_primeiro(p); 
+            const char *ultimo = passenger_get_ultimo(p);  
+            const char *nacionalidade = passenger_get_nacionalidade(p); 
+            int dob_int = passenger_get_data(p);  
             
             // Formatar dob: YYYYMMDD -> YYYY-MM-DD
             char dob_str[16];

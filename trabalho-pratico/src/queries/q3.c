@@ -132,7 +132,7 @@ char *query3(const char *data_inicio, const char *data_fim,
         }
     }
 
-    //encontra aeroporto com mais voos (partidas + chegadas)
+    //encontra aeroporto com mais partidas
     const char *melhor = NULL;
     int max_total = 0;
     int melhor_partidas = 0;
