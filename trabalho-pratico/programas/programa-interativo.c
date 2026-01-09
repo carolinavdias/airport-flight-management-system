@@ -119,16 +119,17 @@ static void mostra_menu() {
 
 static int carrega_dataset(EstadoPrograma *estado, const char *caminho, StringPool *pool) {
     printf(COLOR_YELLOW "\n⏳ A carregar dados de: %s\n" COLOR_RESET, caminho);
-    
+
     Contexto *ctx = cria_contexto();
     if (!ctx) {
         printf(COLOR_RED "❌ Erro ao criar contexto!\n" COLOR_RESET);
         return 0;
     }
-    
+
     set_contexto(ctx, caminho);
     errors_begin();
-    
+    g_mkdir_with_parents("resultados", 0755);
+
     //cria gestores
     estado->gestorAeronaves = gestor_aircrafts_cria();
     estado->gestorVoos = gestor_flights_novo();
@@ -139,18 +140,17 @@ static int carrega_dataset(EstadoPrograma *estado, const char *caminho, StringPo
     gestor_flights_init_cache_q5(estado->gestorVoos);  // Cache para Q5
     gestor_passengers_init_cache_q6(estado->gestorPassageiros);
 
-    if (!estado->gestorAeroportos || !estado->gestorAeronaves || 
+    if (!estado->gestorAeroportos || !estado->gestorAeronaves ||
         !estado->gestorVoos || !estado->gestorPassageiros || !estado->gestorReservas) {
         printf(COLOR_RED "❌ Erro ao criar gestores!\n" COLOR_RESET);
         errors_end();
         return 0;
     }
-    
+
     //carrega dados
-    int *lidos = read_csv(ctx, estado->gestorVoos, estado->gestorAeroportos, 
+    int *lidos = read_csv(ctx, estado->gestorVoos, estado->gestorAeroportos,
           estado->gestorAeronaves, estado->gestorPassageiros, estado->gestorReservas,pool);
     gestor_reservations_finaliza_cache_q4(estado->gestorReservas);
-    //printf ("%d %d %d %d %d\n", lidos[1], lidos[2], lidos[3], lidos[4], lidos[5]); NÃO APAGAR, ÚTIL para debugs
     errors_end();
     free(ctx);
 
@@ -159,9 +159,12 @@ static int carrega_dataset(EstadoPrograma *estado, const char *caminho, StringPo
  	if (lidos[i] == 0) sucesso = 0;
     }
 
-    if (sucesso) printf(COLOR_GREEN "✓ Dados carregados com sucesso!\n" COLOR_RESET);
-    else printf (COLOR_RED "❌ Erro ao carregar dados: localizado no ficheiro.csv nº%d!\n" COLOR_RESET, i-1);
-    estado->dados_carregados = 1;
+    if (sucesso) {
+	printf(COLOR_GREEN "✓ Dados carregados com sucesso!\n" COLOR_RESET);
+	estado->dados_carregados = 1;
+    }
+    else return 0;
+
     free(lidos);
     return 1;
 }
@@ -173,24 +176,24 @@ static int carrega_dataset(EstadoPrograma *estado, const char *caminho, StringPo
 static void executa_query1(EstadoPrograma *estado) {
     printf(COLOR_CYAN "\n╔═══ Query 1: Resumo de Aeroporto ═══╗\n" COLOR_RESET);
     printf("Digite o código IATA do aeroporto: ");
-    
+
     char *codigo = le_linha();
-    if (!codigo || codigo[0] == '\0') {
+    if (!codigo || codigo[0] == '\0' || !valida_codigoIATA(codigo)) {
         printf(COLOR_RED "⚠ Código inválido!\n" COLOR_RESET);
         free(codigo);
         return;
     }
-    
+
     char *resultado = query1(codigo, estado->gestorAeroportos, 
                             estado->gestorVoos, estado->gestorReservas);
-    
+
     if (resultado && resultado[0] != '\n') {
         printf(COLOR_GREEN "\n✓ Resultado:\n" COLOR_RESET);
         printf("%s", resultado);
     } else {
         printf(COLOR_YELLOW "\n⚠ Aeroporto não encontrado ou sem dados.\n" COLOR_RESET);
     }
-    
+
     free(resultado);
     free(codigo);
 }
@@ -202,7 +205,7 @@ static void executa_query1(EstadoPrograma *estado) {
 static void executa_query2(EstadoPrograma *estado) {
     printf(COLOR_CYAN "\n╔═══ Query 2: Top N Aeronaves ═══╗\n" COLOR_RESET);
     printf("Digite N (número de aeronaves): ");
-    
+
     int n;
     if (scanf("%d", &n) != 1 || n <= 0) {
         printf(COLOR_RED "⚠ Número inválido!\n" COLOR_RESET);
@@ -210,26 +213,26 @@ static void executa_query2(EstadoPrograma *estado) {
         return;
     }
     limpa_buffer();
-    
+
     printf("Fabricante (opcional, Enter para todos): ");
     char *fabricante = le_linha();
-    
+
     char comando[512];
     if (fabricante && fabricante[0] != '\0') {
         snprintf(comando, sizeof(comando), "%d %s", n, fabricante);
     } else {
         snprintf(comando, sizeof(comando), "%d", n);
     }
-    
+
     char *resultado = query2(comando, estado->gestorAeronaves, estado->gestorVoos);
-    
+
     if (resultado && resultado[0] != '\n') {
         printf(COLOR_GREEN "\n✓ Resultado:\n" COLOR_RESET);
         printf("%s", resultado);
     } else {
         printf(COLOR_YELLOW "\n⚠ Nenhum resultado encontrado.\n" COLOR_RESET);
     }
-    
+
     free(resultado);
     free(fabricante);
 }
@@ -241,38 +244,38 @@ static void executa_query2(EstadoPrograma *estado) {
 static void executa_query3(EstadoPrograma *estado) {
     printf(COLOR_CYAN "\n╔═══ Query 3: Aeroporto com Mais Partidas ═══╗\n" COLOR_RESET);
     printf("Data início (YYYY-MM-DD): ");
-    
+
     char *data_inicio = le_linha();
-    if (!data_inicio || data_inicio[0] == '\0') {
+    if (!data_inicio || data_inicio[0] == '\0' || !valida_Data(data_inicio)) {
         printf(COLOR_RED "⚠ Data inválida!\n" COLOR_RESET);
         free(data_inicio);
         return;
     }
-    
+
     printf("Data fim (YYYY-MM-DD): ");
     char *data_fim = le_linha();
-    if (!data_fim || data_fim[0] == '\0') {
+    if (!data_fim || data_fim[0] == '\0' || !valida_Data(data_fim)) {
         printf(COLOR_RED "⚠ Data inválida!\n" COLOR_RESET);
         free(data_inicio);
         free(data_fim);
         return;
     }
-    
+
     //adiciona hora
     char inicio_completo[64], fim_completo[64];
     snprintf(inicio_completo, sizeof(inicio_completo), "%s 00:00", data_inicio);
     snprintf(fim_completo, sizeof(fim_completo), "%s 23:59", data_fim);
-    
-    char *resultado = query3(inicio_completo, fim_completo, 
+
+    char *resultado = query3(inicio_completo, fim_completo,
                             estado->gestorVoos, estado->gestorAeroportos);
-    
+
     if (resultado && resultado[0] != '\n') {
         printf(COLOR_GREEN "\n✓ Resultado:\n" COLOR_RESET);
         printf("%s", resultado);
     } else {
         printf(COLOR_YELLOW "\n⚠ Nenhum voo encontrado nesse período.\n" COLOR_RESET);
     }
-    
+
     free(resultado);
     free(data_inicio);
     free(data_fim);
@@ -286,52 +289,44 @@ static void executa_query4(EstadoPrograma *estado) {
     printf(COLOR_CYAN "\n╔═══ Query 4: Passageiro que esteve mais tempo no Top 10 dos que gastaram mais em reservas\n" COLOR_RESET);
 
     printf("Data início Opcional (YYYY-MM-DD), Enter para todos): ");
-    
-    char *data_inicio = le_linha();
-    //limpa_buffer();
-/*
-    if (!data_inicio || data_inicio[0] == '\0') {
-        printf(COLOR_RED "⚠ Data inválida!\n" COLOR_RESET);
-        free(data_inicio);
-        return; */
 
+    char *data_inicio = le_linha();
     char *data_fim = NULL;
     char comando[512];
 
     if (data_inicio && data_inicio[0] != '\0') {
-	printf("Data fim (YYYY-MM-DD): ");
-    	char *data_fim = le_linha();
-        if (!data_fim || data_fim[0] == '\0') {
+	if (!valida_Data(data_inicio)) {
             printf(COLOR_RED "⚠ Data inválida!\n" COLOR_RESET);
             free(data_inicio);
             return;
-        }
-	else if (!valida_Data(data_fim)) {
-	    printf(COLOR_RED "⚠ Data inválida!\n" COLOR_RESET);
-            free(data_inicio);
-            return;
-	     } else {
-	    	snprintf(comando, sizeof(comando), "%s %s", data_inicio, data_fim);
-   	     }
-    }
-/*
-	 &&
-	data_fim    && data_fim[0]    != '\0') {
+	}
+	else {
+	    printf("Data fim (YYYY-MM-DD): ");
+    	    char *data_fim = le_linha();
+            if (!data_fim || data_fim[0] == '\0') {
+            	printf(COLOR_RED "⚠ Data inválida!\n" COLOR_RESET);
+            	free(data_inicio);
+            	return;
+            }
+	    else if (!valida_Data(data_fim)) {
+	    	printf(COLOR_RED "⚠ Data inválida!\n" COLOR_RESET);
+            	free(data_inicio);
+            	return;
+	         } else {
+	    	     snprintf(comando, sizeof(comando), "%s %s", data_inicio, data_fim);
+   	         }
+    	}
+   }
 
-    	snprintf(comando, sizeof(comando), "%s %s", data_inicio, data_fim);
-    } else {
-	//snprintf(comando, sizeof(comando), "");
-    }
-  */  
     char *resultado = query4(comando, estado->gestorPassageiros, estado->gestorReservas);
-    
+
     if (resultado && resultado[0] != '\n') {
         printf(COLOR_GREEN "\n✓ Resultado:\n" COLOR_RESET);
         printf("%s", resultado);
     } else {
         printf(COLOR_YELLOW "\n⚠ Nenhum resultado encontrado.\n" COLOR_RESET);
     }
-    
+
     free(resultado);
     if (data_inicio) free(data_inicio);
     if (data_fim) free(data_fim);
@@ -344,28 +339,42 @@ static void executa_query4(EstadoPrograma *estado) {
 static void executa_query5(EstadoPrograma *estado) {
     printf(COLOR_CYAN "\n╔═══ Query 5: Top N Companhias Aéreas ═══╗\n" COLOR_RESET);
     printf("Digite N (número de companhias aéreas): ");
-    
+
     int n;
     if (scanf("%d", &n) != 1 || n <= 0) {
         printf(COLOR_RED "⚠ Número inválido!\n" COLOR_RESET);
         limpa_buffer();
         return;
     }
-    
+
     char comando[512];
     snprintf(comando, sizeof(comando), "%d", n);
 
     char *resultado = query5(comando, estado->gestorVoos);
-    
+
     if (resultado && resultado[0] != '\n') {
         printf(COLOR_GREEN "\n✓ Resultado:\n" COLOR_RESET);
         printf("%s", resultado);
     } else {
         printf(COLOR_YELLOW "\n⚠ Nenhum resultado encontrado.\n" COLOR_RESET);
     }
-    
+
     free(resultado);
 }
+
+/**
+ * Função auxiliar para validar os argumentos da query 6.
+ */
+
+static int palavra_valida (char *s) {
+    int len = strlen(s);
+    for (int i = 0; i < len; i++) {
+	char c = s[i];
+        if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == ' ')) return 0;
+    }
+    return 1;
+}
+
 
 /**
  * Executa Query 6.
@@ -374,23 +383,23 @@ static void executa_query5(EstadoPrograma *estado) {
 static void executa_query6(EstadoPrograma *estado) {
     printf(COLOR_CYAN "\n╔═══ Query 6: Destino Mais Comum ═══╗\n" COLOR_RESET);
     printf("Digite a nacionalidade: ");
-    
+
     char *nacionalidade = le_linha();
-    if (!nacionalidade || nacionalidade[0] == '\0') {
+    if ((!nacionalidade || nacionalidade[0] == '\0') || !palavra_valida(nacionalidade)) {
         printf(COLOR_RED "⚠ Nacionalidade inválida!\n" COLOR_RESET);
         free(nacionalidade);
         return;
     }
-    
+
     char *resultado = query6(nacionalidade, estado->gestorPassageiros, estado->gestorVoos, estado->gestorReservas);
-    
+
     if (resultado && resultado[0] != '\n') {
         printf(COLOR_GREEN "\n✓ Resultado:\n" COLOR_RESET);
         printf("%s", resultado);
     } else {
         printf(COLOR_YELLOW "\n⚠ Não foi encontrado qualquer passageiro encontrado com essa nacionalidade.\n" COLOR_RESET);
     }
-    
+
     free(resultado);
     free(nacionalidade);
 }
@@ -401,7 +410,7 @@ static void executa_query6(EstadoPrograma *estado) {
 
 static void liberta_recursos(EstadoPrograma *estado) {
     if (!estado->dados_carregados) return;
-    
+
     if (estado->gestorAeronaves) gestor_aircrafts_liberta(estado->gestorAeronaves);
     if (estado->gestorVoos) gestor_flights_destroy(estado->gestorVoos);
     if (estado->gestorAeroportos) gestor_airports_liberta(estado->gestorAeroportos);
@@ -416,7 +425,7 @@ static void liberta_recursos(EstadoPrograma *estado) {
  */
 
 static void limpa_terminal() {
-    printf("\033[2J\033[H");
+    printf ("\n\n");
     fflush(stdout);
 }
 
@@ -426,52 +435,52 @@ static void limpa_terminal() {
 
 int main() {
     EstadoPrograma estado = {0};
-    
+
     mostra_banner();
     StringPool *pool = cria_string_pool();
-    
+
     //pede caminho do dataset
     printf(COLOR_CYAN "Digite o caminho do dataset " COLOR_RESET);
     printf(COLOR_YELLOW "(Enter para './dataset-fase-1'): " COLOR_RESET);
-    
+
     char *caminho = le_linha();
     if (!caminho || caminho[0] == '\0') {
         free(caminho);
         caminho = strdup("./dataset-fase-1");
         printf(COLOR_GREEN "✓ A usar caminho padrão: %s\n" COLOR_RESET, caminho);
     }
-    
+
     //carrega dados
     if (!carrega_dataset(&estado, caminho,pool)) {
         printf(COLOR_RED "\n❌ Falha ao carregar dataset. A encerrar...\n" COLOR_RESET);
         free(caminho);
         return EXIT_FAILURE;
     }
-    
+
     free(caminho);
-    
+
     //loop principal
     int continuar = 1;
     while (continuar) {
         mostra_menu();
-        
+
         char opcao[10];
         if (!fgets(opcao, sizeof(opcao), stdin)) break;
-        
+
         //remove newline
         opcao[strcspn(opcao, "\n")] = '\0';
-        
-        //if (strlen(opcao) == 0) continue;
-        
+
+        if (strlen(opcao) == 0) continue;
+
         switch (opcao[0]) {
             case '1':
                 executa_query1(&estado);
                 break;
-                
+
             case '2':
                 executa_query2(&estado);
                 break;
-                
+
             case '3':
                 executa_query3(&estado);
                 break;
@@ -487,36 +496,44 @@ int main() {
             case '6':
                 executa_query6(&estado);
                 break;
-                
+
             case 'r':
             case 'R':
                 printf(COLOR_CYAN "\nDigite o novo caminho do dataset: " COLOR_RESET);
                 caminho = le_linha();
-                if (caminho && caminho[0] != '\0') {
+
+                if (caminho && caminho[0] != '\0' && g_file_test(caminho,G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
                     liberta_recursos(&estado);
 		    string_pool_clear(pool);
-                    carrega_dataset(&estado, caminho,pool);
+		    if (!carrega_dataset(&estado, caminho,pool)) {
+        		printf(COLOR_RED "\n❌ Falha ao carregar dataset. A encerrar...\n" COLOR_RESET);
+        		free(caminho);
+        		return EXIT_FAILURE;
+		    }
+
+                    //carrega_dataset(&estado, caminho,pool);
                 }
+	 	else printf (COLOR_RED "Pasta vazia ou inexistente.\nDataset não conseguiu recarregar.\n" COLOR_RESET);
                 free(caminho);
                 break;
-                
+
             case 'q':
             case 'Q':
                 continuar = 0;
                 break;
-                
+
             default:
                 printf(COLOR_RED "\n⚠ Opção inválida! Tente novamente.\n" COLOR_RESET);
                 break;
         }
-        
+
         if (continuar) {
             printf(COLOR_YELLOW "\n\nPressione Enter para continuar..." COLOR_RESET);
             getchar();
             limpa_terminal();
         }
     }
-    
+
     //limpa
     printf(COLOR_YELLOW "\n👋 A encerrar programa...\n" COLOR_RESET);
     liberta_recursos(&estado);

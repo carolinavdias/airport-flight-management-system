@@ -71,7 +71,6 @@ static long calcula_id_semana_parser(long long datetime) {
  */
 
 int* read_csv (Contexto *ctx, GestorFlights *V, GestorAirports *AP, GestorAircrafts *AC, GestorPassengers *P, GestorReservations *R, StringPool *pool) {
-
     // Inicializar contagens de passageiros por aeroporto (para Q1 otimizada)
     gestor_airports_init_contagens(AP);
 
