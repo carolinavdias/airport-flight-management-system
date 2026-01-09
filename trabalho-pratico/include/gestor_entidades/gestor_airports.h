@@ -21,8 +21,10 @@
 /**
  * @struct gestor_airports
  * @brief Estrutura interna do gestor de aeroportos.
- * Estrutura que representa o gestor de aeroportos.
- * A implementação interna utiliza estrutura de dadoss.
+ *
+ * O gestor utiliza uma hash table para armazenar aeroportos
+ * indexados pelo código IATA, bem como tabelas auxiliares para
+ * contagem de chegadas e partidas.
  */
 
 typedef struct gestor_airports GestorAirports;
@@ -73,7 +75,7 @@ Aeroporto *gestor_airports_procura(GestorAirports *g, const char *code_IATA);
 int gestor_airports_existe(GestorAirports *g, const char *code_IATA);
 
 /* ============================================
- * CONTAGENS DE PASSAGEIROS 
+ * GESTÃO DE AEROPORTOS
  * ============================================ */
 
 /**
@@ -85,6 +87,10 @@ int gestor_airports_existe(GestorAirports *g, const char *code_IATA);
  */
 
 void gestor_airports_init_contagens(GestorAirports *g);
+
+/* ============================================
+ * CONTAGENS DE CHEGADAS E PARTIDAS
+ * ============================================ */
 
 /**
  * @brief Incrementa o número de chegadas associadas a um aeroporto.

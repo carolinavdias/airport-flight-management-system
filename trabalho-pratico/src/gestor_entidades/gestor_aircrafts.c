@@ -20,8 +20,10 @@ typedef struct gestor_aircrafts {
 
 /**
  * Cria e inicializa o gestor de aeronaves.
- * A tabela de dispersão utiliza strings como chave
- * e liberta automaticamente as aeronaves armazenadas.
+ *
+ * A tabela de dispersão utiliza strings como chave (identificador da aeronave)
+ * e está configurada para libertar automaticamente tanto as chaves como as
+ * estruturas Aeronave associadas.
  */
 
 GestorAircrafts *gestor_aircrafts_cria(void) {
@@ -81,7 +83,7 @@ void gestor_aircrafts_foreach(GestorAircrafts *g, AircraftIterFunc f, void *user
 }
 
 /* ============================================
- * DESTRÓI GESTOR DE RESERVAS
+ * DESTRÓI GESTOR DE AERONAVES
  * ============================================ */
 
 /**

@@ -52,7 +52,7 @@ GestorGeral *gestor_geral_cria(void);
 void gestor_geral_liberta(GestorGeral *g);
 
 /* ============================================
- * GETTERS DOS GESTORES INTERNOS
+ * GETTERS 
  * ============================================ */
 
 /**

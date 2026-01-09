@@ -34,7 +34,7 @@
 typedef struct gestor_flights GestorFlights;
 
 /* ============================================
- * CRIA GESTOR DE VOO
+ * CRIA GESTOR DE VOOS
  * ============================================ */
 
 /**
@@ -48,7 +48,7 @@ typedef struct gestor_flights GestorFlights;
 GestorFlights *gestor_flights_novo();
 
 /* ============================================
- * DESTRÓI GESTOR DE VOO 
+ * DESTRÓI GESTOR DE VOOS
  * ============================================ */
 
  /** 
@@ -164,6 +164,7 @@ Voo **gestor_flights_get_array_ordenado(GestorFlights *g, int *num_voos);
  * @param aircraft_id Identificador do aircraft.
  * @return Número de voos ou 0 se não encontrado.
  */
+
 int gestor_flights_get_contagem_aircraft(GestorFlights *g, const char *aircraft_id);
 
 /**
@@ -199,15 +200,21 @@ void gestor_flights_set_contagens_aircraft(GestorFlights *g, GHashTable *contage
 
 Voo *gestor_flights_procura(GestorFlights *gf, const char *flight_id);
 
+/* ============================================
+ * FUNÇÕES PARA CACHE DE ATRASOS POR AIRLINE (Q5)
+ * ============================================ */
+
 /**
  * @brief Estrutura para dados de atraso por airline.
  */
+
 typedef struct dadosAtrasoQ5 DadosAtrasoQ5;
 
 /**
  * @brief Inicializa o cache Q5 para atrasos por airline.
  * @param g Ponteiro para o gestor.
  */
+
 void gestor_flights_init_cache_q5(GestorFlights *g);
 
 /**
@@ -216,6 +223,7 @@ void gestor_flights_init_cache_q5(GestorFlights *g);
  * @param airline Nome da companhia aerea.
  * @param delay Atraso em minutos.
  */
+
 void gestor_flights_add_atraso_q5(GestorFlights *g, const char *airline, int delay);
 
 /**
@@ -224,6 +232,7 @@ void gestor_flights_add_atraso_q5(GestorFlights *g, const char *airline, int del
  * @param airline Nome da companhia.
  * @return Ponteiro para DadosAtrasoQ5 ou NULL.
  */
+
 DadosAtrasoQ5 *gestor_flights_get_atraso_q5(GestorFlights *g, const char *airline);
 
 /**

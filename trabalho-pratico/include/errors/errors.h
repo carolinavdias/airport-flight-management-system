@@ -3,12 +3,15 @@
 
 /**
  * @file errors.h
- * @brief Funções utilitárias globais usadas por vários módulos do sistema.????????????????????????????
+ * @brief Módulo de registo e gestão global de erros.
  *
- * Este módulo agrega funcionalidades como:
- *  - registo e escrita de erros.
+ * Este módulo fornece funções para:
+ *  - iniciar e limpar a lista global de erros;
+ *  - registar erros ocorridos durante o processamento dos ficheiros;
+ *  - exportar os erros para um ficheiro CSV;
+ *  - libertar toda a memória associada ao sistema de erros.
  *
- * Nenhuma função aqui depende de entidades específicas do domínio.
+ * Não depende de nenhuma entidade específica do domínio.
  */
 
 /* ============================================================

@@ -46,7 +46,7 @@ GestorAirports *gestor_airports_cria(void) {
 }
 
 /* ============================================
- * CONTAGENS DE PASSAGEIROS (Q1 OTIMIZADA)
+ * CONTAGENS DE CHEGADAS E PARTIDAS
  * ============================================ */
 
 /** 

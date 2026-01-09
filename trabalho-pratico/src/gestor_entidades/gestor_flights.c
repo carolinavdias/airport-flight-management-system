@@ -34,7 +34,7 @@ typedef struct dadosAtrasoQ5{
 } DadosAtrasoQ5;
 
 /* ============================================
- * CRIA GESTOR DE VOO
+ * CRIA GESTOR DE VOOS
  * ============================================ */
 
 GestorFlights *gestor_flights_novo() {
@@ -49,7 +49,7 @@ GestorFlights *gestor_flights_novo() {
 }
 
 /* ============================================
- * DESTRÓI GESTOR DE VOO
+ * DESTRÓI GESTOR DE VOOS
  * ============================================ */
 
 void gestor_flights_destroy(GestorFlights *g) {
@@ -161,7 +161,7 @@ Voo *gestor_flights_procura(GestorFlights *g, const char *flight_id) {
 }
 
 /* ============================================
- * FUNÇÕES PARA CACHE Q5 (OTIMIZAÇÃO)
+ * FUNÇÕES PARA CACHE DE ATRASOS POR AIRLINE (Q5)
  * ============================================ */
 
 static void liberta_dados_q5(gpointer data) {
