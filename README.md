@@ -26,7 +26,7 @@ The project was developed across two phases, with a strong focus on **modular ar
 
 | Query | Description |
 |---|---|
-| `Q1 <code>` | Airport summary — name, city, country, type, arrival and departure counts |
+| `Q1 <code>` | Airport summary - name, city, country, type, arrival and departure counts |
 | `Q2 <N> [manufacturer]` | Top N aircraft with most flights, optionally filtered by manufacturer |
 | `Q3 <start> <end>` | Airport with most departures in a date range |
 | `Q4 [start end]` | Passenger who spent most time in the weekly top 10 spenders |
